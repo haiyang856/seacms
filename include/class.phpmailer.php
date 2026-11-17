@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*~ class.phpmailer.php
 .---------------------------------------------------------------------------.
 |  Software: PHPMailer - PHP email class                                     |
@@ -748,7 +748,6 @@ class PHPMailer {
       }
     }
 
-
     if (count($bad_rcpt) > 0 ) { //Create error message for any bad addresses
       $badaddresses = implode(', ', $bad_rcpt);
       throw new phpmailerException($this->Lang('recipients_failed') . $badaddresses);
@@ -1042,7 +1041,6 @@ class PHPMailer {
     }
     return $maxLength;
   }
-
 
   /**
    * Set the body wrapping.

@@ -1,4 +1,4 @@
-<?php  
+<?php
 @session_start();
 if (! defined ( 'sea_INC' )) {
 	exit ( "Request Error!" );
@@ -148,7 +148,7 @@ class MainClass_Template {
 		if (strpos ( $content, '{seacms:allcount}' ) > 0)
 			$content = str_replace ( "{seacms:allcount}", getDataCount ( "all" ), $content );
 		if (strpos ( $content, '{seacms:daycount}' ) > 0)
-			$content = str_replace ( "{seacms:daycount}", getDataCount ( "day" ), $content );		
+			$content = str_replace ( "{seacms:daycount}", getDataCount ( "day" ), $content );
 		if (strpos ( $content, '{seacms:allcountnews}' ) > 0)
 			$content = str_replace ( "{seacms:allcountnews}", getNewsDataCount ( "all" ), $content );
 		if (strpos ( $content, '{seacms:daycountnews}' ) > 0)
@@ -266,19 +266,19 @@ class MainClass_Template {
 							'X',
 							'Y',
 							'Z',
-							'0-9' 
+							'0-9'
 					);
 					break;
 				case "state" :
 					$rsArray = array (
 							'w',
-							'l' 
+							'l'
 					);
 					break;
 				case "money" :
 					$rsArray = array (
 							's',
-							'm' 
+							'm'
 					);
 					break;
 				case "jq" :
@@ -387,8 +387,8 @@ class MainClass_Template {
 					array_splice ( $rsArray, 0, 0, array (
 							array (
 									'tid' => '全部',
-									'tname' => '全部' 
-							) 
+									'tname' => '全部'
+							)
 					) );
 					break;
 				case "year" :
@@ -456,21 +456,21 @@ class MainClass_Template {
 							'X',
 							'Y',
 							'Z',
-							'0-9' 
+							'0-9'
 					);
 					array_splice ( $rsArray, 0, 0, '全部' );
 					break;
 				case "state" :
 					$rsArray = array (
 							'w',
-							'l' 
+							'l'
 					);
 					array_splice ( $rsArray, 0, 0, '全部' );
 					break;
 				case "money" :
 					$rsArray = array (
 							's',
-							'm' 
+							'm'
 					);
 					array_splice ( $rsArray, 0, 0, '全部' );
 					break;
@@ -1537,8 +1537,6 @@ class MainClass_Template {
 					$whereSid = "";
 				}
 
-				
-				
 				switch (trim ( $vtime )) {
 					case "day" :
 						$ntime = gmmktime ( 0, 0, 0, gmdate ( 'm' ), gmdate ( 'd' ), gmdate ( 'Y' ) );
@@ -2903,7 +2901,7 @@ class MainClass_Template {
 								if ($GLOBALS ['cfg_runmode'] == '0') {
 									$topicLink = "/" . $GLOBALS ['cfg_cmspath'] . $GLOBALS ['cfg_filesuffix'] . "/" . $row->enname . $GLOBALS ['cfg_filesuffix2'];
 								}
-								if ($GLOBALS ['cfg_runmode'] == '1') 
+								if ($GLOBALS ['cfg_runmode'] == '1')
 								{
 									$topicLink = "/" . $GLOBALS ['cfg_cmspath'] . $GLOBALS ['cfg_filesuffix'] . "/?" . $row->id . $GLOBALS ['cfg_filesuffix2'];
 								}
@@ -3080,7 +3078,7 @@ class MainClass_Template {
 								if ($GLOBALS ['cfg_runmode'] == '0') {
 									$topicLink = "/" . $GLOBALS ['cfg_cmspath'] . $GLOBALS ['cfg_filesuffix'] . "/" . $row->enname . $GLOBALS ['cfg_filesuffix2'];
 								}
-								if ($GLOBALS ['cfg_runmode'] == '1') 
+								if ($GLOBALS ['cfg_runmode'] == '1')
 								{
 									$topicLink = "/" . $GLOBALS ['cfg_cmspath'] . $GLOBALS ['cfg_filesuffix'] . "/?" . $row->id . $GLOBALS ['cfg_filesuffix2'];
 								}

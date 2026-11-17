@@ -1,4 +1,4 @@
-<?php  
+<?php
 function makeIndex($by='video')
 {
 	global $mainClassObj;
@@ -248,7 +248,6 @@ function makeNewsDay()
 	echoNewsDaySuspend($page+1,$TotalPage);
 }
 
-
 function echoDaySuspend($curPage,$pCount)
 {
 	global $cfg_stoptime;
@@ -316,7 +315,7 @@ function makeArticleById($vId)
 	$content=str_replace("{news:upid}",getUpId($vType,1),$content);
 	if (strpos($content,"{news:keyword}")>0) $content=str_replace("{news:keyword}",getnewsKeywordsList($row['n_keyword'],"&nbsp;"),$content);
 	
-	$n_pic=$row['n_pic'];	
+	$n_pic=$row['n_pic'];
 	if(!empty($n_pic)){
 		if(strpos(' '.$n_pic,'://')>0){
 		$content=str_replace("{news:pic}",$n_pic,$content);
@@ -327,7 +326,7 @@ function makeArticleById($vId)
 	$content=str_replace("{news:pic}",'/'.$GLOBALS['cfg_cmspath'].'pic/nopic.gif',$content);
 	}
 	
-	$n_spic=$row['n_spic'];	
+	$n_spic=$row['n_spic'];
 	if(!empty($n_spic)){
 		if(strpos(' '.$n_spic,'://')>0){
 		$content=str_replace("{news:spic}",$n_spic,$content);
@@ -338,7 +337,7 @@ function makeArticleById($vId)
 	$content=str_replace("{news:spic}",'/'.$GLOBALS['cfg_cmspath'].'pic/nopic.gif',$content);
 	}
 	
-	$n_gpic=$row['n_gpic'];	
+	$n_gpic=$row['n_gpic'];
 	if(!empty($n_gpic)){
 		if(strpos(' '.$n_gpic,'://')>0){
 		$content=str_replace("{news:gpic}",$n_gpic,$content);
@@ -348,7 +347,6 @@ function makeArticleById($vId)
 	}else{
 	$content=str_replace("{news:gpic}",'/'.$GLOBALS['cfg_cmspath'].'pic/nopic.gif',$content);
 	}
-	
 	
 	$content=str_replace("{news:author}",$row['n_author'],$content);
 	$content=str_replace("{news:from}",$row['n_from'],$content);
@@ -372,7 +370,7 @@ function makeArticleById($vId)
 	$content=str_replace("{news:id}",$row['n_id'],$content);
 	$content=str_replace("{seacms:member}",front_member(),$content);
 
-	if (strpos($content,"{news:subcontent}")>0||strpos($content,"{news:subtitle}")>0||strpos($content,"{news:subpagenumber}")>0){	
+	if (strpos($content,"{news:subcontent}")>0||strpos($content,"{news:subtitle}")>0||strpos($content,"{news:subpagenumber}")>0){
 		$desarr=explode("#p#",$row['n_content']);
 		for($i=0;$i<count($desarr);$i++)
 		{
@@ -494,16 +492,15 @@ function makeContentById($vId)
 			$d=0;
 		}
 		
-		
 		$content=str_replace("{playpage:playlink}",getPlayLink2($vType,$vId,date('Y-n',$row['v_addtime']),$row['v_enname'],$d),$content);
-		if(strpos($content,"{playpage:typename}")>0) 
+		if(strpos($content,"{playpage:typename}")>0)
 		{
-			$content=str_replace("{playpage:typename}",getTypeName($vType).getExtraTypeName($vExtraType),$content);	
+			$content=str_replace("{playpage:typename}",getTypeName($vType).getExtraTypeName($vExtraType),$content);
 		}
-		if(strpos($content,"{playpage:linktypename}")>0) 
+		if(strpos($content,"{playpage:linktypename}")>0)
 		{
 			$connector = "</a>";
-			$content=str_replace("{playpage:linktypename}","<a href=\"".getChannelPagesLink($vType)."\">".getTypeName($vType).$connector.getExtraTypeName($vExtraType,$connector).$connector,$content);	
+			$content=str_replace("{playpage:linktypename}","<a href=\"".getChannelPagesLink($vType)."\">".getTypeName($vType).$connector.getExtraTypeName($vExtraType,$connector).$connector,$content);
 		}
 		//获取评论数
 		$PLnumSQL=$dsql->getOne("select count(id) as dd from sea_comment where v_id=".$vId);
@@ -514,14 +511,14 @@ function makeContentById($vId)
 		$vSCnum=$SCnumSQL['dd'];
 					
 		$content = str_replace("{playpage:plnum}",$vPLnum,$content);
-		$content = str_replace("{playpage:scnum}",$vSCnum,$content);	
+		$content = str_replace("{playpage:scnum}",$vSCnum,$content);
 
 		$content=str_replace("{playpage:typelink}",getChannelPagesLink($vType),$content);
 		$content=str_replace("{playpage:lang}",$row['v_lang'],$content);
 		$content=str_replace("{playpage:encodename}",urlencode($row['v_name']),$content);
-		$content=str_replace("{playpage:typeid}",$row['tid'],$content); 
+		$content=str_replace("{playpage:typeid}",$row['tid'],$content);
 		$content=str_replace("{playpage:note}",$row['v_note'],$content);
-		$content=str_replace("{playpage:longtxt}",$row['v_longtxt'],$content);		
+		$content=str_replace("{playpage:longtxt}",$row['v_longtxt'],$content);
 		$content=str_replace("{playpage:diggnum}",$row['v_digg'],$content);
 		$score=number_format($row[v_score]/$row[v_scorenum],1);
 	    $content=str_replace("{playpage:score}",$score,$content);
@@ -541,7 +538,7 @@ function makeContentById($vId)
 		$content=str_replace("{playpage:mtime}",$row['v_mtime'],$content);
 		$content=str_replace("{playpage:imdb}",$row['v_imdb'],$content);
 		$content=str_replace("{playpage:tvs}",$row['v_tvs'],$content);
-		$content=str_replace("{playpage:company}",$row['v_company'],$content); 
+		$content=str_replace("{playpage:company}",$row['v_company'],$content);
 		$content=str_replace("{playpage:desktopurl}",'/'.$GLOBALS['cfg_cmspath'].'desktop.php?name='.urlencode($row['v_name']).'&url='.urlencode($GLOBALS['cfg_basehost'].$contentLink),$content);
 		if (strpos($content,"{playpage:keywords}")>0) $content=str_replace("{playpage:keywords}",getKeywordsList($row['v_tags'],"&nbsp;"),$content);
 		if (strpos($content,"{playpage:jqtype}")>0) $content=str_replace("{playpage:jqtype}",getJqList($row['v_jq'],"&nbsp;"),$content);
@@ -609,7 +606,7 @@ function makeContentById($vId)
 		$content = parseLabelHaveLen($content,Html2Text($v_des),"des");
 		$content = parseLabelHaveLen($content,$row['v_name'],"name");
 		$content = parseLabelHaveLen($content,$row['v_note'],"note");
-		$content=str_replace("{seacms:member}",front_member(),$content);		
+		$content=str_replace("{seacms:member}",front_member(),$content);
 		switch ($typeFlag) {
 			case "parse_content_":
 				$content=str_replace("<head>",'<head><script>var seatype="video"; var seaid='.$row['v_id'].';</script><script src="/'.$GLOBALS['cfg_cmspath'].'js/seajump.js"></script>',$content);
@@ -712,12 +709,12 @@ function makePlayByData($vType,$vId,$playArr,$str2,$content,$sdate,$enname,$stri
 				$st5=explode("#",$st4[1]);
 				foreach($st5 as $key=>$item)
 				{
-					$st6=explode("$",$item); 
+					$st6=explode("$",$item);
 					$eurls.=$st6[1].",";
 				}
 				$eurls=trim($eurls,",");
 				$tmp1 = str_replace("{playpage:alldz}",$eurls,$tmp1);
-				$tmp1 = str_replace("{playpage:nextdz}",$partNameN[2],$tmp1);			
+				$tmp1 = str_replace("{playpage:nextdz}",$partNameN[2],$tmp1);
 				$body= "<script>document.getElementById(\"".$i.$n."\").classList.add(\"playon\");</script>\n\r</body>";
 				$tmp1 = str_replace("</body>",$body,$tmp1);
 				if($cfg_playaddr_enc=='escape'){
@@ -866,7 +863,6 @@ function makeArticleByChannel($channel,$isIncludeSub)
 	echoNewsContentSuspend($curTypeIndex,($currentPage+1),$channel,$action2,$action3);
 }
 
-
 function makeChannelById($typeId)
 {
 	global $dsql,$cfg_iscache,$mainClassObj,$page,$index, $action3,$action,$cfg_basehost ;
@@ -929,7 +925,6 @@ function makeChannelById($typeId)
 	
 	$content = str_replace("{channelpage:order-score-link}",$cfg_basehost."/search.php?page=1&searchtype=5&order=score&tid=".$typeId,$content);
 	$content = str_replace("{channelpage:order-scoreasc-link}",$cfg_basehost."/search.php?page=1&searchtype=5&order=scoreasc&tid=".$typeId,$content);
-	
 	
 	$tempStr = $content;
 	if (isTypeHide($typeId)){
@@ -1051,8 +1046,6 @@ function makeNewsChannelById($typeId)
 		echoEach($typename,1,'..'.$channelLink,"newspage");
 	
 	}
-	
-
 	
 	for($i=$mstart;$i<=$mend;$i++){
 		$tmp=$content;
@@ -1317,7 +1310,6 @@ function makeTopicIndex($page=1)
 	$content=str_replace("{seacms:member}",front_member(),$content);
 	$tempStr = $content;
 	
-	
 	$s=$page;
 	if($s>1) {$s=$page*5;$s=$s-4;}
 
@@ -1331,7 +1323,7 @@ function makeTopicIndex($page=1)
 		createTextFile($content,$topicindexname);
 		$topicindexname="../".$GLOBALS['cfg_album_name']."/".($i==1?'':'index'.$i.$GLOBALS['cfg_filesuffix2']);
 		echo "专题列表第".$i."页生成完毕 <a target='_blank' href='".$topicindexname."'><font color=red>浏览专题列表</font></a><br>";
-        if($i>=$pCount){echo '<br>专题列表生成完毕';echoFoot();exit();}		
+        if($i>=$pCount){echo '<br>专题列表生成完毕';echoFoot();exit();}
 	}
 	$nextpage=$page+1;
 	echo "<br>暂停".$cfg_stoptime."秒后继续生成<script language=\"javascript\">setTimeout(\"makeNextPage();\",".$cfg_stoptime."000);function makeNextPage(){location.href='?action=topicindex&page=".$nextpage."';}</script>";
@@ -1405,7 +1397,6 @@ function makeTopicById($topicId)
 	elseif(strpos($topicgPic,'://')>0){$topicgPic=$topicgPic;}
 	else{$topicgPic=$GLOBALS['cfg_cmspath']."/".$topicgPic;}
 	
-	
 	$topicEnname=$row['enname'];
 	$currentTopicId = $row['id'];
 	$currrent_topic_id=$row['id'];
@@ -1420,9 +1411,9 @@ function makeTopicById($topicId)
 			$content = str_replace("{seacms:currrent_topic_id}",$currrent_topic_id,$content);
 			$content = str_replace("{seacms:topicpic}",$topicPic,$content);
 			$content = str_replace("{seacms:topicspic}",$topicsPic,$content);
-			$content = str_replace("{seacms:topicgpic}",$topicgPic,$content);			
+			$content = str_replace("{seacms:topicgpic}",$topicgPic,$content);
 			$content = str_replace("{seacms:topiccontent}",$topicContent,$content);
-			$content = str_replace("{seacms:topicaddtime}",MyDate('Y-m-d H:i',$topicAddtime),$content);			
+			$content = str_replace("{seacms:topicaddtime}",MyDate('Y-m-d H:i',$topicAddtime),$content);
 			setFileCache($cacheName,$content);
 		}
 	}else{
@@ -1433,7 +1424,7 @@ function makeTopicById($topicId)
 			$content = str_replace("{seacms:currrent_topic_id}",$currrent_topic_id,$content);
 			$content = str_replace("{seacms:topicpic}",$topicPic,$content);
 			$content = str_replace("{seacms:topicspic}",$topicsPic,$content);
-			$content = str_replace("{seacms:topicgpic}",$topicgPic,$content);			
+			$content = str_replace("{seacms:topicgpic}",$topicgPic,$content);
 			$content = str_replace("{seacms:topiccontent}",$topicContent,$content);
 			$content = str_replace("{seacms:topicaddtime}",MyDate('Y-m-d H:i',$topicAddtime),$content);
 	}
@@ -1660,11 +1651,10 @@ function makeCustomInfo($templatename)
 	global $mainClassObj,$dsql,$customLink;
 	$self_str="self_";
 	$pcount=0;
-	$templatePath = "/templets/".$GLOBALS['cfg_df_style']."/".$GLOBALS['cfg_df_html']."/".$templatename; 
+	$templatePath = "/templets/".$GLOBALS['cfg_df_style']."/".$GLOBALS['cfg_df_html']."/".$templatename;
     $customLink="/".$GLOBALS['cfg_cmspath'].str_replace(".html","",str_replace("#", "/", str_replace($self_str,"",$templatename)))."<page>.html";
 	$content=loadFile(sea_ROOT.$templatePath);
 	$content2=str_replace("}"," }",$content);
-	
 	
 	$pSize=ZgetPagesize($content2,$Flag);
     $order=ZgetPageorder($content2,$Flag);
@@ -1680,7 +1670,6 @@ function makeCustomInfo($templatename)
 	$jq=ZgetPagejq($content2,$Flag);
 	if($type=="all"){$type="";}
 
-	
 	if(!empty($type)) $whereStr.=" and tid in ($type)";
 	if(!empty($year)) $whereStr.=" and v_publishyear='$year'";
 	if(!empty($letter)) $whereStr.=" and v_letter='$letter'";
@@ -1701,9 +1690,6 @@ function makeCustomInfo($templatename)
 		$pCount = ceil($TotalResult/$pSize);
 	}
 	
-	
-	
-
 	$content=$mainClassObj->parseTopAndFoot($content);
 	$content=$mainClassObj->parseSelf($content);
 	$content=$mainClassObj->parseHistory($content);
@@ -1972,7 +1958,6 @@ function makeRss()
 		return $GLOBALS['cfg_basehost']."/xml/".$GLOBALS['cfg_cmspath']."rss.xml"." 生成完毕 <a target='_blank' href='../xml/rss.xml'><font color=red>浏览</font></a><br>";
 	}
 }
-
 
 function makeRssn()
 {

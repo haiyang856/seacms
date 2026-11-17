@@ -1,11 +1,8 @@
-<?php 
+<?php
 error_reporting(0);
 session_start();
 require_once(__DIR__.'/include/gpc.filter.php');
   
-
-
-
 require_once("include/common.php");
 //前置跳转start
 $cs=$_SERVER["REQUEST_URI"];
@@ -75,7 +72,7 @@ function echoSearchPage()
 			$whereStr=" where n_recycled=0 and (n_title like '%$searchword%' or n_keyword like '%$searchword%' or n_author like '%$searchword%' or n_from like '%$searchword%')";
 		break;
 		case 1:
-			$whereStr=" where n_recycled=0 and n_title like '%$searchword%'";	
+			$whereStr=" where n_recycled=0 and n_title like '%$searchword%'";
 		break;
 
 	}
@@ -145,7 +142,7 @@ function checkSearchTimes($searchtime)
 	
 }
 
-//获得关键字的分词结果，并保存到数据库 
+//获得关键字的分词结果，并保存到数据库
 function GetKeywords($keyword,$TotalResult)
 {
 	global $dsql;

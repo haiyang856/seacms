@@ -1,15 +1,15 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit("Request Error!");
-} 
+}
 class AppFtp{
 	var $ftpUrl = "127.0.0.1";
 	var $ftpUser = "seacms";
 	var $ftpPass = "123456789";
 	var $ftpDir = "/www/";
 	var $ftpPort = "21";
-	var $ftpR = ''; 
+	var $ftpR = '';
 	var $ftpStatus = 0;
 	var $ftpStatusDes = "";
 	
@@ -49,7 +49,6 @@ class AppFtp{
 	   }
 	}
 	
-	
 	function cd($dir) {
 	   return ftp_chdir($this->ftpR, $dir);
 	}
@@ -60,8 +59,8 @@ class AppFtp{
 	function mkdirs($path)
 	{
 		$path_arr  = explode('/',$path);
-		$file_name = array_pop($path_arr); 
-		$path_div  = count($path_arr); 
+		$file_name = array_pop($path_arr);
+		$path_div  = count($path_arr);
 		$tmpdir = '';
 		foreach($path_arr as $val)
 		{

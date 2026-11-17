@@ -1,4 +1,4 @@
-<?php  
+<?php
 @session_start();
 if (! defined ( 'sea_INC' )) {
 	exit ( "Request Error!" );
@@ -260,19 +260,19 @@ class MainClass_Template {
 							'X',
 							'Y',
 							'Z',
-							'0-9' 
+							'0-9'
 					);
 					break;
 				case "state" :
 					$rsArray = array (
 							'w',
-							'l' 
+							'l'
 					);
 					break;
 				case "money" :
 					$rsArray = array (
 							's',
-							'm' 
+							'm'
 					);
 					break;
 				case "jq" :
@@ -381,8 +381,8 @@ class MainClass_Template {
 					array_splice ( $rsArray, 0, 0, array (
 							array (
 									'tid' => '全部',
-									'tname' => '全部' 
-							) 
+									'tname' => '全部'
+							)
 					) );
 					break;
 				case "year" :
@@ -450,21 +450,21 @@ class MainClass_Template {
 							'X',
 							'Y',
 							'Z',
-							'0-9' 
+							'0-9'
 					);
 					array_splice ( $rsArray, 0, 0, '全部' );
 					break;
 				case "state" :
 					$rsArray = array (
 							'w',
-							'l' 
+							'l'
 					);
 					array_splice ( $rsArray, 0, 0, '全部' );
 					break;
 				case "money" :
 					$rsArray = array (
 							's',
-							'm' 
+							'm'
 					);
 					array_splice ( $rsArray, 0, 0, '全部' );
 					break;
@@ -1342,7 +1342,7 @@ class MainClass_Template {
 						while ( $rowr = $this->dsql->GetObject ( 'al' ) ) {
 							$rows [] = $rowr->vid;
 							}
-						$scid = implode (",", $rows); 
+						$scid = implode (",", $rows);
 						$whereSCid = " and  m.v_id in ($scid) order by FIELD(v_id,$scid)";
 						break;
 				}
@@ -2890,7 +2890,7 @@ class MainClass_Template {
 								if ($GLOBALS ['cfg_runmode'] == '0') {
 									$topicLink = "/" . $GLOBALS ['cfg_cmspath'] . $GLOBALS ['cfg_filesuffix'] . "/" . $row->enname . $GLOBALS ['cfg_filesuffix2'];
 								}
-								if ($GLOBALS ['cfg_runmode'] == '1') 
+								if ($GLOBALS ['cfg_runmode'] == '1')
 								{
 									$topicLink = "/" . $GLOBALS ['cfg_cmspath'] . $GLOBALS ['cfg_filesuffix'] . "/?" . $row->id . $GLOBALS ['cfg_filesuffix2'];
 								}
@@ -3067,7 +3067,7 @@ class MainClass_Template {
 								if ($GLOBALS ['cfg_runmode'] == '0') {
 									$topicLink = "/" . $GLOBALS ['cfg_cmspath'] . $GLOBALS ['cfg_filesuffix'] . "/" . $row->enname . $GLOBALS ['cfg_filesuffix2'];
 								}
-								if ($GLOBALS ['cfg_runmode'] == '1') 
+								if ($GLOBALS ['cfg_runmode'] == '1')
 								{
 									$topicLink = "/" . $GLOBALS ['cfg_cmspath'] . $GLOBALS ['cfg_filesuffix'] . "/?" . $row->id . $GLOBALS ['cfg_filesuffix2'];
 								}

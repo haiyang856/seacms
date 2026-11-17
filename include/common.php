@@ -1,4 +1,4 @@
-<?php 
+<?php
 //error_reporting(0);
 require_once('webscan/webscan.php');
 define('sea_INC', preg_replace("|[/\\\]{1,}|",'/',dirname(__FILE__) ) );
@@ -74,18 +74,18 @@ foreach($_SESSION as $_k=>$_v)
 }
 
 function isMobile()
-{ 
+{
     // 如果有HTTP_X_WAP_PROFILE则一定是移动设备
     if (isset ($_SERVER['HTTP_X_WAP_PROFILE']))
     {
         return true;
-    } 
+    }
     // 如果via信息含有wap则一定是移动设备
     if (isset ($_SERVER['HTTP_VIA']))
-    { 
+    {
         // 找不到为flase,否则为true
         return stristr($_SERVER['HTTP_VIA'], "wap") ? true : false;
-    } 
+    }
     // 脑残法，判断手机发送的客户端标志,兼容性有待提高
     if (isset ($_SERVER['HTTP_USER_AGENT']))
     {
@@ -121,23 +121,23 @@ function isMobile()
             'midp',
             'wap',
             'mobile'
-            ); 
+            );
         // 从HTTP_USER_AGENT中查找手机浏览器的关键字
         if (preg_match("/(" . implode('|', $clientkeywords) . ")/i", strtolower($_SERVER['HTTP_USER_AGENT'])))
         {
             return true;
-        } 
-    } 
+        }
+    }
     // 协议法，因为有可能不准确，放到最后判断
     if (isset ($_SERVER['HTTP_ACCEPT']))
-    { 
+    {
         // 如果只支持wml并且不支持html那一定是移动设备
         // 如果支持wml和html但是wml在html之前则是移动设备
         if ((strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') !== false) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/html') === false || (strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') < strpos($_SERVER['HTTP_ACCEPT'], 'text/html'))))
         {
             return true;
-        } 
-    } 
+        }
+    }
     return false;
 }
 
@@ -157,14 +157,12 @@ function _RunMagicQuotes(&$svar)
 	return $svar;
 }
 
-
 foreach(Array('_GET','_POST','_COOKIE','_SERVER') as $_request)
 {
 	foreach($$_request as $_k => $_v) ${$_k} = _RunMagicQuotes($_v);
 }
 
- 
-//系统相关变量检测
+ //系统相关变量检测
 if(!isset($needFilter))
 {
 	$needFilter = false;

@@ -2,8 +2,6 @@
 error_reporting(0);
 require_once(__DIR__.'/gpc.filter.php');
   
-
-
 require_once('common.php');
 global $cfg_isallphp;
 if($cfg_isallphp=='1'){exit();};
@@ -163,9 +161,9 @@ function updateHit(){
 	$dsql->ExecuteNoneQuery("Update `sea_data` set v_hit = v_hit + 1 where v_id=$id");
 	$row = $dsql->GetOne("Select v_hit,v_daytime,v_weektime,v_monthtime From `sea_data` where v_id=$id ");
 	$n=time(); //当前时间
-	$day=$row['v_daytime']; 
-	$week=$row['v_weektime']; 
-	$month=$row['v_monthtime']; 
+	$day=$row['v_daytime'];
+	$week=$row['v_weektime'];
+	$month=$row['v_monthtime'];
 
 	if(($n-$day)<86400)
 	{
@@ -196,7 +194,6 @@ function updateHit(){
 		$dsql->ExecuteNoneQuery("Update `sea_data` set v_monthhit = 1 where v_id=$id");
 		$dsql->ExecuteNoneQuery("Update `sea_data` set v_monthtime = '$n' where v_id=$id");
 	}
-	
 	
 	if(is_array($row))
 	{
@@ -240,8 +237,8 @@ function addfav(){
 function vpingfen(){
 	global $id,$dsql;
 	$row = $dsql->GetOne("Select v_score,v_scorenum From `sea_data` where v_id=$id ");
-	$num=$row['v_scorenum']; 
-	$sum=$row['v_score']; 
+	$num=$row['v_scorenum'];
+	$sum=$row['v_score'];
 	$sc=number_format($sum/$num,1);
 	return "$num,$sum,$sc";
 }
@@ -249,8 +246,8 @@ function vpingfen(){
 function npingfen(){
 	global $id,$dsql;
 	$row = $dsql->GetOne("Select n_score,n_scorenum From `sea_news` where n_id=$id ");
-	$num=$row['n_scorenum']; 
-	$sum=$row['n_score']; 
+	$num=$row['n_scorenum'];
+	$sum=$row['n_score'];
 	$sc=number_format($sum/$num,1);
 	return "$num,$sum,$sc";
 }

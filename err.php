@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 require_once("include/common.php");
 require_once(sea_INC."/filter.inc.php");
@@ -24,9 +24,9 @@ if($action=='add')
 	$ip = GetIP();
 	$sendtime = time();
 	
-	//检查验证码是否正确 
+	//检查验证码是否正确
 if($cfg_feedback_ck=='1')
-{	
+{
 	$validate = empty($validate) ? '' : strtolower(trim($validate));
 	$svali = $_SESSION['sea_ckstr'];
 	if($validate=='' || $validate != $svali)
@@ -35,7 +35,7 @@ if($cfg_feedback_ck=='1')
 		ShowMsg('验证码不正确!','-1');
 		exit();
 	}
-}	
+}
 	//检查报错间隔时间；
 	if(!empty($cfg_feedback_times))
 	{
@@ -47,8 +47,7 @@ if($cfg_feedback_ck=='1')
 		}
 	}
 	
-	
-$id=$_POST['vid'];
+	$id=$_POST['vid'];
 $id = !empty($id) && is_numeric($id) ? $id : 0;
 $ip = GetIP();
 $author = HtmlReplace($author);
@@ -122,7 +121,7 @@ li{ list-style:none;}
                 <p>详情：<textarea id="errtxt"  name="errtxt" style="width:270px;height:88px" rows=5 cols=30><?php  echo $errtxt2 ?></textarea></p> 
 				
 				<input type="submit" value="影片报错" style="margin-top:5px;margin-left: 10px;cursor:pointer;color: #fff;width: 80px;cursor:pointer;background-color: #5682b2;height: 28px;border:0; border-radius:2px;float:left;">
-				<?php 
+				<?php
 				$vcode="<p style='float:left;display:block;margin-top: 6px;'><input name=\"validate\" type=\"text\" id=\"vdcode\" placeholder=\"验证码\"  style=\"width:50px;text-align: center;text-transform:uppercase;float:left;height: 25px;padding: 3px;\" class=\"text\" tabindex=\"3\" onClick=\"document.getElementById('vdimgck').style.display='inline';\"/>&nbsp;<img id=\"vdimgck\" src=\"include/vdimgck.php\" alt=\"看不清？点击更换\"  align=\"absmiddle\"  style=\"cursor:pointer; float:left;height: 25px;display:none;\" onClick=\"this.src=this.src+'?get=' + new Date()\"/><span class=\"red\"></span></p>";
 				if($cfg_feedback_ck=='1'){echo $vcode;}
 				?>

@@ -1,11 +1,8 @@
-<?php 
+<?php
 error_reporting(0);
 session_start();
 require_once(__DIR__.'/include/gpc.filter.php');
   
-
-
-
 require_once("include/common.php");
 require_once(sea_INC."/splitword.class.php");
 require_once(sea_INC."/ai.php");  // AI 搜索辅助
@@ -111,7 +108,6 @@ function echoSearchPage()
 	
 	if(strpos($searchword,'{searchpage:')) {ShowMsg('请勿输入危险字符！','index.php','0',$cfg_search_time*1000);exit;}
 
-
 function check_str($str,$key){
  foreach($key as $v){
   if(strpos($str,$v)>-1){
@@ -137,10 +133,6 @@ if(check_str($jq,$key)){ShowMsg('请勿输入危险字符！','index.php','0',$c
 if(check_str($money,$key)){ShowMsg('请勿输入危险字符！','index.php','0',$cfg_search_time*1000);exit;}
 if(check_str($page,$key)){ShowMsg('请勿输入危险字符！','index.php','0',$cfg_search_time*1000);exit;}
 
-
-
-
-	
 	if(intval($searchtype)==5)
 	{
 		$searchTemplatePath = "/templets/".$GLOBALS['cfg_df_style']."/".$GLOBALS['cfg_df_html']."/cascade.html";
@@ -173,8 +165,8 @@ if(check_str($page,$key)){ShowMsg('请勿输入危险字符！','index.php','0',
 			$whereStr=" where v_recycled=0 and (v_name like '%$searchword%' or v_actor like '%$searchword%' or v_director like '%$searchword%' or v_tags like '%$searchword%' or v_nickname like '%$searchword%')";
 		break;
 		case 1:
-			$whereStr=" where v_recycled=0 and v_name like '%$searchword%'";	
-		break;		
+			$whereStr=" where v_recycled=0 and v_name like '%$searchword%'";
+		break;
 		case 5:
 			$whereStr=" where v_recycled=0";
 			if(!empty($tid)) $whereStr.=" and (tid in (".getTypeId($tid).") or FIND_IN_SET('".$tid."',v_extratype)<>0)";
@@ -325,7 +317,7 @@ function checkSearchTimes($searchtime)
 	if(GetCookie("ssea2_search")=="ok")
 	{
 		ShowMsg('搜索限制为'.$searchtime.'秒一次','index.php','0',$cfg_search_time);
-		//PutCookie("ssea2_search","ok",$searchtime); 
+		//PutCookie("ssea2_search","ok",$searchtime);
 		exit;
 	}else{
 		PutCookie("ssea2_search","ok",$searchtime);

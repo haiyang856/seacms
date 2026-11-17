@@ -1,8 +1,8 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit("Request Error!");
-} 
+}
 session_start();
 function CheckPurview()
 {
@@ -121,7 +121,6 @@ class userLogin
 		$_SESSION[$this->keepgroupidTag] = '';
 		$_SESSION[$this->keepUserNameTag] = '';
 	}
-
 
 	//获得用户的权限值
 	function getgroupid()

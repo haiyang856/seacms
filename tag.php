@@ -1,9 +1,8 @@
-<?php 
+<?php
 
 error_reporting(0);
 require_once(__DIR__.'/include/gpc.filter.php');
   
-
 require_once("include/common.php");
 require_once(sea_INC."/main.class.php");
 
@@ -78,7 +77,7 @@ function echoTagPage()
 }
 
 function parseSearchPart($templatePath)
-{ 
+{
 	global $mainClassObj;
 	$content=loadFile(sea_ROOT.$templatePath);
 	$content=$mainClassObj->parseTopAndFoot($content);

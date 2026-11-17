@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit("Request Error!");
@@ -67,7 +67,7 @@ function crontodaynextrun($cron, $hour = -2, $minute = -2) {
 		$nextminute = cronnextminute($cron['minute'], $minute);
 		if($cron['hour'] < $hour||($cron['hour'] == $hour && $nextminute === false)) {
 			$nexttime['hour'] = $nexttime['minute'] = -1;
-		} 
+		}
 		else{
 			$nexttime['hour']=$cron['hour'];
 			if(is_array($cron['minute']))$nexttime['minute'] = $cron['minute'][0];

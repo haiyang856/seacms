@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit("Request Error!");
@@ -9,12 +9,12 @@ class Collect
 {
 	/*
 	 * 官方资源库采集入库  v20250825
-	 * $video xml单个simplexml数据 
+	 * $video xml单个simplexml数据
 	 * $localId 入库后本地id
 	 * */
 
 public function xml_db($video,$localId)
-	{ 
+	{
 global $rid,$rid1, $dsql;
 
     // 检查$rid和$dsql是否有效
@@ -56,7 +56,6 @@ if (!empty($configRow) && is_array($configRow)) {
     }
 }
 
-
 // 过滤影片名称,地区,语言
 $filter_config = ['name' => '影片名称','area' => '影片地区','lang' => '影片语言'];
 
@@ -88,9 +87,6 @@ foreach ($replace_Config as $replace_Name) {
     }
 }
 
-
-
-	
 		$v_data['v_name'] =  htmlspecialchars($video->name);//影片名称
 		//$v_data['v_name'] = str_replace(array('\\','()','\''),'/',$v_data['v_name']);
 		$v_data['v_pic'] = (String)$video->pic;//影片图片地址
@@ -140,20 +136,18 @@ foreach ($replace_Config as $replace_Name) {
 					$z["$k"]=$player['flag'];
 					}
 		for($i=0;$i<$zzt;$i++)
-		{ 
+		{
 
 		$video->dl->dd[$i]=trim($video->dl->dd[$i]); //去除空格
 		$video->dl->dd[$i]=trim($video->dl->dd[$i], "#"); //去除#
 
-
 		   if($video->dl->dd[$i]['flag']=='down')
-		      {$v_data['v_downdata'] .= "下载地址一$$".$video->dl->dd[$i]."$$$";} 
-		   else	
+		      {$v_data['v_downdata'] .= "下载地址一$$".$video->dl->dd[$i]."$$$";}
+		   else
 		      {
 				  $f=$video->dl->dd[$i]['flag'];
 				  $flag=$z["$f"];
 				  
-				
 					//如果检测到播放地址没有后缀
 					$find='$'.$f;$find=(String)$find;
 					if(strpos($video->dl->dd[$i],$find) !== true){
@@ -163,18 +157,14 @@ foreach ($replace_Config as $replace_Name) {
 					  }
 					  
 				  $v_data['v_playdata'] .= $flag."$$".$video->dl->dd[$i]."$$$";
-			  } 
-		} 
+			  }
+		}
 
 		$v_data['v_playdata'] = substr($v_data['v_playdata'],0,-3);
 		$v_data['v_downdata'] = substr($v_data['v_downdata'],0,-3);
 		
-		
 		$v_data['v_enname'] = Pinyin($v_data['v_name']);
 		$v_data['v_letter'] = strtoupper(substr($v_data['v_enname'],0,1));
-		
-		
-		
 		
 		// 影片关键词过滤 跳过采集
 		global $cfg_cjjump;
@@ -208,7 +198,7 @@ foreach ($replace_Config as $replace_Name) {
 		
 		// 影片名称替换
 		global $cfg_cjreplace;
-		if($cfg_cjreplace !=""){		
+		if($cfg_cjreplace !=""){
 			$r0 = explode('|',$cfg_cjreplace);
 			$r = array();
 			foreach($r0 as $data){$r[]=explode('=',$data);}
@@ -217,7 +207,7 @@ foreach ($replace_Config as $replace_Name) {
 		
 		// 影片地区替换
 		global $cfg_cjreplaceDQ;
-		if($cfg_cjreplaceDQ !=""){		
+		if($cfg_cjreplaceDQ !=""){
 			$r0 = explode('|',$cfg_cjreplaceDQ);
 			$r = array();
 			foreach($r0 as $data){$r[]=explode('=',$data);}
@@ -226,20 +216,19 @@ foreach ($replace_Config as $replace_Name) {
 		
 		// 影片语言替换
 		global $cfg_cjreplaceYY;
-		if($cfg_cjreplaceYY !=""){		
+		if($cfg_cjreplaceYY !=""){
 			$r0 = explode('|',$cfg_cjreplaceYY);
 			$r = array();
 			foreach($r0 as $data){$r[]=explode('=',$data);}
 			foreach($r as $d){$v_data['v_lang']=str_replace($d['0'],$d['1'],$v_data['v_lang']);}
 		}
 		
-		
 		if(is_numeric($localId))
-		{		
+		{
 			$v_data['v_ismake'] = 0;
 			$v_data['tid'] = $localId;
 			return $this->_into_database($v_data);
-		}else 
+		}else
 		{
 			echo "数据<font color=red>".$v_data['v_name']."</font>未绑定分类，跳过采集<br>";
 			//return $this->_into_tempdatabase($v_data);
@@ -284,7 +273,6 @@ foreach ($replace_Config as $replace_Name) {
 				$v_data['v_name'] =  htmlspecialchars($v_data['v_name']);
 				//$v_data['v_name'] = str_replace(array('\\','()','\''),'/',$v_data['v_name']);
 				
-			    
 			    $v_data['v_letter'] = strtoupper(substr( $v_data['v_enname'],0,1));
 			    $v_data['v_state']=getAreaValue($loopstr,"state",$html,$listconf["removecode"]);
 			    $v_data['v_actor']=getAreaValue($loopstr,"actor",$html,$listconf["removecode"]);
@@ -311,7 +299,6 @@ foreach ($replace_Config as $replace_Name) {
 				
 				$v_data['v_addtime'] = time();
 		
-				
 			   global $cfg_cj_rq,$cfg_cj_rq_s,$cfg_cj_rq_e,$cfg_cj_dc,$cfg_cj_dc_s,$cfg_cj_dc_e,$cfg_cj_pf,$cfg_cj_pf_s,$cfg_cj_pf_e;
 				//pf
 				if($cfg_cj_pf=='1'){$v_data['v_scorenum'] = 1; $v_data['v_score'] = mt_rand($cfg_cj_pf_s,$cfg_cj_pf_e);}
@@ -480,7 +467,7 @@ foreach ($replace_Config as $replace_Name) {
 				
 				// 影片名称替换
 				/* global $cfg_cjreplace;
-				if($cfg_cjreplace !=""){				
+				if($cfg_cjreplace !=""){
 					$r0 = explode('|',$cfg_cjreplace);
 					$r = array();
 					foreach($r0 as $data){$r[]=explode('=',$data);}
@@ -500,7 +487,7 @@ foreach ($replace_Config as $replace_Name) {
 				
 				// 影片地区替换
 				global $cfg_cjreplaceDQ;
-				if($cfg_cjreplaceDQ !=""){		
+				if($cfg_cjreplaceDQ !=""){
 					$r0 = explode('|',$cfg_cjreplaceDQ);
 					$r = array();
 					foreach($r0 as $data){$r[]=explode('=',$data);}
@@ -509,15 +496,13 @@ foreach ($replace_Config as $replace_Name) {
 				
 				// 影片语言替换
 				global $cfg_cjreplaceYY;
-				if($cfg_cjreplaceYY !=""){		
+				if($cfg_cjreplaceYY !=""){
 					$r0 = explode('|',$cfg_cjreplaceYY);
 					$r = array();
 					foreach($r0 as $data){$r[]=explode('=',$data);}
 					foreach($r as $d){$v_data['v_lang']=str_replace($d['0'],$d['1'],$v_data['v_lang']);}
 				}
 
-
-				
 			      $sql = "update `sea_co_url` set succ='1' where uid=".$row['uid'];
 				  $dsql->ExecuteNoneQuery($sql);
 				  
@@ -568,13 +553,12 @@ foreach ($replace_Config as $replace_Name) {
 	
 	public function _into_database($v_data,$i=0)
 	{
-		global $cfg_gatherset,$dsql; 
+		global $cfg_gatherset,$dsql;
 		$autocol_str = !empty($v_data['v_from']) ? $i.' <a href="'.$v_data['v_from'].'" target="_blank">'.$v_data['v_from'].'</a>的' :'';
 		//数据部分处理
 		$v_data['v_name'] = str_replace(array('\\','()','\''),'/',$v_data['v_name']);
 		if($v_data['v_actor']=="" OR empty($v_data['v_actor'])){$v_data['v_actor']="内详";}
 		if($v_data['v_director']=="" OR empty($v_data['v_director'])){$v_data['v_director']="内详";}
-
 
 		//$v_data['v_addtime'] = time();
 		unset($v_data['v_id']);
@@ -589,7 +573,7 @@ foreach ($replace_Config as $replace_Name) {
 			}
 			$v_where=ltrim($v_where," or ");
 			$v_where="(".$v_where.")";
-		}else 
+		}else
 		{*/
 			$v_where="d.v_name='".$v_data['v_name']."'";
 //		}
@@ -597,7 +581,7 @@ foreach ($replace_Config as $replace_Name) {
 		//获取资源库类型ztype
 		global $rid;
 		$r_sql="SELECT ztype FROM sea_zyk where zid='$rid'";
-		$r_rs = $dsql->GetOne($r_sql);	
+		$r_rs = $dsql->GetOne($r_sql);
 		if(is_array($r_rs)){$ztype=$r_rs['ztype'];}else{$ztype='1';}
 		
 		$v_sql="select d.v_id,d.v_pic,d.v_isunion,d.v_publishyear,d.v_publisharea,d.v_lang,d.v_director,d.v_actor,p.body as v_playdata ,p.body1 as v_downdata from sea_data d left join sea_playdata p on p.v_id=d.v_id where $v_where order by d.v_id desc";
@@ -661,7 +645,6 @@ foreach ($replace_Config as $replace_Name) {
 
 					return $autocol_str.$this->update_movie_info($rs1,$v_data);
 
-
 				}else
 				{
 					//if 勾选[开启不添加新影片]
@@ -723,8 +706,8 @@ foreach ($replace_Config as $replace_Name) {
 				if($v_data['v_downdata']==$rs['v_downdata']&&$v_data['v_playdata']==$rs['v_playdata'] && (strpos($cfg_gatherset,'3')!==false))
 				{
 					return $autocol_str.'数据<font color=red>'.$v_data['v_name'].'</font>地址无变化,无需更新<br>';
-				}				
-				return $autocol_str.$this->update_movie_info($rs,$v_data);				
+				}
+				return $autocol_str.$this->update_movie_info($rs,$v_data);
 			}
 		}//else 不 同名
 		else{
@@ -765,7 +748,7 @@ foreach ($replace_Config as $replace_Name) {
 			}
 			$v_where=ltrim($v_where," or ");
 			$v_where="(".$v_where.")";
-		}else 
+		}else
 		{*/
 			//$v_data['v_name'] = str_replace(array('HD','BD','DVD','VCD','TS','【完结】','【】','[]','()','\''),'',$v_data['v_name']);
 			$v_where="v_name='".$v_data['v_name']."'";
@@ -801,7 +784,7 @@ foreach ($replace_Config as $replace_Name) {
 		global $cfg_gatherset;
 		$v_des = $v_data['v_des'];
 		$v_playdata = $v_data['v_playdata'];
-		$v_downdata = $v_data['v_downdata'];	
+		$v_downdata = $v_data['v_downdata'];
 		unset($v_data['tid']);
 		unset($v_data['v_hit']);
 		$errpic=$v_data['v_pic'];
@@ -826,7 +809,7 @@ foreach ($replace_Config as $replace_Name) {
 		if(strpos($cfg_gatherset,'V')!==false){}else{unset($v_data['v_total']);}
 		if(strpos($cfg_gatherset,'W')!==false){}else{unset($v_data['v_len']);}
 		if(strpos($cfg_gatherset,'X')!==false){}else{unset($v_data['v_jq']);}
-		if(strpos($cfg_gatherset,'Y')!==false){unset($v_data['v_addtime']);}	
+		if(strpos($cfg_gatherset,'Y')!==false){unset($v_data['v_addtime']);}
 		
 		//同步错误的图片 重新入库
 		if(strpos($cfg_gatherset,'Z')!==false AND strpos($rs['v_pic'],'#err')!==false){$v_data['v_pic']=$errpic;}
@@ -913,7 +896,7 @@ foreach ($replace_Config as $replace_Name) {
 	}
 
 	public function json_db($video,$localId)
-	{ 
+	{
 global $rid,$rid1, $dsql;
 
     // 检查$rid和$dsql是否有效
@@ -977,8 +960,6 @@ foreach ($replace_Config as $replace_Name) {
     }
 }
 
-
-	
 		$v_data['v_name'] =  htmlspecialchars($video['vod_name']);//影片名称
 		$v_data['v_pic'] = isset($video['vod_pic']) ? $video['vod_pic'] : '';//影片图片地址
 		$v_data['v_state'] = isset($video['vod_remarks']) ? $video['vod_remarks'] : '';//影片连载状态
@@ -1079,7 +1060,6 @@ foreach ($replace_Config as $replace_Name) {
 		$v_data['v_enname'] = Pinyin($v_data['v_name']);
 		$v_data['v_letter'] = strtoupper(substr($v_data['v_enname'], 0, 1));
 		
-		
 		// 影片关键词过滤 跳过采集
 		global $cfg_cjjump;
 		if($cfg_cjjump !=""){
@@ -1112,7 +1092,7 @@ foreach ($replace_Config as $replace_Name) {
 		
 		// 影片名称替换
 		global $cfg_cjreplace;
-		if($cfg_cjreplace !=""){		
+		if($cfg_cjreplace !=""){
 			$r0 = explode('|',$cfg_cjreplace);
 			$r = array();
 			foreach($r0 as $data){$r[]=explode('=',$data);}
@@ -1121,7 +1101,7 @@ foreach ($replace_Config as $replace_Name) {
 		
 		// 影片地区替换
 		global $cfg_cjreplaceDQ;
-		if($cfg_cjreplaceDQ !=""){		
+		if($cfg_cjreplaceDQ !=""){
 			$r0 = explode('|',$cfg_cjreplaceDQ);
 			$r = array();
 			foreach($r0 as $data){$r[]=explode('=',$data);}
@@ -1130,20 +1110,19 @@ foreach ($replace_Config as $replace_Name) {
 		
 		// 影片语言替换
 		global $cfg_cjreplaceYY;
-		if($cfg_cjreplaceYY !=""){		
+		if($cfg_cjreplaceYY !=""){
 			$r0 = explode('|',$cfg_cjreplaceYY);
 			$r = array();
 			foreach($r0 as $data){$r[]=explode('=',$data);}
 			foreach($r as $d){$v_data['v_lang']=str_replace($d['0'],$d['1'],$v_data['v_lang']);}
 		}
 		
-		
 		if(is_numeric($localId))
-		{		
+		{
 			$v_data['v_ismake'] = 0;
 			$v_data['tid'] = $localId;
 			return $this->_into_database($v_data);
-		}else 
+		}else
 		{
 			echo "数据<font color=red>".$v_data['v_name']."</font>未绑定分类，跳过采集<br>";
 		}

@@ -1,4 +1,4 @@
-<?php 
+<?php
 //包含函数库
 require_once(  dirname(__FILE__).'/inc/mysql.php' );
 //拼音的缓冲数组
@@ -44,7 +44,6 @@ function GetDateMk($mktime)
 	return MyDate("Y-m-d",$mktime);
 }
 
-
 //中文截取2，单字节截取模式
 //如果是request的内容，必须使用这个函数
 function cn_substrR($str,$slen,$startdd=0)
@@ -86,7 +85,7 @@ function cn_substr_utf8($str, $length, $start=0)
         }
     }
     return $str;
-}   
+}
 
 function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true){
 	$re['utf-8']   = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
@@ -357,7 +356,6 @@ function ShowMsg($msg,$gourl,$onlymsg=0,$limittime=0,$extraJs='')
 	echo $msg;
 }
 
-
 function alertMsg($str,$url=-1)
 {
 	if(!empty($url)) $urlstr="location.href='".$url."';";
@@ -589,11 +587,11 @@ function doPseudo($v_des,$v_id)
 	{
 		$v_des = $rs[$v_id%$num].$v_des;
 	}
-	elseif ($iType==2)	
+	elseif ($iType==2)
 	{
 		$v_des = $v_des.$rs[$v_id%$num];
 	}
-	else 
+	else
 	{
 		$pos = strpos($v_des, '<br>');
 		if($pos==0)$pos = strpos($v_des, '<br/>');
@@ -603,7 +601,7 @@ function doPseudo($v_des,$v_id)
 		$pos = ceil(($pos-1)/2);
 		if($pos>0)
 		$v_des = cn_substr($v_des,$pos).$rs[$v_id%$num]. cn_substr($v_des,strlen($v_des)-$pos, $pos);
-		else 
+		else
 		$v_des = $rs[$v_id%$num].$v_des;
 	}
 	return $v_des;
@@ -652,7 +650,7 @@ function makePageNumber($currentPage,$pagelistLen,$totalPages,$linkType,$current
 	}
 	if ($pagelistLen > $totalPages) $pagelistLen=$totalPages;
 	if ($currentPage - $beforePages < 1){
-		$beginPage=1 ; 
+		$beginPage=1 ;
 		$endPage=$pagelistLen;
 	}elseif($currentPage - $beforePages + $pagelistLen > $totalPages){
 		$beginPage=$totalPages - $pagelistLen + 1 ; $endPage=$totalPages;
@@ -825,13 +823,13 @@ function newsSubPageLinkInfo($currentPage=1,$pageListLen=10,$TotalPages=1,$curre
 	if ($currentPage==1){
 			$firstPageLink="<em class='nolink'>首页</em>" ; $lastPagelink="<em class='nolink'>上一页</em>";
 		}else{
-			$firstPageLink="<a href='".getArticleLink($currentTypeId,$videoId,'',1)."'>首页</a>" ; 
+			$firstPageLink="<a href='".getArticleLink($currentTypeId,$videoId,'',1)."'>首页</a>" ;
 			$lastPagelink="<a href='".getArticleLink($currentTypeId,$videoId,'',($currentPage-1))."'>上一页</a>";
 		}
 	if($currentPage==$TotalPages){
 		$nextPagelink="<em class='nolink'>下一页</em>" ; $finalPageLink="<em class='nolink'>尾页</em>";
 	}else{
-		$nextPagelink="<a  href='".getArticleLink($currentTypeId,$videoId,'',($currentPage+1))."'>下一页</a>" ; 
+		$nextPagelink="<a  href='".getArticleLink($currentTypeId,$videoId,'',($currentPage+1))."'>下一页</a>" ;
 		$finalPageLink="<a  href='".getArticleLink($currentTypeId,$videoId,'',$TotalPages)."'>尾页</a>";
 	}
 	$pageNumberInfo=$firstPageLink.$lastPagelink.$pageNumber.$nextPagelink.$finalPageLink;
@@ -845,13 +843,13 @@ function pageNumberLinkInfo($currentPage=1,$pageListLen=10,$TotalPages=1,$linkTy
 			if ($currentPage==1){
 					$firstPageLink="<em class='nolink'>首页</em>" ; $lastPagelink="<em class='nolink'>上一页</em>";
 				}else{
-					$firstPageLink="<a href='".getChannelPagesLink($currentTypeId,1)."'>首页</a>" ; 
+					$firstPageLink="<a href='".getChannelPagesLink($currentTypeId,1)."'>首页</a>" ;
 					$lastPagelink="<a href='".getChannelPagesLink($currentTypeId,($currentPage-1))."'>上一页</a>";
 				}
 			if($currentPage==$TotalPages){
 				$nextPagelink="<em class='nolink'>下一页</em>" ; $finalPageLink="<em class='nolink'>尾页</em>";
 			}else{
-				$nextPagelink="<a  href='".getChannelPagesLink($currentTypeId,($currentPage+1))."'>下一页</a>" ; 
+				$nextPagelink="<a  href='".getChannelPagesLink($currentTypeId,($currentPage+1))."'>下一页</a>" ;
 				$finalPageLink="<a  href='".getChannelPagesLink($currentTypeId,$TotalPages)."'>尾页</a>";
 			}
 			$pagesStr="<form><input type='input' name='page' size=4  /><input type='button' value='跳转' onclick=\"getPageGoUrl(".$TotalPages.",'page',".getChannellinkStr().",'".$GLOBALS['cfg_channelpage_name2'].$GLOBALS['cfg_filesuffix2']."')\" class='btn' /></form>";
@@ -861,13 +859,13 @@ function pageNumberLinkInfo($currentPage=1,$pageListLen=10,$TotalPages=1,$linkTy
 			if ($currentPage==1){
 					$firstPageLink="<em class='nolink'>首页</em>" ; $lastPagelink="<em class='nolink'>上一页</em>";
 				}else{
-					$firstPageLink="<a href='".getnewspageLink($currentTypeId,1)."'>首页</a>" ; 
+					$firstPageLink="<a href='".getnewspageLink($currentTypeId,1)."'>首页</a>" ;
 					$lastPagelink="<a href='".getnewspageLink($currentTypeId,($currentPage-1))."'>上一页</a>";
 				}
 			if($currentPage==$TotalPages){
 				$nextPagelink="<em class='nolink'>下一页</em>" ; $finalPageLink="<em class='nolink'>尾页</em>";
 			}else{
-				$nextPagelink="<a  href='".getnewspageLink($currentTypeId,($currentPage+1))."'>下一页</a>" ; 
+				$nextPagelink="<a  href='".getnewspageLink($currentTypeId,($currentPage+1))."'>下一页</a>" ;
 				$finalPageLink="<a  href='".getnewspageLink($currentTypeId,$TotalPages)."'>尾页</a>";
 			}
 			$pagesStr="<form><input type='input' name='page' size=4  /><input type='button' value='跳转' onclick=\"getPageGoUrl(".$TotalPages.",'page',".getChannellinkStr().",'".$GLOBALS['cfg_channelpage_name2'].$GLOBALS['cfg_filesuffix2']."')\" class='btn' /></form>";
@@ -939,19 +937,19 @@ function pageNumberLinkInfo($currentPage=1,$pageListLen=10,$TotalPages=1,$linkTy
 		case "gbook":
 			if ($currentPage==1){$firstPageLink="<em class='nolink'>首页</em>" ; $lastPagelink="<em class='nolink'>上一页</em>";}else{$firstPageLink="<a href='?page=1'>首页</a>" ; $lastPagelink="<a href='?page=".($currentPage-1)."'>上一页</a>";}
 			if($currentPage==$TotalPages){$nextPagelink="<em class='nolink'>下一页</em>" ; $finalPageLink="<em class='nolink'>尾页</em>";}else{$nextPagelink="<a href='?page=".($currentPage+1)."'>下一页</a>" ; $finalPageLink="<a href='?page=".$TotalPages."'>尾页</a>";}
-			$pageNumberInfo="<span>共".$TotalResult."条数据 页次:".$currentPage."/".$TotalPages."页</span>".$firstPageLink.$lastPagelink.$pageNumber.$nextPagelink.$finalPageLink; 
+			$pageNumberInfo="<span>共".$TotalResult."条数据 页次:".$currentPage."/".$TotalPages."页</span>".$firstPageLink.$lastPagelink.$pageNumber.$nextPagelink.$finalPageLink;
 		break;
 		case "customvideo":
 			if ($currentPage==1){
 					$firstPageLink="<em class='nolink'>首页</em>" ; $lastPagelink="<em class='nolink'>上一页</em>";
 				}else{
-					$firstPageLink="<a href='".getCustomLink(1)."'>首页</a>" ; 
+					$firstPageLink="<a href='".getCustomLink(1)."'>首页</a>" ;
 					$lastPagelink="<a href='".getCustomLink($currentPage-1)."'>上一页</a>";
 				}
 			if($currentPage==$TotalPages){
 				$nextPagelink="<em class='nolink'>下一页</em>" ; $finalPageLink="<em class='nolink'>尾页</em>";
 			}else{
-				$nextPagelink="<a  href='".getCustomLink($currentPage+1)."'>下一页</a>" ; 
+				$nextPagelink="<a  href='".getCustomLink($currentPage+1)."'>下一页</a>" ;
 				$finalPageLink="<a  href='".getCustomLink($TotalPages)."'>尾页</a>";
 			}
 			$pagesStr="<form><input type='input' name='page' size=4  /><input type='button' value='跳转' onclick=\"getPageGoUrl(".$TotalPages.",'page',2,'".$GLOBALS['cfg_channelpage_name2'].$GLOBALS['cfg_filesuffix2']."')\" class='btn' /></form>";
@@ -998,7 +996,6 @@ function getTopicIndexPageLink($page){
 	return $linkStr;
 }
 
-
 function getSubStrByFromAndEnd($str,$startStr,$endStr,$operType){
 	switch ($operType) {
 		case "start":
@@ -1030,8 +1027,6 @@ function getPlayurlArray($playurl){
 	return $getPlayurlArray;
 }
 
-
-
 function getPlayerKindsArray(){
 	$PlayerKindsArray=array();
 	$m_file = sea_DATA."/admin/playerKinds.xml";
@@ -1041,13 +1036,12 @@ function getPlayerKindsArray(){
 		$conv = stripslashes($player['flag']);
 		$PlayerKindsArray[$conv]['des']='';
 		$PlayerKindsArray[$conv]['intro']=stripslashes($player->intro);
-		$PlayerKindsArray[$conv]['open']=$player['open'];	
+		$PlayerKindsArray[$conv]['open']=$player['open'];
 		$PlayerKindsArray[$conv]['postfix']=$player['postfix'];
 		$PlayerKindsArray[$conv]['sort']=$player['sort'];
 		
 		}
 	return $PlayerKindsArray;
-
 
 /*	foreach($allPlayerKinds as $v)
 	{
@@ -1062,7 +1056,7 @@ function getPlayerKindsArray(){
 		}
 		}
 	}
-*/	
+*/
 }
 
 function getPlayerKindsArray2(){
@@ -1094,7 +1088,6 @@ function getPlayerIntroArray()
 		$temp[$i]['sort']=intval($player['sort']);
 		$i+=1;
 			
-	
 	}
 	if($GLOBALS['cfg_isfromsort']=='1')
 	{
@@ -1128,7 +1121,6 @@ function getDownIntroArray()
 		$temp[$i]['sort']=$player['sort'];
 		$i+=1;
 			
-	
 	}
 /*	$l=count($temp);
 	for($i=0;$i<=$l;$i++)
@@ -1210,11 +1202,11 @@ function getPlayUrlList($ifrom,$url,$typeid,$vId,$starget,$sdate,$enname,$listyl
 	{
 		$vipe=str_ireplace('e', "", $vip);
 		$vipes=$urlCount - $vipe;
-		$viparr=array_flip(array_slice($urlArray,$vipes,$vipe,true));		
+		$viparr=array_flip(array_slice($urlArray,$vipes,$vipe,true));
 	}
 	elseif(strpos($vip,'a')!==false)
 		{
-			$viparr=array_flip(array_slice($urlArray,0,$urlCount,true));		
+			$viparr=array_flip(array_slice($urlArray,0,$urlCount,true));
 		}
 	elseif(strpos($vip,'f')!==false)
 	{
@@ -1224,13 +1216,12 @@ function getPlayUrlList($ifrom,$url,$typeid,$vId,$starget,$sdate,$enname,$listyl
 	else
 	{
 		$viparr2=explode(',',$vip);
-		foreach ($viparr2 as $value) 
+		foreach ($viparr2 as $value)
 		{
 		  $viparr[]=$value-1;
 		}
 	}
 	//print_r($viparr);die;
-	
 	
 	$urlStr="";
 	for($i=0;$i<=$urlCount;$i++){
@@ -1239,7 +1230,7 @@ function getPlayUrlList($ifrom,$url,$typeid,$vId,$starget,$sdate,$enname,$listyl
 			if (count($singleUrlArray)<2) $singleUrlArray=Array("","","");
 			$style=' class="';
 			if(in_array($i,$viparr)){$style.="playvip";} else {$style.="";}
-			if($paras[0]==$ifrom && $i==$paras[1]) $style.=" playon\""; else $style.="\"";			
+			if($paras[0]==$ifrom && $i==$paras[1]) $style.=" playon\""; else $style.="\"";
 			if($style==' class=""' OR $style==' class=" "'){$style='';}
 			if ($cfg_isalertwin){
 				$urlStr.="<".$listyle."><a title='".$singleUrlArray[0]."' href=\"javascript:openWin('".getPlayLink2($typeid,$vId,$sdate,$enname,$ifrom,$i)."',".($GLOBALS['cfg_alertwinw']).",".($GLOBALS['cfg_alertwinh']).",250,100,1)\"".$style.">".$singleUrlArray[0]."</a></".$listyle.">";
@@ -1308,7 +1299,6 @@ function getPlayUrlList3($ifrom,$url,$typeid,$vId,$starget,$sdate,$enname,$listy
 	return $urlStr;
 }
 
-
 function getDownUrlList($url,$starget,$listyle='li',$linkstr=false){
 	global $cfg_isalertwin;
 	$listyle='li';
@@ -1353,10 +1343,6 @@ function getDownUrlList2($url,$starget,$listyle='li',$k,$linkstr=false){
 	return $urlStr2;
 }
 
-
-
-
-
 function GetTruePath()
 {
 	$truepath = $GLOBALS["cfg_basedir"];
@@ -1375,23 +1361,21 @@ function escape($str){
 	return join("",$ar);
 }
 
-
-
-function unescape($str) { 
+function unescape($str) {
 
  if(function_exists(mb_convert_encoding))
  {
- $str = rawurldecode($str); 
- preg_match_all("/%u.{4}|&#x.{4};|&#d+;|.+/U",$str,$r); 
- $ar = $r[0]; 
- foreach($ar as $k=>$v) { 
-  if(substr($v,0,2) == "%u") 
+ $str = rawurldecode($str);
+ preg_match_all("/%u.{4}|&#x.{4};|&#d+;|.+/U",$str,$r);
+ $ar = $r[0];
+ foreach($ar as $k=>$v) {
+  if(substr($v,0,2) == "%u")
    $ar[$k] = mb_convert_encoding(pack("H4",substr($v,-4)),"utf-8","UCS-2");
-  elseif(substr($v,0,3) == "&#x") 
+  elseif(substr($v,0,3) == "&#x")
    $ar[$k] = mb_convert_encoding(pack("H4",substr($v,3,-1)),"utf-8","UCS-2");
-  elseif(substr($v,0,2) == "&#") { 
+  elseif(substr($v,0,2) == "&#") {
    $ar[$k] = mb_convert_encoding(pack("H4",substr($v,2,-1)),"utf-8","UCS-2");
-  } 
+  }
  }
  }
   else
@@ -1405,8 +1389,7 @@ function unescape($str) {
       $ar[$k] = iconv("UCS-2","utf-8",pack("H4",substr($v,-4)));
   }}
  
-  
- return join("",$ar); 
+ return join("",$ar);
 }
 
 function getKeywordsList($key,$span){
@@ -1470,7 +1453,7 @@ function parseLabelHaveLen($content,$str,$label){
 		return $content;
 	}else{
 		return $content;
-	}	
+	}
 }
 
 function parseNewsLabelHaveLen($content,$str,$label){
@@ -1486,7 +1469,7 @@ function parseNewsLabelHaveLen($content,$str,$label){
 		return $content;
 	}else{
 		return $content;
-	}	
+	}
 }
 
 //截取字数
@@ -1500,25 +1483,25 @@ function trimmed_title($text, $limit=12) {
 	}
 }
 
-function cnSubStr($string,$sublen) 
-{ 
-	if($sublen>=strlen($string)) 
-	{ 
-		return $string; 
-	} 
-	$s=""; 
-	for($i=0;$i<$sublen;$i++) 
-	{ 
-		if(ord($string[$i])>127) 
-		{ 
-			$s.=$string[$i].$string[++$i]; 
-			continue; 
-		}else{ 
-			$s.=$string[$i]; 
-			continue; 
-		} 
-	} 
-	return $s; 
+function cnSubStr($string,$sublen)
+{
+	if($sublen>=strlen($string))
+	{
+		return $string;
+	}
+	$s="";
+	for($i=0;$i<$sublen;$i++)
+	{
+		if(ord($string[$i])>127)
+		{
+			$s.=$string[$i].$string[++$i];
+			continue;
+		}else{
+			$s.=$string[$i];
+			continue;
+		}
+	}
+	return $s;
 }
 
 function csubstr($text, $start=0, $limit=12) {
@@ -1531,27 +1514,27 @@ function csubstr($text, $start=0, $limit=12) {
 		$text = iconv_substr($text, 0, $limit, 'utf-8');
 		return array($text, $more);
 	} else {
-		preg_match_all("/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf7][\x80-\xbf][\x80-\xbf][\x80-\xbf]/", $text, $ar);   
-		if(func_num_args() >= 3) {   
+		preg_match_all("/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf7][\x80-\xbf][\x80-\xbf][\x80-\xbf]/", $text, $ar);
+		if(func_num_args() >= 3) {
 			if (count($ar[0])>$limit) {
 				$more = TRUE;
-				$text = join("",array_slice($ar[0],0,$limit)).".."; 
+				$text = join("",array_slice($ar[0],0,$limit))."..";
 			} else {
 				$more = FALSE;
-				$text = join("",array_slice($ar[0],0,$limit)); 
+				$text = join("",array_slice($ar[0],0,$limit));
 			}
 		} else {
 			$more = FALSE;
-			$text =  join("",array_slice($ar[0],0)); 
+			$text =  join("",array_slice($ar[0],0));
 		}
 		return array($text, $more);
-	} 
+	}
 }
 
 function setCache($p_cacheName,$sql="",$arr=""){
         global $dsql,$cfg_iscache,$cfg_cachetime,$cfg_cachemark,$cfg_redishost,$cfg_redisport,$cfg_redispsw;
         $p_cacheName=$cfg_cachemark.$p_cacheName;
-        $redis = new redis();  
+        $redis = new redis();
         $redis->connect($cfg_redishost,$cfg_redisport);
 		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}
         $ttl=$redis->TTL($p_cacheName);
@@ -1577,9 +1560,9 @@ function setCache($p_cacheName,$sql="",$arr=""){
 function getCache($p_cacheName){
         global $cfg_cachemark,$cfg_redishost,$cfg_redisport,$cfg_redispsw;
         $p_cacheName=$cfg_cachemark.$p_cacheName;
-        $redis = new redis();  
+        $redis = new redis();
         $redis->connect($cfg_redishost,$cfg_redisport);
-		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}	
+		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}
         $ttl=$redis->TTL($p_cacheName);
         if ($ttl > 0 ){
                 return unserialize($redis->GET($p_cacheName));
@@ -1597,8 +1580,8 @@ function TrimMsg($msg)
 	return addslashes($msg);
 }
 
-function showFace($message)   
-{   
+function showFace($message)
+{
 	$message=preg_replace("/\[ps:([0-9]{1,2})\]/is","<img src=\"/".$GLOBALS['cfg_cmspath']."pic/faces/\\1.gif\" border=\"0\"/>",$message);
 	return $message;
 }
@@ -1616,7 +1599,7 @@ function lib_hotwords($num=5)
 	$dsql->Execute('hw');
 	$hotword = '';
 	$i=1;
-	while($row=$dsql->GetArray('hw')){	
+	while($row=$dsql->GetArray('hw')){
 		if($i>$num)break;
 		$hotword .= "<a href='".$cfg_phpurl."search.php?searchword=".urlencode($row['keyword'])."'>".$row['keyword']."</a> ";
 		$i++;
@@ -1696,61 +1679,61 @@ function FilterSearch($keyword)
 	return $restr;
 }
 
-function RemoveXSS($val) {  
-   // remove all non-printable characters. CR(0a) and LF(0b) and TAB(9) are allowed  
-   // this prevents some character re-spacing such as <java\0script>  
-   // note that you have to handle splits with \n, \r, and \t later since they *are* allowed in some inputs  
-   $val = preg_replace('/([\x00-\x08,\x0b-\x0c,\x0e-\x19])/', '', $val);  
+function RemoveXSS($val) {
+   // remove all non-printable characters. CR(0a) and LF(0b) and TAB(9) are allowed
+   // this prevents some character re-spacing such as <java\0script>
+   // note that you have to handle splits with \n, \r, and \t later since they *are* allowed in some inputs
+   $val = preg_replace('/([\x00-\x08,\x0b-\x0c,\x0e-\x19])/', '', $val);
      
-   // straight replacements, the user should never need these since they're normal characters  
-   // this prevents like <IMG SRC=@avascript:alert('XSS')>  
-   $search = 'abcdefghijklmnopqrstuvwxyz'; 
-   $search .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';  
-   $search .= '1234567890!@#$%^&*()'; 
-   $search .= '~`";:?+/={}[]-_|\'\\'; 
-   for ($i = 0; $i < strlen($search); $i++) { 
-      // ;? matches the ;, which is optional 
-      // 0{0,7} matches any padded zeros, which are optional and go up to 8 chars 
+   // straight replacements, the user should never need these since they're normal characters
+   // this prevents like <IMG SRC=@avascript:alert('XSS')>
+   $search = 'abcdefghijklmnopqrstuvwxyz';
+   $search .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+   $search .= '1234567890!@#$%^&*()';
+   $search .= '~`";:?+/={}[]-_|\'\\';
+   for ($i = 0; $i < strlen($search); $i++) {
+      // ;? matches the ;, which is optional
+      // 0{0,7} matches any padded zeros, which are optional and go up to 8 chars
     
-      // @ @ search for the hex values 
-      $val = preg_replace('/(&#[xX]0{0,8}'.dechex(ord($search[$i])).';?)/i', $search[$i], $val); // with a ; 
-      // @ @ 0{0,7} matches '0' zero to seven times  
-      $val = preg_replace('/(&#0{0,8}'.ord($search[$i]).';?)/', $search[$i], $val); // with a ; 
-   } 
+      // @ @ search for the hex values
+      $val = preg_replace('/(&#[xX]0{0,8}'.dechex(ord($search[$i])).';?)/i', $search[$i], $val); // with a ;
+      // @ @ 0{0,7} matches '0' zero to seven times
+      $val = preg_replace('/(&#0{0,8}'.ord($search[$i]).';?)/', $search[$i], $val); // with a ;
+   }
     
-   // now the only remaining whitespace attacks are \t, \n, and \r 
+   // now the only remaining whitespace attacks are \t, \n, and \r
 
-   $ra1 = Array('_GET','_POST','_COOKIE','_REQUEST','if:','javascript', 'vbscript', 'expression', 'applet', 'meta', 'xml', 'blink', 'link', 'style', 'script', 'embed', 'object', 'iframe', 'frame', 'frameset', 'ilayer', 'layer', 'bgsound', 'title', 'base', 'eval', 'passthru', 'exec', 'assert', 'system', 'chroot', 'chgrp', 'chown', 'shell_exec', 'proc_open', 'ini_restore', 'dl', 'readlink', 'symlink', 'popen', 'stream_socket_server', 'pfsockopen', 'putenv', 'cmd','base64_decode','fopen','fputs','replace','input','contents'); 
-   $ra2 = Array('onabort', 'onactivate', 'onafterprint', 'onafterupdate', 'onbeforeactivate', 'onbeforecopy', 'onbeforecut', 'onbeforedeactivate', 'onbeforeeditfocus', 'onbeforepaste', 'onbeforeprint', 'onbeforeunload', 'onbeforeupdate', 'onblur', 'onbounce', 'oncellchange', 'onchange', 'onclick', 'oncontextmenu', 'oncontrolselect', 'oncopy', 'oncut', 'ondataavailable', 'ondatasetchanged', 'ondatasetcomplete', 'ondblclick', 'ondeactivate', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover', 'ondragstart', 'ondrop', 'onerror', 'onerrorupdate', 'onfilterchange', 'onfinish', 'onfocus', 'onfocusin', 'onfocusout', 'onhelp', 'onkeydown', 'onkeypress', 'onkeyup', 'onlayoutcomplete', 'onload', 'onlosecapture', 'onmousedown', 'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 'onmovestart', 'onpaste', 'onpropertychange', 'onreadystatechange', 'onreset', 'onresize', 'onresizeend', 'onresizestart', 'onrowenter', 'onrowexit', 'onrowsdelete', 'onrowsinserted', 'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 'onsubmit', 'onunload'); 
-   $ra = array_merge($ra1, $ra2); 
+   $ra1 = Array('_GET','_POST','_COOKIE','_REQUEST','if:','javascript', 'vbscript', 'expression', 'applet', 'meta', 'xml', 'blink', 'link', 'style', 'script', 'embed', 'object', 'iframe', 'frame', 'frameset', 'ilayer', 'layer', 'bgsound', 'title', 'base', 'eval', 'passthru', 'exec', 'assert', 'system', 'chroot', 'chgrp', 'chown', 'shell_exec', 'proc_open', 'ini_restore', 'dl', 'readlink', 'symlink', 'popen', 'stream_socket_server', 'pfsockopen', 'putenv', 'cmd','base64_decode','fopen','fputs','replace','input','contents');
+   $ra2 = Array('onabort', 'onactivate', 'onafterprint', 'onafterupdate', 'onbeforeactivate', 'onbeforecopy', 'onbeforecut', 'onbeforedeactivate', 'onbeforeeditfocus', 'onbeforepaste', 'onbeforeprint', 'onbeforeunload', 'onbeforeupdate', 'onblur', 'onbounce', 'oncellchange', 'onchange', 'onclick', 'oncontextmenu', 'oncontrolselect', 'oncopy', 'oncut', 'ondataavailable', 'ondatasetchanged', 'ondatasetcomplete', 'ondblclick', 'ondeactivate', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover', 'ondragstart', 'ondrop', 'onerror', 'onerrorupdate', 'onfilterchange', 'onfinish', 'onfocus', 'onfocusin', 'onfocusout', 'onhelp', 'onkeydown', 'onkeypress', 'onkeyup', 'onlayoutcomplete', 'onload', 'onlosecapture', 'onmousedown', 'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 'onmovestart', 'onpaste', 'onpropertychange', 'onreadystatechange', 'onreset', 'onresize', 'onresizeend', 'onresizestart', 'onrowenter', 'onrowexit', 'onrowsdelete', 'onrowsinserted', 'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 'onsubmit', 'onunload');
+   $ra = array_merge($ra1, $ra2);
     
-   $found = true; // keep replacing as long as the previous round replaced something 
-   while ($found == true) { 
-      $val_before = $val; 
-      for ($i = 0; $i < sizeof($ra); $i++) { 
-         $pattern = '/'; 
-         for ($j = 0; $j < strlen($ra[$i]); $j++) { 
-            if ($j > 0) { 
-               $pattern .= '(';  
-               $pattern .= '(&#[xX]0{0,8}([9ab]);)'; 
-               $pattern .= '|';  
-               $pattern .= '|(&#0{0,8}([9|10|13]);)'; 
-               $pattern .= ')*'; 
-            } 
-            $pattern .= $ra[$i][$j]; 
-         } 
-         $pattern .= '/i';  
-         $replacement = substr($ra[$i], 0, 2).'<x>'.substr($ra[$i], 2); // add in <> to nerf the tag  
-         $val = preg_replace($pattern, $replacement, $val); // filter out the hex tags  
-         if ($val_before == $val) {  
-            // no replacements were made, so exit the loop  
-            $found = false;  
-         }  
-      }  
-   } 
+   $found = true; // keep replacing as long as the previous round replaced something
+   while ($found == true) {
+      $val_before = $val;
+      for ($i = 0; $i < sizeof($ra); $i++) {
+         $pattern = '/';
+         for ($j = 0; $j < strlen($ra[$i]); $j++) {
+            if ($j > 0) {
+               $pattern .= '(';
+               $pattern .= '(&#[xX]0{0,8}([9ab]);)';
+               $pattern .= '|';
+               $pattern .= '|(&#0{0,8}([9|10|13]);)';
+               $pattern .= ')*';
+            }
+            $pattern .= $ra[$i][$j];
+         }
+         $pattern .= '/i';
+         $replacement = substr($ra[$i], 0, 2).'<x>'.substr($ra[$i], 2); // add in <> to nerf the tag
+         $val = preg_replace($pattern, $replacement, $val); // filter out the hex tags
+         if ($val_before == $val) {
+            // no replacements were made, so exit the loop
+            $found = false;
+         }
+      }
+   }
    
-   return $val;  
-}   
+   return $val;
+}
 
 function getDataCount($countType){
 	global $dsql;
@@ -1849,7 +1832,7 @@ function getTypeListsOnCache($type=0)
 	if(!is_array(${'gtypelist'.$type}))
 	{
 		if($cfg_iscache){
-			if (chkFileCache($cacheName)){${'gtypelist'.$type}=unserialize(getFileCache($cacheName));}else{${'gtypelist'.$type}=getTypeLists($type);setFileCache($cacheName,serialize(${'gtypelist'.$type}));}	
+			if (chkFileCache($cacheName)){${'gtypelist'.$type}=unserialize(getFileCache($cacheName));}else{${'gtypelist'.$type}=getTypeLists($type);setFileCache($cacheName,serialize(${'gtypelist'.$type}));}
 		}else{
 			${'gtypelist'.$type}=getTypeLists($type);
 		}
@@ -1866,15 +1849,13 @@ function getjqTypeListsOnCache($type=0)
 	if(!is_array(${'gjqtypelist'.$type}))
 	{
 		if($cfg_iscache){
-			if (chkFileCache($cacheName)){${'gjqtypelist'.$type}=unserialize(getFileCache($cacheName));}else{${'gjqtypelist'.$type}=getjqTypeLists($type);setFileCache($cacheName,serialize(${'gjqtypelist'.$type}));}	
+			if (chkFileCache($cacheName)){${'gjqtypelist'.$type}=unserialize(getFileCache($cacheName));}else{${'gjqtypelist'.$type}=getjqTypeLists($type);setFileCache($cacheName,serialize(${'gjqtypelist'.$type}));}
 		}else{
 			${'gjqtypelist'.$type}=getjqTypeLists($type);
 		}
 	}
 	return ${'gjqtypelist'.$type};
 }
-
-
 
 function getTypeLists($type=0)
 {
@@ -1914,7 +1895,7 @@ function getTypeTitle($id,$tptype=0)
 		if($row->tid==$id)
 		{
 			return $row->title;
-		}	
+		}
 	}
 }
 
@@ -1926,7 +1907,7 @@ function getTypeKeywords($id,$tptype=0)
 		if($row->tid==$id)
 		{
 			return $row->keyword;
-		}	
+		}
 	}
 }
 
@@ -1938,7 +1919,7 @@ function getNewsTypeKeywords($id,$tptype=1)
 		if($row->tid==$id)
 		{
 			return $row->keyword;
-		}	
+		}
 	}
 }
 
@@ -1950,7 +1931,7 @@ function getNewsTypeDescription($id,$tptype=1)
 		if($row->tid==$id)
 		{
 			return $row->description;
-		}	
+		}
 	}
 }
 
@@ -1962,10 +1943,9 @@ function getTypeDescription($id,$tptype=0)
 		if($row->tid==$id)
 		{
 			return $row->description;
-		}	
+		}
 	}
 }
-
 
 function makeTypeOption($topId,$separateStr,$tptype=0,$span="")
 {
@@ -2135,7 +2115,6 @@ function getNumPerTypeOfNews($id)
 
 }
 
-
 function getNumPerTypeOnCache($id,$type=0){
 	$cacheName="str_get_num_pertype".$id;
 	if($cfg_iscache){
@@ -2170,7 +2149,6 @@ function getNumPerjqTypeOnCache($id,$type=0){
    return $num;
 }
 
-
 function getNumPerType($id)
 {
 	global $dsql;
@@ -2185,7 +2163,7 @@ function getNumPerType($id)
 	else
 	{
 		$num=0;
-	}	
+	}
 	return $num;
 }
 
@@ -2203,7 +2181,7 @@ function getNumPerjqType($id)
 	else
 	{
 		$num=0;
-	}	
+	}
 	return $num;
 }
 
@@ -2239,35 +2217,33 @@ function getTypePath($id,$immediate=false,$type=0)
 	return $getTypePath;
 }
 
-
-
 function delFile($filename)
 {
-	if (file_exists($filename)) 
+	if (file_exists($filename))
 	{
-		@unlink($filename); 
+		@unlink($filename);
 	}
 }
 
-function delFolder($dirName) 
-{ 
+function delFolder($dirName)
+{
     if(!is_dir($dirName))
-    { 
+    {
         @unlink($dirName);
-        return false; 
-    } 
-    $handle = @opendir($dirName); 
-    while(($file = @readdir($handle)) !== false) 
-    { 
-        if($file != '.' && $file != '..') 
-        { 
-            $dir = $dirName . '/' . $file; 
-            is_dir($dir) ? delFolder($dir) : @unlink($dir); 
-        } 
-    } 
-    closedir($handle); 
-    return rmdir($dirName) ; 
-} 
+        return false;
+    }
+    $handle = @opendir($dirName);
+    while(($file = @readdir($handle)) !== false)
+    {
+        if($file != '.' && $file != '..')
+        {
+            $dir = $dirName . '/' . $file;
+            is_dir($dir) ? delFolder($dir) : @unlink($dir);
+        }
+    }
+    closedir($handle);
+    return rmdir($dirName) ;
+}
 
 function encodeHtml($str)
 {
@@ -2313,7 +2289,7 @@ function getVideoEnname($videoId)
 	}
 	else
 	{
-		return Pinyin($row['v_name']);	
+		return Pinyin($row['v_name']);
 	}
 }
 
@@ -2337,7 +2313,6 @@ function getNewsSdate($Id)
 	$row = $dsql->GetOne("SELECT n_addtime FROM sea_news WHERE n_id=$Id");
 	return $row['n_addtime'];
 }
-
 
 function getletterlist()
 {
@@ -2366,14 +2341,14 @@ function cget($url,$isref){
 	if($isref=='1'){return getRemoteContent($url);}else{return get($url);}
 }
 
-function curl_get_contents($url,$conall=false,$timeout = 30) {  
-    $user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36";  
+function curl_get_contents($url,$conall=false,$timeout = 30) {
+    $user_agent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36";
 	$curl = curl_init();                                         //初始化 curl
     curl_setopt($curl, CURLOPT_URL, $url);                       //要访问网页 URL 地址
-	curl_setopt($curl, CURLOPT_USERAGENT,$user_agent);		    //模拟用户浏览器信息 
+	curl_setopt($curl, CURLOPT_USERAGENT,$user_agent);		    //模拟用户浏览器信息
     curl_setopt($curl, CURLOPT_REFERER,$url) ;                 //伪装网页来源 URL
-    curl_setopt($curl, CURLOPT_AUTOREFERER, 1);                //当Location:重定向时，自动设置header中的Referer:信息                   
-    curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);             //数据传输的最大允许时间 
+    curl_setopt($curl, CURLOPT_AUTOREFERER, 1);                //当Location:重定向时，自动设置header中的Referer:信息
+    curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);             //数据传输的最大允许时间
     curl_setopt($curl, CURLOPT_HEADER, $conall);                     //不返回 header 部分
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);            //返回字符串，而非直接输出到屏幕上
 	curl_setopt($curl, CURLOPT_FOLLOWLOCATION,1);             //跟踪爬取重定向页面
@@ -2385,12 +2360,11 @@ function curl_get_contents($url,$conall=false,$timeout = 30) {
     return $data;
 }
 
-
 function getRemoteContent($url,$conall=false)
 {
 	$content = "";
-	if(!empty($url)) { 
-		if( function_exists('curl_init') ){			
+	if(!empty($url)) {
+		if( function_exists('curl_init') ){
               $content =curl_get_contents($url,$conall);
 		}
 		else if( ini_get('allow_url_fopen')==1){
@@ -2404,8 +2378,6 @@ function getRemoteContent($url,$conall=false)
 	
 	return $content;
 }
-
-
 
 function getRemoteContentBAK($url,$conall=null)
 {
@@ -2452,8 +2424,8 @@ function createStreamFile($stream,$fileDir)
 {
 	$fileDir=str_replace( "\\", "/",$fileDir);
 	createfolder($fileDir,"filedir");
-	@$f=fopen($fileDir,"wb");   
-	@fwrite($f,$stream);   
+	@$f=fopen($fileDir,"wb");
+	@fwrite($f,$stream);
 	@fclose($f);
 	if(file_exists($fileDir)) return true; else return false;
 }
@@ -2523,9 +2495,9 @@ function chkFileCache($cacheName)
 {
         global $cfg_cachemark,$cfg_redishost,$cfg_redisport,$cfg_redispsw;
         $cacheName=$cfg_cachemark.$cacheName;
-        $redis = new redis();  
-        $redis->connect($cfg_redishost,$cfg_redisport); 
-		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}	
+        $redis = new redis();
+        $redis->connect($cfg_redishost,$cfg_redisport);
+		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}
         $ttl=$redis->TTL($cacheName);
         if ($ttl > 0){
                 return true;
@@ -2538,9 +2510,9 @@ function setFileCache($cacheName,$cacheValue)
 {
         global $cfg_cachetime,$cfg_cachemark,$cfg_redishost,$cfg_redisport,$cfg_redispsw;
         $cacheName=$cfg_cachemark.$cacheName;
-        $redis = new redis();  
+        $redis = new redis();
         $redis->connect($cfg_redishost,$cfg_redisport);
-		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}		
+		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}
         if ($redis->SETEX($cacheName,$cfg_cachetime*60,$cacheValue)){
                 return true;
         }else{
@@ -2552,9 +2524,9 @@ function getFileCache($cacheName)
 {
         global $cfg_cachemark,$cfg_redishost,$cfg_redisport,$cfg_redispsw;
         $cacheName=$cfg_cachemark.$cacheName;
-        $redis = new redis();  
+        $redis = new redis();
         $redis->connect($cfg_redishost,$cfg_redisport);
-		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}		
+		if($cfg_redispsw !=""){$redis->auth($cfg_redispsw);}
         return $redis->GET($cacheName);
 }
 
@@ -2573,7 +2545,7 @@ function getTypeText($id,$tptype=0)
 				return $str;
 			}else{
 				$str=getTypeText($row->upid,$tptype)."&nbsp;&nbsp;&raquo;&nbsp;&nbsp;<a href='".getnewspageLink($row->tid)."'>".$row->tname."</a>";
-			}	
+			}
 			}else{
 			if($row->upid==0)
 			{
@@ -2750,11 +2722,11 @@ function getExtraTypeName($tid,$connector=" ")
 						{
 							if($j<count($ids_arr)-1)
 							{
-								$tname= $tname . " <a href='".getChannelPagesLink($row->tid)."'>".$row->tname."</a>";	
+								$tname= $tname . " <a href='".getChannelPagesLink($row->tid)."'>".$row->tname."</a>";
 							}
 							else
 							{
-								$tname= $tname . " <a href='".getChannelPagesLink($row->tid)."'>".$row->tname;	
+								$tname= $tname . " <a href='".getChannelPagesLink($row->tid)."'>".$row->tname;
 							}
 							
 						}
@@ -3107,7 +3079,6 @@ function echoFoot()
 	viewFoot();
 }
 
-
 /*
 php5.3.x版本ereg函数兼容
 */
@@ -3145,25 +3116,25 @@ php5.3.x版本ereg函数兼容
 */
 
 //下载文件
-function get_file($url,$folder,$filename){         
-	$destination_folder = $folder?$folder.'/':'';//文件下载保存目录  
-	$newfname = $destination_folder .$filename;       
-	$file = fopen ($url, "rb");    
-	if ($file){    
-		$newf = fopen ($newfname, "wb");  
+function get_file($url,$folder,$filename){
+	$destination_folder = $folder?$folder.'/':'';//文件下载保存目录
+	$newfname = $destination_folder .$filename;
+	$file = fopen ($url, "rb");
+	if ($file){
+		$newf = fopen ($newfname, "wb");
 		if ($newf)
-		{        
-			while(!feof($file)) {   
-				fwrite($newf, fread($file, 1024 * 8 ), 1024 * 8 );      
+		{
+			while(!feof($file)) {
+				fwrite($newf, fread($file, 1024 * 8 ), 1024 * 8 );
 			}
 		}
-	}       
-	if ($file){        
+	}
+	if ($file){
 		fclose($file);
-	}        
-	if ($newf){   
-		fclose($newf);    
-	}     
+	}
+	if ($newf){
+		fclose($newf);
+	}
 }
 // 快速文件数据读取和保存 针对简单类型数据 字符串、数组
 function RWCache($name,$value='') {
@@ -3192,8 +3163,6 @@ function RWCache($name,$value='') {
     return $value;
 }
 
-
-
 /**
  * 等价PHP5版本的array_combine函数
  */
@@ -3208,9 +3177,9 @@ function filterChar($str)
 	for($i=1;$i<=31;$i++)
 	{
 		if($i!=10&&$i!=13)
-		$str=str_replace(chr($i),'',$str);	
+		$str=str_replace(chr($i),'',$str);
 	}
-	return $str;	
+	return $str;
 }
 
 function gatherIntoLibTransfer($data,$str)
@@ -3278,13 +3247,12 @@ function update_record($table,$where='',$data=array(),$escape=false)
 	}
 	foreach($data as $key=>$value)
 	{
-		$updatesql.="$key='$value',";	
+		$updatesql.="$key='$value',";
 	}
 	$updatesql=rtrim($updatesql,',');
 	$query="update {$table} set {$updatesql} $where";
 	return $dsql->ExecuteNoneQuery($query);
 }
-
 
 function getReferedId($str)
 {
@@ -3299,9 +3267,7 @@ function getReferedId($str)
 					if (m_ereg("$z",$str)) return "$k";
 					}
 	
-	
-	
-}
+	}
 
 function ResetFromSort($sData)
 {
@@ -3311,7 +3277,7 @@ function ResetFromSort($sData)
 	$li=array();
 	$ret="";
 	if($dl>0)
-	{	
+	{
 		$ay=getPlayerIntroArray();
 		$ul=count($ay);
 		for($i=0;$i<$dl;$i++)
@@ -3338,7 +3304,7 @@ function ResetFromSort($sData)
 	}else
 	{
 		$ResetFromSort=$sData;
-	} 
+	}
 	return $ResetFromSort;
 }
 
@@ -3358,7 +3324,6 @@ function getUserAuth($id,$flag)
 			$dsql->ExecuteNoneQuery("update `sea_member` set gid=2 where id=$ccuid");
 		}
 	}
-	
 	
 	$result=false;
 	if ($flag== "list"){
@@ -3428,24 +3393,22 @@ function checkIP()
 	{
 		if(in_array($rip,$ipArr))
 		{
-			exit("您所在的IP不允许访问此页面！");	
+			exit("您所在的IP不允许访问此页面！");
 		}
 	}elseif($cfg_banIPS==2)
 	{
 		if(!in_array($rip,$ipArr))
 		{
-			exit("您所在的IP不允许访问此页面！");	
+			exit("您所在的IP不允许访问此页面！");
 		}
 	}
 }
-
 
 function gatherPicHandle($pic)
 {
 	global $image;
 	return $image->gatherPicHandle($pic);
 }
-
 
 function Pinyin($s, $isfirst = false) {
 	static $pinyins;
@@ -3491,4 +3454,3 @@ function Pinyin($s, $isfirst = false) {
 	}
 	return $rs;
 }
-

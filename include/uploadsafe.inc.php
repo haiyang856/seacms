@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
     exit("Request Error!");
@@ -7,7 +7,7 @@ if(isset($_FILES['GLOBALS']))
 {
     exit('Request not allow!');
 }
-//为了防止用户通过注入的可能性改动了数据库 
+//为了防止用户通过注入的可能性改动了数据库
 //这里强制限定的某些文件类型禁止上传
 $cfg_not_allowall = "php|pl|cgi|asp|asa|cer|aspx|jsp|php3|shtm|shtml|htm|html";
 $imtypes = array("image/pjpeg", "image/jpeg", "image/gif", "image/png", "image/xpng", "image/wbmp", "image/bmp");
@@ -23,12 +23,12 @@ foreach($_FILES as $_key=>$_value)
         }
     }
 if(!filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP)){$_SERVER['HTTP_CLIENT_IP']='0.0.0.0';}
-if(!filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP)){$_SERVER['REMOTE_ADDR']='0.0.0.0';}  
-if(!filter_var($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)){$_SERVER['HTTP_X_FORWARDED_FOR']='0.0.0.0';}    
-//安全过滤  
+if(!filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP)){$_SERVER['REMOTE_ADDR']='0.0.0.0';}
+if(!filter_var($_SERVER['HTTP_X_FORWARDED_FOR'], FILTER_VALIDATE_IP)){$_SERVER['HTTP_X_FORWARDED_FOR']='0.0.0.0';}
+//安全过滤
 $_FILES[$_key]['name']=str_ireplace($fskey,'',$_FILES[$_key]['name']);
 $_FILES[$_key]['tmp_name']=str_ireplace($fskey,'',$_FILES[$_key]['tmp_name']);
-$_SERVER['HTTP_COOKIE']=str_ireplace($fskey,'',$_SERVER['HTTP_COOKIE']);   
+$_SERVER['HTTP_COOKIE']=str_ireplace($fskey,'',$_SERVER['HTTP_COOKIE']);
     $$_key = $_FILES[$_key]['tmp_name'] = str_replace("\\\\","\\",$_FILES[$_key]['tmp_name']);
     ${$_key.'_name'} = $_FILES[$_key]['name'];
     ${$_key.'_type'} = $_FILES[$_key]['type'] = m_eregi_replace('[^0-9a-z\./]','',$_FILES[$_key]['type']);

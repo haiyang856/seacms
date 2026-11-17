@@ -1,9 +1,9 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit("Request Error!");
 }
-//包含函数库 
+//包含函数库
 require_once(  dirname(__FILE__).'/inc/mysql.php' );
 $DBUpdate = new DBManager;
 class DBManager
@@ -29,7 +29,7 @@ class DBManager
         if(!file_exists($sqlPath))
             return false;
        
-        $handle = fopen($sqlPath,'rb');   
+        $handle = fopen($sqlPath,'rb');
        
         $sqlStr = fread($handle,filesize($sqlPath));
        
@@ -61,12 +61,12 @@ class DBManager
                     }
                     //如果不是注释，则认为是sql语句
                     if(!$isComment)
-                        $newStatement[] = $subSentence;                   
+                        $newStatement[] = $subSentence;
                 }
             }
            
             $statement = $newStatement;
-        }    
+        }
         //组合sql语句
         foreach($segment as & $statement)
         {

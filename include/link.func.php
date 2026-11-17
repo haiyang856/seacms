@@ -1,5 +1,5 @@
-<?php  
-//获取视频首页链接 
+<?php
+//获取视频首页链接
 function getIndexLink()
 {
 	switch ($GLOBALS['cfg_runmode2'])
@@ -10,8 +10,8 @@ function getIndexLink()
 			break;
 		case 2:
 			$linkStr="/".$GLOBALS['cfg_cmspath']."index".$GLOBALS['cfg_filesuffix2'];
-			break;	
-		default:break;		
+			break;
+		default:break;
 	}
 	return $linkStr;
 }
@@ -74,7 +74,7 @@ function getChannelPagesLink($typeId,$page=1,$linktype='')
 		$linkStr="/".$GLOBALS['cfg_cmspath'].$GLOBALS['cfg_channel_name']."/?";
 		if($GLOBALS['cfg_paramset']){
 		if (intval($page)==1) $tempStr=""; else $tempStr="&".$GLOBALS['cfg_parampage'].'='.$page;
-		$linkStr.=$GLOBALS['cfg_paramid'].'='.$typeId.$tempStr;	
+		$linkStr.=$GLOBALS['cfg_paramid'].'='.$typeId.$tempStr;
 		}else{
 		if (intval($page)==1) $tempStr=""; else $tempStr="-".$page;
 		$linkStr.=$typeId.$tempStr.$GLOBALS['cfg_filesuffix2'];
@@ -153,7 +153,7 @@ function getContentLink($typeId,$videoId,$linkType,$sDate,$videoenname)
 				$typePath=getTypePathOnCache($typeId);
 				if($cfg_createid=='md5') $videoId=substr(md5($videoId),8,8).strtoupper(substr(md5($videoId),16,8));
 				if($linkType!='link') $linkStr="/".$GLOBALS['cfg_cmspath'].$typePath.$videoId.'/'.$GLOBALS['cfg_contentpage_name2'].$GLOBALS['cfg_filesuffix2'];
-				else $linkStr="/".$GLOBALS['cfg_cmspath'].$typePath.$videoId.'/'; 
+				else $linkStr="/".$GLOBALS['cfg_cmspath'].$typePath.$videoId.'/';
 				break;
 			case "dir2":
 				if($cfg_createid=='md5') $videoId=substr(md5($videoId),8,8).strtoupper(substr(md5($videoId),16,8));
@@ -185,12 +185,12 @@ function getContentLink($typeId,$videoId,$linkType,$sDate,$videoenname)
 			case "dir8":
 				$typePath=getTypePathOnCache($typeId);
 				$linkStr="/".$GLOBALS['cfg_cmspath'].$GLOBALS['cfg_content_name2']."/".$sDate.'/'.$GLOBALS['cfg_contentpage_name2'].$videoenname.$GLOBALS['cfg_filesuffix2'];
-				break;		
+				break;
 			case "dir9":
 				$typePath=getTypePathOnCache($typeId,true);
 				$linkStr="/".$GLOBALS['cfg_cmspath'].$typePath.$videoenname.'/';
 				if($linkType!='link')$linkStr.=$GLOBALS['cfg_contentpage_name2'].$GLOBALS['cfg_filesuffix2'];
-				break;	
+				break;
 		}
 	}
 	elseif($GLOBALS['cfg_runmode']=='1')
@@ -291,7 +291,7 @@ function getPlayLink($typeId,$videoId,$sDate,$enname,$filesuffix='')
 				case "dir1":
 					$typePath=getTypePathOnCache($typeId);
 					if($cfg_createid=='md5') $videoId=substr(md5($videoId),8,8).strtoupper(substr(md5($videoId),16,8));
-					$linkStr="/".$GLOBALS['cfg_cmspath'].$typePath.$videoId."/".$GLOBALS['cfg_playpage_name2a'].$filesuffix;  //播放的连接 
+					$linkStr="/".$GLOBALS['cfg_cmspath'].$typePath.$videoId."/".$GLOBALS['cfg_playpage_name2a'].$filesuffix;  //播放的连接
 					break;
 				case "dir2":
 					if($cfg_createid=='md5') $linkStr="/".$GLOBALS['cfg_cmspath'].$GLOBALS['cfg_playpage_name2'].'/'.substr(md5($videoId),8,8).strtoupper(substr(md5($videoId),16,8)).$filesuffix;
@@ -316,14 +316,14 @@ function getPlayLink($typeId,$videoId,$sDate,$enname,$filesuffix='')
 				case "dir7":
 					$typePath=getTypePathOnCache($typeId);
 					$linkStr="/".$GLOBALS['cfg_cmspath'].$typePath.$sDate."/".$enname."/".$GLOBALS['cfg_playpage_name2a'].$filesuffix;
-					break;	
+					break;
 				case "dir8":
 					$linkStr="/".$GLOBALS['cfg_cmspath'].$GLOBALS['cfg_play_name2'].'/'.$sDate.'/'.$enname.'/'.$GLOBALS['cfg_playpage_name2'].$filesuffix;
-					break;	
+					break;
 				case "dir9":
 					$typePath=getTypePathOnCache($typeId,true);
 					$linkStr="/".$GLOBALS['cfg_cmspath'].$typePath.$enname."/".$GLOBALS['cfg_playpage_name2a'].$filesuffix;
-					break;	
+					break;
 			}
 		break;
 		case 1:
@@ -409,20 +409,19 @@ function getChannellinkStr()
 				$pageUrlStyle=2;
 				break;
 			case "dir4":
-				$pageUrlStyle=3;			
+				$pageUrlStyle=3;
 				break;
 			case "dir5":
 				$pageUrlStyle=2;
 				break;
 			case "dir6":
-				$pageUrlStyle=3;			
+				$pageUrlStyle=3;
 				break;
 			case "dir7":
-				$pageUrlStyle=2;			
+				$pageUrlStyle=2;
 				break;
 			
 		}
-
 
 	}
 	elseif($GLOBALS['cfg_runmode']=='1')
@@ -487,7 +486,7 @@ function getCascadeLink($str,$value,$tid)
 		case "sectype":
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?searchtype=5&tid=".urlencode($value);
 		break;
-		case "year":					
+		case "year":
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?searchtype=5&tid=".urlencode($tid)."&year=".urlencode($value);
 		break;
 		case "area":
@@ -539,43 +538,43 @@ function getItemLink($str,$value,$schwhere)
 			else
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?tid\=[^\&]*/i","",$schwhere)."&tid=".urlencode($value);
 		break;
-		case "year":	
+		case "year":
 			if($value=="全部")
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?year\=[^\&]*/i","",$schwhere);
-			else				
+			else
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?year\=[^\&]*/i","",$schwhere)."&year=".urlencode($value);
 		break;
-		case "area":	
+		case "area":
 			if($value=="全部")
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?area\=[^\&]*/i","",$schwhere);
 			else
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?area\=[^\&]*/i","",$schwhere)."&area=".urlencode($value);
 		break;
-		case "letter":	
+		case "letter":
 			if($value=="全部")
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?letter\=[^\&]*/i","",$schwhere);
 			else
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?letter\=[^\&]*/i","",$schwhere)."&letter=".urlencode($value);
 		break;
-		case "lang":	
+		case "lang":
 			if($value=="全部")
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?yuyan\=[^\&]*/i","",$schwhere);
 			else
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?yuyan\=[^\&]*/i","",$schwhere)."&yuyan=".urlencode($value);
 		break;
-		case "jq":	
+		case "jq":
 			if($value=="全部")
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?jq\=[^\&]*/i","",$schwhere);
 			else
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?jq\=[^\&]*/i","",$schwhere)."&jq=".urlencode($value);
 		break;
-		case "ver":	
+		case "ver":
 			if($value=="全部")
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?ver\=[^\&]*/i","",$schwhere);
 			else
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?ver\=[^\&]*/i","",$schwhere)."&ver=".urlencode($value);
 		break;
-		case "state":	
+		case "state":
 			if($value=='全部')
 			{
 				$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?state\=[^\&]*/i","",$schwhere);
@@ -589,7 +588,7 @@ function getItemLink($str,$value,$schwhere)
 			$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?state\=[^\&]*/i","",$schwhere)."&state=l";
 			}
 		break;
-		case "money":	
+		case "money":
 			if($value=="全部")
 			{
 				$Link="/".$GLOBALS['cfg_cmspath']."search.php?".preg_replace("/\&?money\=[^\&]*/i","",$schwhere);

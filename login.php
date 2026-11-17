@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 require_once("include/common.php");
 //前置跳转start
@@ -7,13 +7,13 @@ if($GLOBALS['cfg_mskin']==3 AND $GLOBALS['isMobile']==1){header("location:$cfg_m
 if($GLOBALS['cfg_mskin']==4 AND $GLOBALS['isMobile']==1){header("location:$cfg_mhost");}
 //前置跳转end
 require_once(sea_INC."/main.class.php");
-if($cfg_user==0) 
+if($cfg_user==0)
 {
 	ShowMsg('系统已关闭会员功能!','index.php');
 	exit();
 }
 $front='front';
-$hashstr=md5($cfg_dbpwd.$cfg_dbname.$cfg_dbuser.$front); //构造session安全码 
+$hashstr=md5($cfg_dbpwd.$cfg_dbname.$cfg_dbuser.$front); //构造session安全码
 $svali = $_SESSION['sea_ckstr'];
 if($dopost=='login')
 {
@@ -52,7 +52,7 @@ if($row1['username']==$userid AND $row1['password']==$pwd)
 					//验证是否激活邮箱
 					require_once('data/admin/smtp.php');
 					if($smtpreg=='on'){
-						$sql="SELECT acode FROM sea_member where username= '$userid'"; 
+						$sql="SELECT acode FROM sea_member where username= '$userid'";
 						$row = $dsql->GetOne($sql);
 						if($row['acode']!='y'){
 							showMsg("您的账户尚未激活，请激活后登陆！","index.php",0,10000);
@@ -62,7 +62,7 @@ if($row1['username']==$userid AND $row1['password']==$pwd)
 					$_SESSION['sea_user_id'] = $row1['id'];
 					$uid=$row1['id'];
 					$_SESSION['sea_user_name'] = $row1['username'];
-					$lifeTime = 2592000; 
+					$lifeTime = 2592000;
 					setcookie(session_name(), session_id(), time() + $lifeTime, "/");
 					if($row1['vipendtime']<time()){
 						$_SESSION['sea_user_group'] = 2;
@@ -80,7 +80,6 @@ if($row1['username']==$userid AND $row1['password']==$pwd)
 						$dsql->ExecuteNoneQuery("UPDATE `sea_member` set logincount=logincount+1 where id='$uid'");
 						ShowMsg("成功登录，正在转向会员中心！","$member_to",0,3000);
 					}
-					
 					
 					exit();
 

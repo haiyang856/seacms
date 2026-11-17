@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit("Request Error!");
@@ -10,7 +10,7 @@ class Image
 	function gatherPicHandle($pic)
 	{
 		global $cfg_gatherpicset;
-		if(!$cfg_gatherpicset) 
+		if(!$cfg_gatherpicset)
 		{
 			return $pic;
 		}elseif(strpos($pic,'uploads/')===0)
@@ -34,7 +34,7 @@ class Image
 		$picUrl=$pic;
 	if($picUrl==""){
 $ps="";}else{
-$ps = explode('/',$picUrl);}  
+$ps = explode('/',$picUrl);}
 		$filename=$ps[count($ps)-1];
 		if (strpos(" ".$filename,"?")>0){
 			$filenamet=explode('?',$filename);
@@ -62,7 +62,7 @@ if (strpos("|.jpg|.gif|.png|.bmp|.jpeg|.webp|",strtolower($fileext))===false){  
 		if(is_numeric($isDownOk)){
 			$this->watermark($filePath);
 			if($GLOBALS['app_ftp']==1)
-			{ 
+			{
 				if($ftpreturn=$this->uploadftp( $picpath ,$picfile ,$v_name ,$picUrl)===TRUE)
 				{
 					if($GLOBALS['app_updatepic']==1)
@@ -71,8 +71,8 @@ if (strpos("|.jpg|.gif|.png|.bmp|.jpeg|.webp|",strtolower($fileext))===false){  
 						$filePath = $GLOBALS['app_ftpurl'].$GLOBALS['app_ftpdir'].$filePath;
 					}
 					if(!empty($v_name))
-					echo "数据<font color=red>".$v_name."</font>的图片下载成功并自动转移FTP服务器,大小为<font color=red>".$isDownOk."</font>KB <a target=_blank href=".$filePath.">预览图片</a><br>";	
-				}else 
+					echo "数据<font color=red>".$v_name."</font>的图片下载成功并自动转移FTP服务器,大小为<font color=red>".$isDownOk."</font>KB <a target=_blank href=".$filePath.">预览图片</a><br>";
+				}else
 				{
 					if(!empty($v_name)) echo $ftpreturn;
 				}
@@ -110,10 +110,7 @@ if (strpos("|.jpg|.gif|.png|.bmp|.jpeg|.webp|",strtolower($fileext))===false){  
   }
   return $kz;
  }
- }	
-	
-	
-	
+ }
 	
 	function _downPic($picUrl,$filePath,$vname='')
 	{
@@ -124,11 +121,11 @@ if (strpos("|.jpg|.gif|.png|.bmp|.jpeg|.webp|",strtolower($fileext))===false){  
 		$fileext=getFileFormat($filePath);
 	if($picUrl==""){
 $ps="";}else{
-$ps = explode('/',$picUrl);}  
+$ps = explode('/',$picUrl);}
 		$filename=urldecode($ps[count($ps)-1]);
 		if ($fileext!="" && strpos("|.jpg|.gif|.png|.bmp|.jpeg|.webp|",strtolower($fileext))>0){
 			if(!(strpos($picUrl,".d32dsf3fdsf3432ds2dsdf3dsdf23k0dak0poidas.com/")>0)){
-			//	if(empty($filename) || strpos($filename,".")==0){   
+			//	if(empty($filename) || strpos($filename,".")==0){
 				if(empty($filename) || strpos('hzh'.$filePath,".")==0){   //2021-7-31  hzh
 					return "数据<font color=red>".$vname."</font>的图片路径错误2,请检查图片地址是否有效 ".$spanstr;
 				}
@@ -198,23 +195,22 @@ $ps = explode('/',$picUrl);}
 		}
 	}
 	
-	
 	 //图片水印, $replace=1:覆盖原文件, 0:生成新文件
 	 /*
 	  * error1:源图片不存在或图片加载失败
 	  * error2:创建水印资源失败,可能 是图片后缀有误
 	  * error3:创建源图片资源失败,可能 是图片后缀有误
-	  * 
+	  *
 	  * */
 	function _imgwatermark($filePath,$replace = 1) {
-			global $photo_wwidth,$photo_wheight,$photo_waterpos,$photo_marktrans,$photo_diaphaneity,$photo_markimg;	
+			global $photo_wwidth,$photo_wheight,$photo_waterpos,$photo_marktrans,$photo_diaphaneity,$photo_markimg;
 			$filePath = sea_ROOT.'/'.$filePath;
 			$photo_markimg = sea_ROOT."/data/mark/".$photo_markimg;
 			if(!file_exists($filePath) || !$water_info = getimagesize($filePath)) {
 					return 1;
-			 } 
+			 }
 			 
-			$water_im = '';	
+			$water_im = '';
 			switch($water_info[2]) {
 				case 1:@$water_im = imagecreatefromgif($photo_markimg);break;
 				case 2:@$water_im = imagecreatefromjpeg($photo_markimg);break;
@@ -227,7 +223,7 @@ $ps = explode('/',$picUrl);}
 			}
  			$src_info = $water_info;
 			$src_w = $src_info[0];
-			$src_h = $src_info[1];			
+			$src_h = $src_info[1];
 			$src_im = '';
 			switch($src_info[2]) {
 	    		case 1:
@@ -253,7 +249,7 @@ $ps = explode('/',$picUrl);}
 				case 0://随机
 					$posx = mt_rand(0, ($src_w - $photo_wwidth));
 					$posy = mt_rand(0, ($src_h - $photo_wheight));
-					break;					
+					break;
 				case 1://顶端居左
 					$posx = 0;
 					$posy = 0;
@@ -298,13 +294,13 @@ $ps = explode('/',$picUrl);}
 	}
 	
 	function _strwatermark($filePath){
-			global $photo_waterpos,$photo_watertext,$photo_fontsize,$photo_fontcolor,$photo_marktrans;	
+			global $photo_waterpos,$photo_watertext,$photo_fontsize,$photo_fontcolor,$photo_marktrans;
 			$filePath = sea_ROOT.'/'.$filePath;
 			if(!file_exists($filePath) || !$src_info = getimagesize($filePath)) {
 				return 1;
 			}
 			$src_w = $src_info[0];
-			$src_h = $src_info[1];			
+			$src_h = $src_info[1];
 			$src_im = '';
 			switch($src_info[2]) {
 	    		case 1:
@@ -326,12 +322,12 @@ $ps = explode('/',$picUrl);}
 		    $temp = imagettfbbox ( ceil ( $photo_fontsize * 2.5 ), 0 ,sea_DATA."/mark/simhei.ttf" , $photo_watertext ); //取得使用 TrueType 字体的文本的范围
 		    $w = $temp [ 2 ] - $temp [ 6 ];
 			$h = $temp [ 3 ] - $temp [ 7 ];
-			unset( $temp );     			
+			unset( $temp );
 			switch($photo_waterpos) {
 				case 0://随机
 					$posx = mt_rand(0, ($src_w - $w));
 					$posy = mt_rand(0, ($src_h - $h));
-					break;					
+					break;
 				case 1://顶端居左
 					$posx = 0;
 					$posy = 0;
@@ -352,10 +348,10 @@ $ps = explode('/',$picUrl);}
 					break;
 			}
 			if( !empty( $photo_fontcolor ) && ( strlen ( $photo_fontcolor )== 7 ) )
-			{ 				
+			{
 	     	$R = hexdec ( substr ( $photo_fontcolor , 1 , 2 ));
 	     	$G = hexdec ( substr ( $photo_fontcolor , 3 , 2 ));
-	     	$B = hexdec ( substr ( $photo_fontcolor , 5 )); 				
+	     	$B = hexdec ( substr ( $photo_fontcolor , 5 ));
 			}
 			else
 			{
@@ -371,8 +367,8 @@ $ps = explode('/',$picUrl);}
 				default:return false;
 	  		}
 			@imagedestroy($src_im);
-			return true;       	
+			return true;
 		    
-	}	
+	}
 	
 }

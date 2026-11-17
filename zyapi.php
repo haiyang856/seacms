@@ -1,4 +1,4 @@
-<?php 
+<?php
 /******************************
 海洋CMS
 功能：资源发布zyAPI模块
@@ -10,7 +10,7 @@ require_once("include/main.class.php");
 require_once("data/config.cache.inc.php");
 
 //判断是否开启api服务
-$vo=explode('#',file_get_contents("data/admin/isapi.txt")); 
+$vo=explode('#',file_get_contents("data/admin/isapi.txt"));
 $v=$vo[0]; //开关
 $o=$vo[1]; if($o=="" OR empty($o)){$o=1;}//排序方式
 if($o==1){$orderStr=" order by v_addtime DESC";}
@@ -36,7 +36,7 @@ if (!isNum($rpage)) { $rpage=1;} else { $rpage= intval($rpage);}
 if ($rpage < 1){ $rpage=1;}
 if (!isNum($rday)) { $rday=0;} else { $rday= intval($rday);}
 
-$app_apiver="5.0"; 
+$app_apiver="5.0";
 
 //判断操作类型
 switch($action)
@@ -205,7 +205,6 @@ function vlist()
 	
 }
 
-
 function getplayurl($urls)
 {
 	
@@ -226,20 +225,20 @@ function getplayurl($urls)
 		$arr2=explode("|*||*|",$v);
 		for($i=0;$i<$zzt;$i++)
 		{
-		   if($arr2['0']=='下载地址' or $arr2['0']=='下载地址一' or $arr2['0']=='下载地址二'  or $arr2['0']=='下载地址三'  or $arr2['0']=='下载地址四' or $arr2['0']=='下载地址五'){$flag= "down";} 
-		   else	
+		   if($arr2['0']=='下载地址' or $arr2['0']=='下载地址一' or $arr2['0']=='下载地址二'  or $arr2['0']=='下载地址三'  or $arr2['0']=='下载地址四' or $arr2['0']=='下载地址五'){$flag= "down";}
+		   else
 		      {
 				  $f=$arr2['0'];
 				  $flag=$z["$f"];
-			  } 
-		} 
-		$str = $str . "<dd flag=\"". $flag ."\"><![CDATA[" . $arr2['1']. "]]></dd>";	
+			  }
+		}
+		$str = $str . "<dd flag=\"". $flag ."\"><![CDATA[" . $arr2['1']. "]]></dd>";
 	}
 	$str=str_replace('|*|','$',$str);
 	return $str;
 }
 
-function isnum($varnum){	
+function isnum($varnum){
   $string_var = "0123456789";
   $len_string = strlen($varnum);
   if(substr($varnum,0,1)=="0"){

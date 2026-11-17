@@ -1,5 +1,5 @@
-<?php 
-if($scheckAC=="check"){	
+<?php
+if($scheckAC=="check"){
 	$front='front';
 	$hashstr=md5($cfg_dbpwd.$cfg_dbname.$cfg_dbuser.$front);
 	$svali = $_SESSION['sea_ckstr'];

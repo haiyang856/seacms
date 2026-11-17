@@ -1,6 +1,6 @@
-<?php 
+<?php
 /*
-	[seacms1.0] (C)2011-2012 seacms.net 
+	[seacms1.0] (C)2011-2012 seacms.net
 */
 if(!defined('sea_INC'))
 {
@@ -359,7 +359,7 @@ function getNewsTestItemRule($tid,$previewurl,$previewpic='')
 	getTestAreaValue($loopstr,"author","新闻作者",$html);
 	getTestAreaValue($loopstr,"pdate","新闻日期",$html);
 	getTestAreaValue($loopstr,"parea","新闻来源",$html);
-	getTestAreaValue($loopstr,"state","新闻关键字",$html);	
+	getTestAreaValue($loopstr,"state","新闻关键字",$html);
 	getTestAreaValue($loopstr,"des","新闻正文",$html);
 	unset($attrDictionary);
 }
@@ -374,8 +374,8 @@ function getTestAreaValue($loopstr,$str,$strname,$html,$removecode='')
 		if($removecode!=''){
 			$name=removeHTMLCode($name,$removecode);
 		}
-		if($trimRule!='') 
-		{ 
+		if($trimRule!='')
+		{
 			$name=Gettrimvalue($trimRule,$name);
 			$name=stripslashes($name);
 		}

@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit('seacms');
@@ -63,10 +63,9 @@ function utf82gb($utfstr)
 	return $okstr;
 }
 
-
 // 判断字符串是否utf-8  2012年1月23日， 巴特尔添加
-function is_utf8($word) 
-{ 
+function is_utf8($word)
+{
 	if(preg_match("/^([".chr(228)."-".chr(233)."]{1}[".chr(128)."-".chr(191)."]{1}[".chr(128)."-".chr(191)."]{1}){1}/",$word) == true || preg_match("/([".chr(228)."-".chr(233)."]{1}[".chr(128)."-".chr(191)."]{1}[".chr(128)."-".chr(191)."]{1}){1}$/",$word) == true || preg_match("/([".chr(228)."-".chr(233)."]{1}[".chr(128)."-".chr(191)."]{1}[".chr(128)."-".chr(191)."]{1}){2,}/",$word))
 	{
 		return true;
@@ -75,7 +74,7 @@ function is_utf8($word)
 	{
 	return false;
 	}
-} 
+}
 
 //GB转UTF-8编码
 function gb2utf8($gbstr)

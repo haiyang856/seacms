@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 require_once("include/common.php");
 require_once(sea_INC."/main.class.php");
@@ -30,7 +30,7 @@ function GetRealIP()
 	return $cip;
 }
  
-$bip = GetRealIP();   
+$bip = GetRealIP();
 
 $row = $dsql->GetOne("Select * from sea_ie where ip='$bip'");
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 
 //获取随机字符
@@ -8,7 +8,7 @@ $rndstring_A=mt_rand(1,9);
 $rndstring_B=mt_rand(1,9);
 $rndstring=$rndstring_A.'+'.$rndstring_B.'=?';
 $rndstring_R=$rndstring_A + $rndstring_B;
-//如果支持GD，则绘图 
+//如果支持GD，则绘图
 if(function_exists("imagecreate"))
 {
 	//Firefox部份情况会多次请求的问题，5秒内刷新页面将不改变session
@@ -47,7 +47,6 @@ if(function_exists("imagecreate"))
 		$fontColor=imagecolorallocate($im,rand(0,120), rand(0,120), rand(0,120));
 		imagestring($im, 5, $i*10+6, mt_rand(2,4), $rndstring[$i], $fontColor);
 	}
-
 
 	header("Pragma:no-cache\r\n");
 	header("Cache-Control:no-cache\r\n");

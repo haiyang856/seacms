@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 require_once("include/common.php");
 //前置跳转start
@@ -60,7 +60,7 @@ if($action=='add')
 	
 	//检查验证码是否正确
 if($cfg_feedback_ck=='1')
-{	
+{
 	$validate = empty($validate) ? '' : strtolower(trim($validate));
 	$svali = $_SESSION['sea_ckstr'];
 	if($validate=='' || $validate != $svali)
@@ -69,7 +69,7 @@ if($cfg_feedback_ck=='1')
 		ShowMsg('验证码不正确!','-1');
 		exit();
 	}
-}	
+}
 	//检查留言间隔时间；
 	if(!empty($cfg_feedback_times))
 	{
@@ -127,7 +127,7 @@ if($cfg_feedback_ck=='1')
 	if($needCheck==1)
 	{
 		ShowMsg('感谢您的留言，我们会尽快回复您！','gbook.php',0,3000);
-		exit();	
+		exit();
 	}
 	else
 	{
@@ -193,7 +193,7 @@ function viewLeaveWord(){
 	"<form id=\"f_leaveword\"   action=\"/".$GLOBALS['cfg_cmspath']."gbook.php?action=add\" method=\"post\" onsubmit=\"return leaveWordgbook2()\">".
 	"<input type=\"hidden\" value=\"$userid\" name=\"userid\" />".
 	"<input type=\"hidden\" value=\"$uname\" name=\"m_author\" />".
-	"<div class=\"sea_main_5\"><div class=\"sea_main_6\">". 
+	"<div class=\"sea_main_5\"><div class=\"sea_main_6\">".
 	"<div style=\"display:none;\">".
 	"".(isset($uname)?$uname:'<input class="sea_main_7" type="input"  value="匿名网友" name="m_author" id="m_author" size="20" />').
 	"</div>".
@@ -210,7 +210,6 @@ function viewLeaveWord(){
 	return $mystr;
 }
 
-
 //开启验证码
 function viewLeaveWord2(){
 	if(!empty($_SESSION['sea_user_name']))
@@ -226,7 +225,7 @@ function viewLeaveWord2(){
 	"<form id=\"f_leaveword\"   action=\"/".$GLOBALS['cfg_cmspath']."gbook.php?action=add\" method=\"post\" onsubmit=\"return leaveWordgbook()\">".
 	"<input type=\"hidden\" value=\"$userid\" name=\"userid\" />".
 	"<input type=\"hidden\" value=\"$uname\" name=\"m_author\" />".
-	"<div class=\"sea_main_5\"><div class=\"sea_main_6\">". 
+	"<div class=\"sea_main_5\"><div class=\"sea_main_6\">".
 	"<div style=\"display:none;\">".
 	"".(isset($uname)?$uname:'<input class="sea_main_7" type="input"  value="匿名网友" name="m_author" id="m_author" size="20" />').
 	"</div>".
@@ -252,7 +251,7 @@ function leaveWordList($currentPage){
 		$currentPage=1;
 	}
 	$limitstart = ($currentPage-1) * $vsize;
-	$sql="select * from `sea_guestbook` where ischeck='1' ORDER BY id DESC limit $limitstart,$vsize";	
+	$sql="select * from `sea_guestbook` where ischeck='1' ORDER BY id DESC limit $limitstart,$vsize";
 	$cquery = "Select count(*) as dd From `sea_guestbook` where ischeck='1'";
 	$row = $dsql->GetOne($cquery);
 	if(is_array($row))
@@ -297,13 +296,12 @@ function leaveWordList($currentPage){
 			{$txt.="<span class=\"sea_num\">".$i."</span>";}
 		else
 			{$txt.="<a href=\"/".$GLOBALS['cfg_cmspath']."gbook.php?page=".$i."\">".$i."</a>";}
-	}	
+	}
 	}
 	if($currentPage==$TotalPage)$txt.="<a>›</a><a>››</a>";
 	else $txt.="<a href=\"/".$GLOBALS['cfg_cmspath']."gbook.php?page=".($currentPage+1)."\">›</a><a href=\"/".$GLOBALS['cfg_cmspath']."gbook.php?page=".$TotalPage."\">››</a>";
 	return $txt."</div></div>";
 
 }
-
 
 ?>

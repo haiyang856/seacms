@@ -1,11 +1,11 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit("Request Error!");
 }
 //包含函数库
 require_once( dirname(__FILE__).'/inc/mysql.php' );
-//调用这个类前,请先设定这些外部变量 
+//调用这个类前,请先设定这些外部变量
 /*----------------------------
 $GLOBALS['cfg_dbhost'];
 $GLOBALS['cfg_dbuser'];
@@ -70,7 +70,6 @@ class DB_MySQL
 		$this->result["me"] = 0;
 	}
 	
-
 	//设置SQL里的参数
 	function SetParameter($key,$value)
 	{
@@ -183,7 +182,6 @@ class DB_MySQL
 		return mysqli_query($this->linkID,$this->queryString);
 	}
 
-
 	//执行一个返回影响记录条数的SQL语句，如update,delete,insert等
 	function ExecuteNoneQuery2($sql='')
 	{
@@ -248,7 +246,7 @@ class DB_MySQL
 		//查询性能测试
 		//$queryTime = ExecTime() - $t1;
 		//if($queryTime > 0.05) {
-			//echo $this->queryString."--{$queryTime}<hr />\r\n"; 
+			//echo $this->queryString."--{$queryTime}<hr />\r\n";
 		//}
 		
 		if($this->result[$id]===false)
@@ -334,7 +332,6 @@ class DB_MySQL
 		}
 	}
 
-
 	function GetObject($id="me")
 	{
 		if($this->result[$id]==0)
@@ -393,7 +390,7 @@ class DB_MySQL
 	function GetTableFields($tbname,$id="me")
 	{
 		
-		$this->result[$id]=mysqli_query($this->linkID,"SHOW COLUMNS FROM table [LIKE '".$tbname."']"); 
+		$this->result[$id]=mysqli_query($this->linkID,"SHOW COLUMNS FROM table [LIKE '".$tbname."']");
 		
 		//$this->result[$id] = mysqli_list_fields($this->dbName,$tbname,$this->linkID);
 	}
@@ -484,7 +481,6 @@ class DB_MySQL
 		
 		echo $emsg;
 		
-		
 		$savemsg = 'Page: '.$this->GetCurUrl()."\r\nError: ".$msg;
 		//保存MySql错误日志
 		$fp = @fopen($errorTrackFile, 'a');
@@ -516,7 +512,7 @@ class DB_MySQL
 }
 
 //特殊操作
-$arrs1 = array(); $arrs2 = array(); 
+$arrs1 = array(); $arrs2 = array();
 if(isset($GLOBALS['arrs1']))
 {
 	$v1 = $v2 = '';
@@ -547,8 +543,7 @@ function CheckSql($db_string,$querytype='select')
 	$pos = -1;
 	$log_file = sea_INC.'/../data/'.md5($cfg_cookie_encode).'_safe.txt';
 	$userIP = GetIP();
-	$getUrl = GetCurUrl();	
-
+	$getUrl = GetCurUrl();
 
 	//如果是普通查询语句，直接过滤一些特殊语法
 	if($querytype=='select')

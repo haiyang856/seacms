@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(!defined('sea_INC'))
 {
 	exit("Request Error!");
@@ -50,7 +50,7 @@ function _Replace_Badword(&$var)
 	
 	for($i=0;$i<count($myarr);$i++)
 	{
-		$var = str_replace($myarr[$i],"*",$var);	
+		$var = str_replace($myarr[$i],"*",$var);
 	}
 	return $var;
 }

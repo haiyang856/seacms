@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 
 require_once("include/common.php");
@@ -16,35 +16,31 @@ $vpart=$_GET['vpart']+1;
 $sug=array('q'=>"",'p'=>false,s=>array(''));
 
 if($wd=='' && $url=='')
-{ 
+{
    $sug[p]=true;
    $sug[q]="input error！";
-   echo $cb."(".json_encode($sug).");" ;  
-   exit();	
+   echo $cb."(".json_encode($sug).");" ;
+   exit();
 }
 
-
 $myObj = new SetQuerybyseacms();
-
 
 if($wd!=''){
 	
 	$sug[q]=$wd;
-	$sug[s]=$myObj->Querykey($wd,"v_name",10);	
+	$sug[s]=$myObj->Querykey($wd,"v_name",10);
 	
-	
-}elseif($url!=''){
+	}elseif($url!=''){
 	$sug[q]=$url;
-	$sug[s]=$myObj->Queryurl($vid,$vfrom,$vpart);	
+	$sug[s]=$myObj->Queryurl($vid,$vfrom,$vpart);
 	
 }
 
 echo $myObj->out_json($cb,$sug);
 
-
 //seacms 查询类 by nohacks.cn
 class SetQuerybyseacms
-{	
+{
 
   public function Querykey($keyword,$key,$num)
   
@@ -64,32 +60,29 @@ class SetQuerybyseacms
 				
 	  //执行查询
 		 $this->dsql->SetQuery($sql);
-         $this->dsql->Execute('zz');								
+         $this->dsql->Execute('zz');
 		 $aa=$this->dsql->GetTotalRow('zz');
                                
-			if($aa>0){																    
+			if($aa>0){
 									
 				  while($row = $this->dsql->GetAssoc('zz'))
 					    {
 																	
 						 $rows[]=$row[$key];
 									
-					    }	
+					    }
 								
-						 unset($rowr);			
+						 unset($rowr);
                      }
          		 
-		   
-	  return $rows;		 		 		 
+	  return $rows;
   }
-  
   
    public function Queryurl($vid,$from,$part)
   
    {
    	
    	global $dsql,$cfg_pointsname;
-
 
 		//echo $url.$vid.$vfrom,$vpart;
    		$row=$dsql->GetOne("SELECT * FROM `sea_playdata` WHERE `v_id` ='$vid'");
@@ -136,11 +129,11 @@ class SetQuerybyseacms
 	{
 		$vipe=str_ireplace('e', "", $vip);
 		$vipes=$urlCount - $vipe;
-		$viparr=array_flip(array_slice($urlArray2,$vipes,$vipe,true));		
+		$viparr=array_flip(array_slice($urlArray2,$vipes,$vipe,true));
 	}
 	elseif(strpos($vip,'a')!==false)
 	{
-			$viparr=array_flip(array_slice($urlArray2,0,$urlCount,true));		
+			$viparr=array_flip(array_slice($urlArray2,0,$urlCount,true));
 	}
 	elseif(strpos($vip,'f')!==false)
 	{
@@ -150,7 +143,7 @@ class SetQuerybyseacms
 	else
 	{
 		$viparr2=explode(',',$vip);
-		foreach ($viparr2 as $value) 
+		foreach ($viparr2 as $value)
 		{
 		  $viparr[]=$value-1;
 		}
@@ -172,24 +165,20 @@ $uid = intval($uid);
 	  $viparr2=array_diff($viparr,$vipdelarr);
       return  array('num'=>sizeof($urlArray),'part'=>$part,'url'=>$urlArray[$prat],'video'=>$urlArray,'houz'=>$houz,'vipp'=>$viparr2,'try'=>$try,'jifen'=>$jifen,'jifenname'=>$cfg_pointsname,'isauth'=>$isauth);
 
-
      return '';
 
    }
   
-
      public function out_json($Callback,$data)
   
    {
 	   $str=$Callback."(".json_encode($data).");" ;
 	    
-	   return  $str;  
+	   return  $str;
 	   	    
-	   
-   }   
+   }
 	   	   
-  
-}
+  }
 				
 ?> 
 

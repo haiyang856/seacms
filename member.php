@@ -33,7 +33,7 @@
 .sea_page .sea_num{float:left;font-family:Tahoma;height:22px;line-height:22px;padding:0 8px;margin-left:3px;background-color:#6394c8;border-radius: 4px;font-size: 12px;color: #fff;list-style:none;}
 </style>
 </head>
-<?php 
+<?php
 session_start();
 require_once("include/common.php");
 require_once(sea_INC.'/main.class.php');
@@ -73,7 +73,6 @@ if($mod=='activate'){
 	$dsql->ExecuteNoneQuery("update `sea_member` set acode = 'y' where acode='$acode'");
 	showMsg("恭喜，账户激活成功！","login.php",0,3000);exit();
 }
-
 
 //找回密码
 if($mod=='repsw'){
@@ -160,12 +159,11 @@ if($mod=='repsw2'){
 	
 	require_once('data/admin/smtp.php');
 
-		
 	$smtprmail = $repswemail;
 	$smtprtitle = '【'.$cfg_webname.'】Email 找回密码操作邮件';
 $smtprbody = '<strong>Email 找回密码操作邮件</strong><br><br>尊敬的：'.$repswname.'<br>这封信是由 '.$cfg_webname.' 发送的。<br>您收到这封邮件，是由于在 '.$cfg_webname.' 进行了找回密码操作。如果您并没有访问过 '.$cfg_webname.'，或没有进行上述操作，请忽略这封邮件。您不需要退订或进行其他进一步的操作。<br><br>如果您是 '.$cfg_webname. '的用户并且正在进行找回密码操作，我们需要对您的信息的有效性进行验证以避免密码被盗用。<br>您只需点击下面的链接即可重置您的密码：<br><a target="_blank" href="'.$cfg_basehost.'/member.php?mod=repsw3&repswcode='.$repswcode.'&repswname='.$repswname.'">'.$cfg_basehost.'/member.php?mod=repsw3&repswcode='.$repswcode.'&repswname='.$repswname.'</a><br>(如果上面不是链接形式，请将该地址手工粘贴到浏览器地址栏再访问)<br>此链接只允许访问一次！<br><br>感谢您的访问，祝您使用愉快！<br><br>此致<br>'.$cfg_webname.'管理团队.<br>'.$cfg_basehost.'<br>';
 
-	require_once("include/class.phpmailer.php"); 
+	require_once("include/class.phpmailer.php");
 	$mail = new PHPMailer();
 	$mail->SMTPDebug = 0;//是否启用smtp的debug进行调试
 	$mail->isSMTP();
@@ -176,16 +174,15 @@ $smtprbody = '<strong>Email 找回密码操作邮件</strong><br><br>尊敬的�
 	$mail->CharSet = 'UTF-8';
 	$mail->FromName = $smtpname;//设置发件人名称
 	$mail->Username =$smtpuser;//smtp登录的账号
-	$mail->Password = $smtppass;//smtp登录的密码 
+	$mail->Password = $smtppass;//smtp登录的密码
 	$mail->From = $smtpusermail;//发件人邮箱地址
 	$mail->isHTML(true); //邮件正文是否为html编码 注意此处是一个方法 不再是属性 true或false
-	$mail->addAddress($smtprmail);//设置收件人邮箱地址 
+	$mail->addAddress($smtprmail);//设置收件人邮箱地址
 	$mail->Subject ="=?utf-8?B?" . base64_encode($smtprtitle) . "?=";//添加该邮件的主题
 	//$mail->Subject = $smtprtitle;//添加该邮件的主题
 	$mail->Body = $smtprbody;//添加邮件正文
 
-	 
-	//发送命令 返回布尔值 
+	//发送命令 返回布尔值
 	//PS：经过测试，要是收件人不存在，若不出现错误依然返回true 也就是说在发送之前 自己需要些方法实现检测该邮箱是否真实有效
 	$status = $mail->send();
 	 
@@ -194,12 +191,10 @@ $smtprbody = '<strong>Email 找回密码操作邮件</strong><br><br>尊敬的�
 	 ShowMsg('申请成功!<br>一封验证邮件已发送到您的注册邮箱，请查收！','login.php',0,100000);
 	}else{
 	 ShowMsg('抱歉！激活邮件发送失败，请联系客服解决此错误。','login.php',0,100000);
-	}						
+	}
 	
 	exit();
 }
-
-
 
 if($mod=='repsw3'){
 	require_once('data/admin/smtp.php');
@@ -283,7 +278,6 @@ EOT;
 	exit();
 }
 
-
 if($mod=='repsw4'){
 	$repswname=$_POST['repswname'];
 	$repswcode=$_POST['repswcode'];
@@ -319,10 +313,7 @@ if($mod=='repsw4'){
 	ShowMsg('密码重置成功，请使用新密码登陆！','login.php');
 	exit();
 	
-	
-}
-
-
+	}
 
 ////////////////////////////////////
 $front='front';
@@ -333,13 +324,12 @@ if(empty($uid) OR $_SESSION['hashstr'] !== $hashstr)
 	exit();
 }
 
-
 if($action=='chgpwdsubmit')
 {
 	if(trim($newpwd)<>trim($newpwd2))
 	{
-		ShowMsg('两次输入密码不一致','-1');	
-		exit();	
+		ShowMsg('两次输入密码不一致','-1');
+		exit();
 	}
 	
 	$result  = filter_var($email, FILTER_VALIDATE_EMAIL);if($result==false){ShowMsg('请输入正确的邮箱地址','-1');exit();}
@@ -439,7 +429,7 @@ function ImageResize2($srcFile,$toW,$toH,$toFile="")
 	}
 	imagedestroy($im);
 	return true;
-}	
+}
 	if($_FILES['image']['name'] !="" AND $cfg_upic=='1'){
 		
         $file_name = $_FILES['image']['name'];
@@ -450,18 +440,17 @@ function ImageResize2($srcFile,$toW,$toH,$toFile="")
         $file_ext=strtolower(end($name_arr));
         $extensions= array("jpeg","jpg","png","gif","bmp","webp");
         /* 规定可以上传的扩展名文件 */
-		if($file_size > 2048000) {$errors='头像文件大小不能超过2M';ShowMsg($errors,'-1');exit;} 
+		if($file_size > 2048000) {$errors='头像文件大小不能超过2M';ShowMsg($errors,'-1');exit;}
 		if(in_array($file_ext,$extensions)=== false){$errors="头像文件必须是图片";ShowMsg($errors,'-1');exit;}
 		$is_img = getimagesize($_FILES["image"]["tmp_name"]);
 		if(!$is_img){$errors="头像文件必须是图片";ShowMsg($errors,'-1');exit;}
        
-        
        /* 把图片从临时文件夹内的文件移动到当前脚本所在的目录 */
 		$path="uploads/user/".date('Y-n',time())."/";
 		$path2=$path.$_SESSION['sea_user_id']."_".time().".".$file_ext;
 		mkdir($path);
-		$picok=move_uploaded_file($file_tmp,$path2); 
-		if($picok==false){$path2 ="";}		
+		$picok=move_uploaded_file($file_tmp,$path2);
+		if($picok==false){$path2 ="";}
 		if($picok AND $oldpic !='uploads/user/a.png'){unlink($oldpic);}
 	}
 	if($path2 !=""){
@@ -476,8 +465,8 @@ function ImageResize2($srcFile,$toW,$toH,$toFile="")
 	{
 	if(empty($newpwd)){$pwd = $spwd['password'];} else{$pwd = substr(md5($newpwd),5,20);};
 	$dsql->ExecuteNoneQuery("update `sea_member` set password = '$pwd',email = '$email',nickname = '$nickname',pic='$path2' where id= '$uid'");
-	ShowMsg('个人信息修改成功','-1');	
-	exit();	
+	ShowMsg('个人信息修改成功','-1');
+	exit();
 	}
 }
 elseif($action=='cancelfav')
@@ -531,16 +520,16 @@ elseif($action=='hyz')
 	$mon = intval($mon);
 	if(empty($mon))
 	{showMsg("请选择要购买的时长","member.php?action=cc");exit;}
-	$sqlhyz1="SELECT * FROM sea_member_group where gid='$gid'"; 
+	$sqlhyz1="SELECT * FROM sea_member_group where gid='$gid'";
 	$rowhyz1 = $dsql->GetOne($sqlhyz1);
     if(!is_array($rowhyz1)){
         showMsg("会员组不存在","-1");exit;
     }else{
-		$hyzjf=$rowhyz1['g_upgrade']*$mon; //购买会员组所需积分  
+		$hyzjf=$rowhyz1['g_upgrade']*$mon; //购买会员组所需积分
     }
 	//获取会员基本信息
 	$uname=$_SESSION['sea_user_name'];
-	$sqlhyz2="SELECT points,vipendtime FROM sea_member where username='$uname'"; 
+	$sqlhyz2="SELECT points,vipendtime FROM sea_member where username='$uname'";
 	$rowhyz2 = $dsql->GetOne($sqlhyz2);
     if(!is_array($rowhyz2)){
         showMsg("会员信息不存在","-1");exit;
@@ -558,7 +547,7 @@ elseif($action=='hyz')
 	if($userjf<$hyzjf)
 	{
 		showMsg("积分不足","-1");exit; //判断积分是否足够购买
-	} 
+	}
 	else
 	{
 		$ntime=time();
@@ -576,7 +565,7 @@ elseif($action=='cc')
 {
 	$ccuid=intval($_SESSION['sea_user_id']);
 	$cc2=$dsql->GetOne("select * from sea_member where id=$ccuid");
-	$ccgid=$cc2['gid'];	
+	$ccgid=$cc2['gid'];
 	$_SESSION['sea_user_group'] = $ccgid;
 	$cc1=$dsql->GetOne("select * from sea_member_group where gid=$ccgid");
 	$ccgroup=$cc1['gname'];
@@ -605,7 +594,7 @@ elseif($action=='cc')
 		if(empty($u) OR !is_numeric($u)){exit;}
 		$row = $dsql->GetOne("Select stime from sea_member where id='$u'");
 		$nowtime=time();
-		$lasttime=$row['stime'];	
+		$lasttime=$row['stime'];
 		if($nowtime-$lasttime > 86400 )
 		{$stxt= '<button onClick="self.location=\'s.php\'" class="btn btn-warning" type="button"><strong>我要签到</strong> <span class="badge">+'.$cfg_pointsname.'</span>  </button>';}
 		else
@@ -613,12 +602,12 @@ elseif($action=='cc')
 		
 	 }
 require_once("data/admin/notify.php");
-if(empty($notify1) OR $notify1 ==""){$notify1css='display:none';} 
-if(empty($notify2) OR $notify2 ==""){$notify2css='display:none';} 
+if(empty($notify1) OR $notify1 ==""){$notify1css='display:none';}
+if(empty($notify2) OR $notify2 ==""){$notify2css='display:none';}
 if(empty($notify3) OR $notify3 ==""){$notify3css='display:none';}
-if(empty($msgbody) OR $msgbody =="" OR $msgstate=='y'){$notify4css='display:none';$msgbody='';} 
-$upic=$cc2['pic'];	
-if($upic ==""){$upic='uploads/user/a.png';}  
+if(empty($msgbody) OR $msgbody =="" OR $msgstate=='y'){$notify4css='display:none';$msgbody='';}
+$upic=$cc2['pic'];
+if($upic ==""){$upic='uploads/user/a.png';}
 	echo <<<EOT
 	        
 <body>
@@ -730,8 +719,8 @@ EOT;
 							$oldnickname=$row1['nickname'];
 							if($cfg_upic !='1'){$upicstyle=' style="display:none;"';}
 							echo "<form id=\"f_Activation\"   action=\"?action=chgpwdsubmit\" method=\"post\" enctype=\"multipart/form-data\">".
-								"<li><input type=\"password\" name=\"oldpwd\" value=\"\" class=\"form-control\" placeholder=\"输入旧密码\" /></li>". "<li><input type=\"password\" name=\"newpwd\"  class=\"form-control\" placeholder=\"输入新密码\" /></li>".  
-								"<li><input type=\"password\" name=\"newpwd2\" class=\"form-control\" placeholder=\"再次确认\" /></li>".  
+								"<li><input type=\"password\" name=\"oldpwd\" value=\"\" class=\"form-control\" placeholder=\"输入旧密码\" /></li>". "<li><input type=\"password\" name=\"newpwd\"  class=\"form-control\" placeholder=\"输入新密码\" /></li>".
+								"<li><input type=\"password\" name=\"newpwd2\" class=\"form-control\" placeholder=\"再次确认\" /></li>".
 								"<li><input type=\"text\" name=\"email\" value=\"$oldemail\" class=\"form-control\" placeholder=\"邮箱地址\" /></li>".
 								"<li><input type=\"text\" name=\"nickname\" value=\"$oldnickname\" class=\"form-control\" placeholder=\"联系方式\" /></li>".
 							    "<li ".$upicstyle."><label>上传头像</label><input type=\"file\" name=\"image\" id=\"image\" multiple class=\"file-loading\" /></li>".
@@ -762,7 +751,6 @@ EOT;
 </body>
 EOT;
 
-
 }
 elseif($action=='delmsg')
 {
@@ -771,20 +759,20 @@ elseif($action=='delmsg')
 }
 elseif($action=='favorite')
 {
-	$page = $_GET["page"]; 
+	$page = $_GET["page"];
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_favorite where uid=".$uid);
 	$rcount=$row['dd'];
-	$page_count = ceil($rcount/$pcount); 
-	if(empty($_GET['page'])||$_GET['page']<0){ 
-	$page=1; 
-	}else { 
-	$page=$_GET['page']; 
-	}  
-	$select_limit = $pcount; 
-	$select_from = ($page - 1) * $pcount.','; 
-	$pre_page = ($page == 1)? 1 : $page - 1; 
-	$next_page= ($page == $page_count)? $page_count : $page + 1 ; 	
+	$page_count = ceil($rcount/$pcount);
+	if(empty($_GET['page'])||$_GET['page']<0){
+	$page=1;
+	}else {
+	$page=$_GET['page'];
+	}
+	$select_limit = $pcount;
+	$select_from = ($page - 1) * $pcount.',';
+	$pre_page = ($page == 1)? 1 : $page - 1;
+	$next_page= ($page == $page_count)? $page_count : $page + 1 ;
 	$dsql->setQuery("select * from sea_favorite where uid=".$uid." ORDER BY kptime DESC limit ".($page-1)*$pcount.",$pcount");
 	$dsql->Execute('favlist');
 	echo <<<EOT
@@ -875,7 +863,7 @@ EOT;
 								</td>
 		                    </tr>
 EOT;
-												  }			
+												  }
 							 echo <<<EOT
 	 </table>
 	                     <div class="sea_page">
@@ -911,17 +899,17 @@ elseif($action=='buy')
 	$page = $_GET["page"];
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_buy where uid=".$uid);
-	$rcount=$row['dd'];	
-	$page_count = ceil($rcount/$pcount); 
-	if(empty($_GET['page'])||$_GET['page']<0){ 
-	$page=1; 
-	}else { 
-	$page=$_GET['page']; 
+	$rcount=$row['dd'];
+	$page_count = ceil($rcount/$pcount);
+	if(empty($_GET['page'])||$_GET['page']<0){
+	$page=1;
+	}else {
+	$page=$_GET['page'];
 	}
-	$select_limit = $pcount; 
-	$select_from = ($page - 1) * $pcount.','; 
-	$pre_page = ($page == 1)? 1 : $page - 1; 
-	$next_page= ($page == $page_count)? $page_count : $page + 1 ; 
+	$select_limit = $pcount;
+	$select_from = ($page - 1) * $pcount.',';
+	$pre_page = ($page == 1)? 1 : $page - 1;
+	$next_page= ($page == $page_count)? $page_count : $page + 1 ;
 	$dsql->setQuery("select * from sea_buy where uid=".$uid." group by vid ORDER BY kptime DESC limit ".($page-1)*$pcount.",$pcount");
 	$dsql->Execute('buylist');
 	echo <<<EOT
@@ -1058,16 +1046,16 @@ elseif($action=='buy2')
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_hyzbuy where uname='$uname'");
 	$rcount=$row['dd'];
-	$page_count = ceil($rcount/$pcount); 
-	if(empty($_GET['page'])||$_GET['page']<0){ 
-	$page=1; 
-	}else { 
-	$page=$_GET['page']; 
+	$page_count = ceil($rcount/$pcount);
+	if(empty($_GET['page'])||$_GET['page']<0){
+	$page=1;
+	}else {
+	$page=$_GET['page'];
 	}
-	$select_limit = $pcount; 
-	$select_from = ($page - 1) * $pcount.','; 
-	$pre_page = ($page == 1)? 1 : $page - 1; 
-	$next_page= ($page == $page_count)? $page_count : $page + 1 ; 
+	$select_limit = $pcount;
+	$select_from = ($page - 1) * $pcount.',';
+	$pre_page = ($page == 1)? 1 : $page - 1;
+	$next_page= ($page == $page_count)? $page_count : $page + 1 ;
 	$dsql->setQuery("select * from sea_hyzbuy where uname='$uname' ORDER BY paytime DESC limit ".($page-1)*$pcount.",$pcount");
 	$dsql->Execute('buylist');
 	echo <<<EOT
@@ -1186,16 +1174,16 @@ elseif($action=='buy3')
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_cck where status=1 and uname='$uname'");
 	$rcount=$row['dd'];
-	$page_count = ceil($rcount/$pcount); 
-	if(empty($_GET['page'])||$_GET['page']<0){ 
-	$page=1; 
-	}else { 
-	$page=$_GET['page']; 
+	$page_count = ceil($rcount/$pcount);
+	if(empty($_GET['page'])||$_GET['page']<0){
+	$page=1;
+	}else {
+	$page=$_GET['page'];
 	}
-	$select_limit = $pcount; 
-	$select_from = ($page - 1) * $pcount.','; 
-	$pre_page = ($page == 1)? 1 : $page - 1; 
-	$next_page= ($page == $page_count)? $page_count : $page + 1 ; 
+	$select_limit = $pcount;
+	$select_from = ($page - 1) * $pcount.',';
+	$pre_page = ($page == 1)? 1 : $page - 1;
+	$next_page= ($page == $page_count)? $page_count : $page + 1 ;
 	$dsql->setQuery("select * from sea_cck where status=1 and  uname='$uname' ORDER BY usetime DESC limit ".($page-1)*$pcount.",$pcount");
 	$dsql->Execute('buylist');
 	echo <<<EOT
@@ -1310,16 +1298,16 @@ elseif($action=='gb')
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_guestbook where uname='$uname'");
 	$rcount=$row['dd'];
-	$page_count = ceil($rcount/$pcount); 
-	if(empty($_GET['page'])||$_GET['page']<0){ 
-	$page=1; 
-	}else { 
-	$page=$_GET['page']; 
+	$page_count = ceil($rcount/$pcount);
+	if(empty($_GET['page'])||$_GET['page']<0){
+	$page=1;
+	}else {
+	$page=$_GET['page'];
 	}
-	$select_limit = $pcount; 
-	$select_from = ($page - 1) * $pcount.','; 
-	$pre_page = ($page == 1)? 1 : $page - 1; 
-	$next_page= ($page == $page_count)? $page_count : $page + 1 ; 
+	$select_limit = $pcount;
+	$select_from = ($page - 1) * $pcount.',';
+	$pre_page = ($page == 1)? 1 : $page - 1;
+	$next_page= ($page == $page_count)? $page_count : $page + 1 ;
 	$dsql->setQuery("select * from sea_guestbook where uname='$uname' ORDER BY dtime DESC limit ".($page-1)*$pcount.",$pcount");
 	$dsql->Execute('clist');
 	echo <<<EOT
@@ -1416,16 +1404,16 @@ elseif($action=='VNc')
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_comment where username='$uname'");
 	$rcount=$row['dd'];
-	$page_count = ceil($rcount/$pcount); 
-	if(empty($_GET['page'])||$_GET['page']<0){ 
-	$page=1; 
-	}else { 
-	$page=$_GET['page']; 
+	$page_count = ceil($rcount/$pcount);
+	if(empty($_GET['page'])||$_GET['page']<0){
+	$page=1;
+	}else {
+	$page=$_GET['page'];
 	}
-	$select_limit = $pcount; 
-	$select_from = ($page - 1) * $pcount.','; 
-	$pre_page = ($page == 1)? 1 : $page - 1; 
-	$next_page= ($page == $page_count)? $page_count : $page + 1 ; 
+	$select_limit = $pcount;
+	$select_from = ($page - 1) * $pcount.',';
+	$pre_page = ($page == 1)? 1 : $page - 1;
+	$next_page= ($page == $page_count)? $page_count : $page + 1 ;
 	$dsql->setQuery("select * from sea_comment where username='$uname' ORDER BY dtime DESC limit ".($page-1)*$pcount.",$pcount");
 	$dsql->Execute('clist');
 	echo <<<EOT
@@ -1481,7 +1469,7 @@ EOT;
 		$cname=$rs['v_name'];
 		$ctype='[视频]';
 	}elseif($row['m_type']==1){
-		$rs=$dsql->getOne("select tid,n_id,n_title from sea_news where n_id=".$row['v_id']);		
+		$rs=$dsql->getOne("select tid,n_id,n_title from sea_news where n_id=".$row['v_id']);
 		$clink=getArticleLink($rs['tid'],$rs['n_id'],'');
 		$cname=$rs['n_title'];
 		$ctype='[新闻]';
@@ -1538,16 +1526,16 @@ elseif($action=='Rc')
 	$row=$dsql->getOne("select count(id) as dd from sea_comment where reply in($row_all_id_str)");
 	$rcount=$row['dd'];
 	//echo($rcount); die;//所有回复评论数量
-	$page_count = ceil($rcount/$pcount); 
-	if(empty($_GET['page'])||$_GET['page']<0){ 
-	$page=1; 
-	}else { 
-	$page=$_GET['page']; 
+	$page_count = ceil($rcount/$pcount);
+	if(empty($_GET['page'])||$_GET['page']<0){
+	$page=1;
+	}else {
+	$page=$_GET['page'];
 	}
-	$select_limit = $pcount; 
-	$select_from = ($page - 1) * $pcount.','; 
-	$pre_page = ($page == 1)? 1 : $page - 1; 
-	$next_page= ($page == $page_count)? $page_count : $page + 1 ; 
+	$select_limit = $pcount;
+	$select_from = ($page - 1) * $pcount.',';
+	$pre_page = ($page == 1)? 1 : $page - 1;
+	$next_page= ($page == $page_count)? $page_count : $page + 1 ;
 	$dsql->setQuery("select * from sea_comment  where reply in($row_all_id_str) ORDER BY dtime DESC limit ".($page-1)*$pcount.",$pcount");
 	$dsql->Execute('clist');
 	echo <<<EOT
@@ -1602,7 +1590,7 @@ if($cfg_feedback_ck=='1')
 ?>
 <script>
 function check() {
-	<?php 
+	<?php
 	if($cfg_feedback_ck=='1'){
 	echo 'if(document.getElementById("vdcode").value.length<1){alert("验证码必须填写");return false;}';}
 	?>
@@ -1630,7 +1618,7 @@ var showR=function (rid,rvid,rmtype) {
 		$cname=$rs['v_name'];
 		$ctype='[视频]';
 	}elseif($row['m_type']==1){
-		$rs=$dsql->getOne("select tid,n_id,n_title from sea_news where n_id=".$row['v_id']);		
+		$rs=$dsql->getOne("select tid,n_id,n_title from sea_news where n_id=".$row['v_id']);
 		$clink=getArticleLink($rs['tid'],$rs['n_id'],'');
 		$cname=$rs['n_title'];
 		$ctype='[新闻]';
@@ -1758,16 +1746,16 @@ elseif($action=='err')
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_erradd where author='$uname'");
 	$rcount=$row['dd'];
-	$page_count = ceil($rcount/$pcount); 
-	if(empty($_GET['page'])||$_GET['page']<0){ 
-	$page=1; 
-	}else { 
-	$page=$_GET['page']; 
+	$page_count = ceil($rcount/$pcount);
+	if(empty($_GET['page'])||$_GET['page']<0){
+	$page=1;
+	}else {
+	$page=$_GET['page'];
 	}
-	$select_limit = $pcount; 
-	$select_from = ($page - 1) * $pcount.','; 
-	$pre_page = ($page == 1)? 1 : $page - 1; 
-	$next_page= ($page == $page_count)? $page_count : $page + 1 ; 
+	$select_limit = $pcount;
+	$select_from = ($page - 1) * $pcount.',';
+	$pre_page = ($page == 1)? 1 : $page - 1;
+	$next_page= ($page == $page_count)? $page_count : $page + 1 ;
 	$dsql->setQuery("select * from sea_erradd where author='$uname' ORDER BY sendtime DESC limit ".($page-1)*$pcount.",$pcount");
 	$dsql->Execute('clist');
 	echo <<<EOT
@@ -1817,7 +1805,7 @@ elseif($action=='err')
 EOT;
 	while($row=$dsql->getArray('clist'))
 {
-	$rs=$dsql->getOne("select * from sea_data where v_id=".$row['vid']);	
+	$rs=$dsql->getOne("select * from sea_data where v_id=".$row['vid']);
 	echo '<div class="panel panel-info"><div class="panel-heading" style="padding-top:7px;height:30px;font-size: 12px;">';
 	echo '<span style="float:right;">'.MyDate('',$row['sendtime']).' <a title="删除" href=javascript:if(confirm("确定要删除吗?"))location="?action=del_err&id='.$row['id'].'"><i class="icon iconfont icon-delete" style="color:#688faf;font-size:12px;">删除</i></a></span><span style="float:left;"><a target="_blank" style="color: #31708f;" href="'.getContentLink($rs['tid'],$rs['v_id'],"",date('Y-n',$rs['v_addtime']),$rs['v_enname']).'">'.cn_substrR($rs['v_name'],30).'</a></span>';
 	echo '</div><div class="panel-body pspan">';
