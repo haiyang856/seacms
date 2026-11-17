@@ -212,11 +212,7 @@ class DB_MySQL
 	
 	function realescape($string)
 	{
-		if(get_magic_quotes_gpc())
-		{
-			$string = stripslashes($string);
-		}
-		return mysqli_real_escape_string($this->linkID,$string);	
+		return mysqli_real_escape_string($this->linkID, $string);
 	}
 
 	function ExecNoneQuery($sql='')

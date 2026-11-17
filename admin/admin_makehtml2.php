@@ -86,7 +86,7 @@ function makeTypeOptionSelected_Multiple($topId,$separateStr,$span="",$compareVa
 {
 	$tlist=getTypeListsOnCache($tptype);
 	if ($topId!=0){$span.=$separateStr;}else{$span="";}
-	$ids_arr = split('[,]',$compareValue);
+	$ids_arr = explode(',',$compareValue);
 	foreach($tlist as $row)
 	{
 		
@@ -119,7 +119,7 @@ function makeTypeOptionSelected_Jq($topId,$separateStr,$span="",$compareValue,$t
 {
 	$tlist=getjqTypeListsOnCache($tptype);
 	if ($topId!=0){$span.=$separateStr;}else{$span="";}
-	$ids_arr = split('[,]',$compareValue);
+	$ids_arr = explode(',',$compareValue);
 	foreach($tlist as $row)
 	{
 		
@@ -168,7 +168,7 @@ function downSinglePic($picUrl,$vid,$vname,$filePath,$infotype)
 		return false;
 	}
 	$fileext=getFileFormat($filePath);
-	$ps=split("/",$picUrl);
+	$ps=explode('/',$picUrl);
 	$filename=urldecode($ps[count($ps)-1]);
 	if ($fileext!="" && strpos("|.jpg|.gif|.png|.bmp|.jpeg|.webp|",strtolower($fileext))>0){
 		if(!(strpos($picUrl,".d32dsf3fdsf3432ds2dsdf3dsdf23k0dak0poidas.com/")>0)){

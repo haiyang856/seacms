@@ -240,15 +240,8 @@ class POP3 {
 
     //  Increase the stream time-out
 
-    //  Check for PHP 4.3.0 or later
-    if (version_compare(phpversion(), '5.0.0', 'ge')) {
-      stream_set_timeout($this->pop_conn, $tval, 0);
-    } else {
-      //  Does not work on Windows
-      if (substr(PHP_OS, 0, 3) !== 'WIN') {
-        socket_set_timeout($this->pop_conn, $tval, 0);
-      }
-    }
+    //  stream_set_timeout 自 PHP 4.3 起可用,统一使用
+    stream_set_timeout($this->pop_conn, $tval, 0);
 
     //  Get the POP3 server response
     $pop3_response = $this->getResponse();

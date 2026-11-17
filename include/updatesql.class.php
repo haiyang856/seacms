@@ -86,16 +86,13 @@ class DBManager
    
     private function saveByQuery($sqlArray)
     {
-        $conn = mysql_connect($this->dbHost,$this->dbUser,$this->dbPassword);
-       
-        my_select_db($conn,$this->dbSchema);
-       
-        foreach($sqlArray as $sql)
-        {
-			$sql = str_replace('sea_',$this->prefix,$sql);
-            mysql_query($sql);
-        }       
-        mysql_close($conn);
+        $conn = mysqli_connect($this->dbHost, $this->dbUser, $this->dbPassword, $this->dbSchema);
+
+        foreach ($sqlArray as $sql) {
+            $sql = str_replace('sea_', $this->prefix, $sql);
+            mysqli_query($conn, $sql);
+        }
+        mysqli_close($conn);
     }
    
 }

@@ -15,14 +15,6 @@ header("Content-Type: text/html; charset={$s_lang}");
 require_once(sea_ROOT.'/install/install.inc.php');
 require_once(sea_INC.'/common.file.func.php');
 
-if(PHP_VERSION < '4.1.0') {
-	$_GET = &$HTTP_GET_VARS;
-	$_POST = &$HTTP_POST_VARS;
-	$_COOKIE = &$HTTP_COOKIE_VARS;
-	$_SERVER = &$HTTP_SERVER_VARS;
-	$_ENV = &$HTTP_ENV_VARS;
-	$_FILES = &$HTTP_POST_FILES;
-}
 foreach(Array('_GET','_POST','_COOKIE') as $_request)
 {
 	 foreach($$_request as $_k => $_v) ${$_k} = RunMagicQuotes($_v);

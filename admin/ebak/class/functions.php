@@ -220,10 +220,6 @@ function make_password($pw_length){
 	$notuse=array(58,59,60,61,62,63,64,73,79,91,92,93,94,95,96,108,111);
 	while($i<$pw_length)
 	{
-		if(PHP_VERSION<'4.2.0')
-		{
-			mt_srand((double)microtime()*1000000);
-		}
 		$randnum=mt_rand($low_ascii_bound,$upper_ascii_bound);
 		if(!in_array($randnum,$notuse))
 		{
@@ -241,10 +237,6 @@ function make_password_zm($pw_length){
 	$notuse=array(58,59,60,61,62,63,64,73,79,91,92,93,94,95,96,108,111);
 	while($i<$pw_length)
 	{
-		if(PHP_VERSION<'4.2.0')
-		{
-			mt_srand((double)microtime()*1000000);
-		}
 		$randnum=mt_rand($low_ascii_bound,$upper_ascii_bound);
 		if(!in_array($randnum,$notuse))
 		{

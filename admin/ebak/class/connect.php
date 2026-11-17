@@ -1,13 +1,12 @@
 <?php 
 error_reporting(0);
-if(PHP_VERSION<'5.3.0')
-{
-	@set_magic_quotes_runtime(0);
-}
+
+// PHP 8 çŽ¯å¢ƒ:åŠ è½½ mysqli å®žçŽ°çš„ mysql_* å…¼å®¹å±‚
+require_once(dirname(__FILE__) . '/mysql8_compat.php');
 
 define('InEmpireBak',TRUE);
 define('EBAK_PATH',substr(dirname(__FILE__),0,-5));
-define('MAGIC_QUOTES_GPC',function_exists('get_magic_quotes_gpc')&&@get_magic_quotes_gpc());
+define('MAGIC_QUOTES_GPC', false);
 
 $php_outtime=0;
 $editor=0;
@@ -47,7 +46,7 @@ if(!defined('EmpireBakConfig'))
 
 Ebak_CheckUserAgent();
 
-//³¬Ê±ÉèÖÃ
+//ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
 if($php_outtime)
 {
 	$php_outtime=(int)$php_outtime;
@@ -89,7 +88,7 @@ if(!defined('EmpireBakSetPage'))
 	$ebak_set_selfserverid=$ebak_set_selfserver_r['serverid'];
 }
 
-//Êý¾Ý¿â
+//ï¿½ï¿½ï¿½Ý¿ï¿½
 function eDbConnectError(){
 	global $editor,$fun_r;
 	if(empty($fun_r['ConntConnectDb']))
@@ -110,7 +109,7 @@ function db_connect(){
 	return $dblink;
 }
 
-//ÉèÖÃ±àÂë
+//ï¿½ï¿½ï¿½Ã±ï¿½ï¿½ï¿½
 function DoSetDbChar($dbchar){
 	if($dbchar&&$dbchar!='auto')
 	{
@@ -128,13 +127,13 @@ function db_close(){
 	do_dbclose();
 }
 
-//È¡µÃmysql°æ±¾
+//È¡ï¿½ï¿½mysqlï¿½æ±¾
 function Ebak_GetMysqlVerForDb($selectdb=0){
 	$getdbver=do_eGetDBVer($selectdb);
 	return Ebak_ReturnMysqlVer($getdbver);
 }
 
-//·µ»Ømysql°æ±¾
+//ï¿½ï¿½ï¿½ï¿½mysqlï¿½æ±¾
 function Ebak_ReturnMysqlVer($dbver){
 	if(empty($dbver))
 	{
@@ -159,34 +158,34 @@ function Ebak_ReturnMysqlVer($dbver){
 	return $dbver;
 }
 
-//·µ»ØcookieÇ°×º
+//ï¿½ï¿½ï¿½ï¿½cookieÇ°×º
 function Ebak_ReturnCookieVarPre($ecms=0){
 	global $phome_cookievarpre;
 	$varpre=empty($ecms)?$phome_cookievarpre:'qebak_';
 	return $varpre;
 }
 
-//ÉèÖÃCOOKIE
+//ï¿½ï¿½ï¿½ï¿½COOKIE
 function esetcookie($var,$val,$life=0,$ecms=0){
 	global $phome_cookiedomain,$phome_cookiepath,$phome_cookievarpre;
 	$varpre=Ebak_ReturnCookieVarPre($ecms);
 	return setcookie($varpre.$var,$val,$life,$phome_cookiepath,$phome_cookiedomain);
 }
 
-//·µ»Øcookie
+//ï¿½ï¿½ï¿½ï¿½cookie
 function getcvar($var,$ecms=0){
 	global $phome_cookievarpre;
 	$tvar=Ebak_ReturnCookieVarPre($ecms).$var;
 	return $_COOKIE[$tvar];
 }
 
-//µ¼ÈëÓïÑÔ°ü
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô°ï¿½
 function LoadLang($file){
 	global $ebaklang;
 	return "lang/gbutf8/pub/".$file;
 }
 
-//²ÎÊý´¦Àíº¯Êý
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 function RepPostVar($val){
 	$val=str_replace(" ","",$val);
 	$val=str_replace("'","",$val);
@@ -195,19 +194,19 @@ function RepPostVar($val){
 	return $val;
 }
 
-//µ¼ÈëÄ£°å
+//ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
 function LoadAdminTemp($file){
 	global $ebaklang;
 	return "lang/gbutf8/temp/".$file;
 }
 
-//Ê¹ÓÃ±àÂë
+//Ê¹ï¿½Ã±ï¿½ï¿½ï¿½
 function HeaderIeChar(){
 	global $ebaklangchar;
 	@header('Content-Type: text/html; charset='.$ebaklangchar);
 }
 
-//·µ»ØÓïÑÔ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 function ReturnUseEbakLang(){
 	global $langcharr;
 	$loginlangid=(int)getcvar('loginlangid',1);
@@ -225,7 +224,7 @@ function ReturnUseEbakLang(){
 	return $r;
 }
 
-//·µ»ØÊ¹ÓÃµÄ·þÎñÆ÷
+//ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ÃµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½
 function Ebak_ReturnUseMoreDbServer($serverid=0){
 	global $ebak_set_moredbserver;
 	$ret_r=array();
@@ -264,7 +263,7 @@ function Ebak_ReturnUseMoreDbServer($serverid=0){
 	return $ret_r;
 }
 
-//·µ»ØÊ¹ÓÃµÄ·þÎñÆ÷
+//ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ÃµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½
 function Ebak_SetUseMoreDbServer(){
 	global $phome_db_ver,$phome_db_server,$phome_db_port,$phome_db_username,$phome_db_password,$phome_db_dbname,$baktbpre,$phome_db_char;
 	$dbr=array();
@@ -291,7 +290,7 @@ function Ebak_SetUseMoreDbServer(){
 	return $dbr;
 }
 
-//·µ»Ø¶àÊý¾Ý¿â·þÎñÆ÷ÁÐ±í
+//ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
 function Ebak_ReturnMoreDbServerList($selfserverid){
 	global $ebak_set_moredbserver;
 	if(empty($ebak_set_moredbserver))
@@ -331,7 +330,7 @@ function Ebak_ReturnMoreDbServerList($selfserverid){
 	return $dbservers;
 }
 
-//Ê¶±ðmysql½Ó¿Ú(0¶¼²»Ö§³Ö,1Ö§³Ömysql,2Ö§³Ömysqli,3¶¼Ö§³Ö)
+//Ê¶ï¿½ï¿½mysqlï¿½Ó¿ï¿½(0ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½,1Ö§ï¿½ï¿½mysql,2Ö§ï¿½ï¿½mysqli,3ï¿½ï¿½Ö§ï¿½ï¿½)
 function Ebak_ReturnMysqlConnectType(){
 	$no=0;
 	if(function_exists('mysql_connect'))
@@ -345,7 +344,7 @@ function Ebak_ReturnMysqlConnectType(){
 	return $no;
 }
 
-//ÊÇ·ñ¹Ø±Õ
+//ï¿½Ç·ï¿½Ø±ï¿½
 function Ebak_CheckCloseEbakSys(){
 	if(file_exists(EBAK_PATH.'closesys/empirebak.off'))
 	{
@@ -354,7 +353,7 @@ function Ebak_CheckCloseEbakSys(){
 	}
 }
 
-//ÑéÖ¤agentÐÅÏ¢
+//ï¿½ï¿½Ö¤agentï¿½ï¿½Ï¢
 function Ebak_CheckUserAgent(){
 	global $ebak_set_ckuseragent;
 	if(empty($ebak_set_ckuseragent))
@@ -378,7 +377,7 @@ function Ebak_CheckUserAgent(){
 	}
 }
 
-//ÉèÖÃÑéÖ¤Âë
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½
 function Ebak_SetShowKey($varname,$val){
 	global $ebak_set_ckrndvalthree;
 	$time=time();
@@ -387,7 +386,7 @@ function Ebak_SetShowKey($varname,$val){
 	esetcookie($varname,$key,0,1);
 }
 
-//¼ì²éÑéÖ¤Âë
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½
 function Ebak_CheckShowKey($varname,$postval){
 	global $ebak_set_ckrndvalthree,$ebak_set_keytime;
 	$r=explode(',',getcvar($varname,1));
@@ -410,12 +409,12 @@ function Ebak_CheckShowKey($varname,$postval){
 	}
 }
 
-//Çå¿ÕÑéÖ¤Âë
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ö¤ï¿½ï¿½
 function Ebak_EmptyShowKey($varname){
 	esetcookie($varname,'',0,1);
 }
 
-//·µ»Øµ±Ç°ÓòÃû
+//ï¿½ï¿½ï¿½Øµï¿½Ç°ï¿½ï¿½ï¿½ï¿½
 function Ebak_eReturnDomain(){
 	$domain=$_SERVER['HTTP_HOST'];
 	if(empty($domain))
@@ -425,7 +424,7 @@ function Ebak_eReturnDomain(){
 	return (Ebak_eCheckUseHttps()==1?'https://':'http://').$domain;
 }
 
-//ÑéÖ¤ÊÇ·ñÊ¹ÓÃhttps
+//ï¿½ï¿½Ö¤ï¿½Ç·ï¿½Ê¹ï¿½ï¿½https
 function Ebak_eCheckUseHttps(){
 	if($_SERVER['SERVER_PORT']==443)
 	{
@@ -437,7 +436,7 @@ function Ebak_eCheckUseHttps(){
 	}
 }
 
-//·µ»ØµÚËÄËæ»úÂë
+//ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 function Ebak_ReturnFourCheckRnd(){
 	global $set_username,$ebak_set_ckrndvalfour;
 	$fourcheck=md5($ebak_set_ckrndvalfour.'!E-b-A-k!'.$set_username);

@@ -6,14 +6,6 @@ define('sea_ROOT', preg_replace("|[/\\\]{1,}|",'/',substr(sea_INC,0,-8) ) );
 define('sea_DATA', sea_ROOT.'/data');
 require_once(sea_INC.'/inc/mysql.php' );
 require_once(sea_INC."/filter.inc.php");
-if(PHP_VERSION < '4.1.0') {
-	$_GET = &$HTTP_GET_VARS;
-	$_POST = &$HTTP_POST_VARS;
-	$_COOKIE = &$HTTP_COOKIE_VARS;
-	$_SERVER = &$HTTP_SERVER_VARS;
-	$_ENV = &$HTTP_ENV_VARS;
-	$_FILES = &$HTTP_POST_FILES;
-}
 $starttime = microtime();
 require_once(sea_INC.'/common.func.php');
 //检查和注册外部提交的变量
@@ -154,16 +146,13 @@ if($isMobile){$GLOBALS['isMobile']=1;}else{$GLOBALS['isMobile']=0;}
 
 function _RunMagicQuotes(&$svar)
 {
-	if(!get_magic_quotes_gpc())
-	{
-		if( is_array($svar) )
-		{
-			foreach($svar as $_k => $_v) $svar[$_k] = _RunMagicQuotes($_v);
+	// PHP 8 已移除 magic_quotes,统一做转义以保持原有数据流行为
+	if (is_array($svar)) {
+		foreach ($svar as $_k => $_v) {
+			$svar[$_k] = _RunMagicQuotes($_v);
 		}
-		else
-		{
-			$svar = addslashes($svar);
-		}
+	} else {
+		$svar = addslashes($svar);
 	}
 	return $svar;
 }

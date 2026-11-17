@@ -3,19 +3,6 @@ error_reporting(0);
 session_start();
 require_once(__DIR__.'/include/gpc.filter.php');
   
-function stripslashes_array(&$array) {  
-while(list($key,$var) = each($array)) {  
-    if ($key != 'argc' && $key != 'argv' && (strtoupper($key) != $key || ''.intval($key) == "$key")) {  
-      if (is_string($var)) {  
-         $array[$key] = lib_replace_end_tag($var);  
-}  
-if (is_array($var))  {  
-     $array[$key] = stripslashes_array($var);  
-}  
-}  
-}  
-return $array;  
-} 
 
 
 
