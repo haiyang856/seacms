@@ -33,7 +33,14 @@ if(empty($step))
 
 $PHP_SELF = $_SERVER['PHP_SELF'] ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
 
-$bbserver = 'http://'.preg_replace("/\:\d+/", '', $_SERVER['HTTP_HOST']).($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] != 80 ? ':'.$_SERVER['SERVER_PORT'] : '');
+// 协议检测:优先依据 HTTPS/REQUEST_SCHEME,兼容反向代理场景
+$isHttps = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+    || (isset($_SERVER['REQUEST_SCHEME']) && strtolower($_SERVER['REQUEST_SCHEME']) === 'https')
+    || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+$siteScheme = $isHttps ? 'https' : 'http';
+// 主机名:HTTP_HOST 由浏览器请求头提供,FPM 下 SERVER_NAME 可能为空或占位值,故优先 HTTP_HOST
+$siteHost = !empty($_SERVER['HTTP_HOST']) ? preg_replace("/[^A-Za-z0-9\.\:\-]/", '', $_SERVER['HTTP_HOST']) : $_SERVER['SERVER_NAME'];
+$bbserver = $siteScheme.'://'.$siteHost;
 $default_ucapi = $bbserver.'/ucenter';
 $default_appurl = $bbserver.substr($PHP_SELF, 0, strpos($PHP_SELF, 'install/') - 1);
 
@@ -110,13 +117,13 @@ else if($step==3)
 
   $basepath = m_eregi_replace('install(.*)$','',$scriptName);
   $basepath = ltrim($basepath,'/');
-  if(empty($_SERVER['HTTP_HOST']))
+  if(!empty($_SERVER['HTTP_HOST']))
   {
-  	$baseurl = 'http://'.$_SERVER['HTTP_HOST'];
+  	$baseurl = $siteScheme.'://'.$_SERVER['HTTP_HOST'];
   }
   else
   {
-  	$baseurl = "http://".$_SERVER['SERVER_NAME'];
+  	$baseurl = $siteScheme.'://'.$_SERVER['SERVER_NAME'];
   }
 
   $rnd_cookieEncode = chr(mt_rand(ord('A'),ord('Z'))).chr(mt_rand(ord('a'),ord('z'))).chr(mt_rand(ord('A'),ord('Z'))).chr(mt_rand(ord('A'),ord('Z'))).chr(mt_rand(ord('a'),ord('z'))).mt_rand(1000,9999).chr(mt_rand(ord('A'),ord('Z')));
