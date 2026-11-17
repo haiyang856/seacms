@@ -3511,29 +3511,64 @@ class MainClass_Template {
 		}
 	}
 	function parseStrIf($strIf) {
-		if (strpos ( $strIf, '=' ) === false) {
-			return $strIf;
-		}
 		if ((strpos ( $strIf, '==' ) === false) && (strpos ( $strIf, '=' ) > 0)) {
 			$strIf = str_replace ( '=', '==', $strIf );
 		}
-		if (strpos ( $strIf, '{' ) > 0) {
-			$strIf = str_replace ( '{', '', $strIf );
-		}
-		if (strpos ( $strIf, '}' ) > 0) {
-		$strIf = str_replace ( '}', '', $strIf );
-		}
-		if (strpos ( $strIf, ':' ) > 0) {
-			$strIf = str_replace ( ':', '', $strIf );
-		}
-		if (strpos ( $strIf, '[' ) > 0) {
-			$strIf = str_replace ( '[', '', $strIf );
-		}
-		if (strpos ( $strIf, ']' ) > 0) {
-			$strIf = str_replace ( ']', '', $strIf );
+		// 剥离模板标签符号,统一在所有路径上执行
+		$strIf = str_replace ( array ( '{', '}', ':', '[', ']' ), '', $strIf );
+		if (strpos ( $strIf, '==' ) === false) {
+			return $this->quoteBareIdents ( $strIf );
 		}
 		$strIfArr = explode ( '==', $strIf );
-		return (empty ( $strIfArr [0] ) ? 'NULL' : $strIfArr [0]) . "==" . (empty ( $strIfArr [1] ) ? 'NULL' : $strIfArr [1]);
+		return $this->quoteBareIdents ( $strIfArr [0] ) . "==" . $this->quoteBareIdents ( isset ( $strIfArr [1] ) ? $strIfArr [1] : '' );
+	}
+	/**
+	 * PHP 8 兼容:模板 {if:} 条件中的裸标识符在 PHP 7 中被当作同名字符串处理,
+	 * PHP 8 起未定义常量为致命错误。此处为裸词自动加引号,复刻 PHP 7 语义。
+	 */
+	function quoteBareIdents($expr) {
+		$expr = ( string ) $expr;
+		if ( $expr === '' ) return 'NULL';
+		$keywords = array ( 'true', 'false', 'null', 'and', 'or', 'xor', 'not', 'empty', 'isset', 'array', 'in_array', 'count', 'intval', 'floatval', 'strval', 'defined', 'date', 'time', 'trim' );
+		$out = '';
+		$i = 0;
+		$n = strlen ( $expr );
+		while ( $i < $n ) {
+			$c = $expr [$i];
+			if ( $c === "'" || $c === '"' ) {
+				$q = $c;
+				$out .= $c;
+				$i++;
+				while ( $i < $n ) {
+					if ( $expr [$i] === '\\' && $i + 1 < $n ) {
+						$out .= $expr [$i] . $expr [$i + 1];
+						$i += 2;
+						continue;
+					}
+					$out .= $expr [$i];
+					$isEnd = ( $expr [$i] === $q );
+					$i++;
+					if ( $isEnd ) break;
+				}
+				continue;
+			}
+			if ( preg_match ( '/[A-Za-z_]/', $c ) && ! preg_match ( '/(?:\$|->|::)$/', $out ) ) {
+				if ( preg_match ( '/^[A-Za-z_][A-Za-z0-9_]*/', substr ( $expr, $i ), $m ) ) {
+					$word = $m [0];
+					$after = substr ( $expr, $i + strlen ( $word ) );
+					if ( in_array ( strtolower ( $word ), $keywords, true ) || preg_match ( '/^\s*\(/', $after ) ) {
+						$out .= $word;
+					} else {
+						$out .= "'" . $word . "'";
+					}
+					$i += strlen ( $word );
+					continue;
+				}
+			}
+			$out .= $c;
+			$i++;
+		}
+		return $out;
 	}
 	function parseIf($content) {
 		if (strpos ( $content, '{if:' ) === false) {
@@ -3606,6 +3641,7 @@ class MainClass_Template {
 					if (strpos ( $strElseIf0, ':' ) > 0)$strElseIf0 = str_replace ( ':', '', $strElseIf0 );
 					if (strpos ( $strElseIf0, '[' ) > 0)$strElseIf0 = str_replace ( '[', '', $strElseIf0 );
 					if (strpos ( $strElseIf0, ']' ) > 0)$strElseIf0 = str_replace ( ']', '', $strElseIf0 );
+					$strElseIf0 = $this->quoteBareIdents ( $strElseIf0 );
 					@eval ( "if(" . $strElseIf0 . "){\$resultStr=\"$strElseIfThen0\";\$elseIfFlag=true;}" );
 					$content = str_replace ( $iar [0] [$m], $resultStr, $content );
 				}
