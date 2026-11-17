@@ -1,0 +1,10 @@
+# data 目录包含数据库配置、缓存与备份,禁止一切 Web 访问
+# 程序均通过文件系统读取本目录,不依赖 HTTP 访问
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order Deny,Allow
+    Deny from all
+</IfModule>

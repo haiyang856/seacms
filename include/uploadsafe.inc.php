@@ -9,7 +9,7 @@ if(isset($_FILES['GLOBALS']))
 }
 //为了防止用户通过注入的可能性改动了数据库
 //这里强制限定的某些文件类型禁止上传
-$cfg_not_allowall = "php|pl|cgi|asp|asa|cer|aspx|jsp|php3|shtm|shtml|htm|html";
+$cfg_not_allowall = "php|pl|cgi|asp|asa|cer|aspx|jsp|php3|php4|php5|php7|php8|phtml|pht|phar|shtm|shtml|htm|html|htaccess|htpasswd|js|css";
 $imtypes = array("image/pjpeg", "image/jpeg", "image/gif", "image/png", "image/xpng", "image/wbmp", "image/bmp");
 $keyarr = array('name','type','tmp_name','size');
 $fskey=array('(',')','<','>','%','0x','|',';','{','}','$','&','*','#','@','[',']');
