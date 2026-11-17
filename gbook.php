@@ -180,6 +180,8 @@ function viewMain(){
 }
 
 function viewLeaveWord(){
+	$uname = '';
+	$userid = 0;
 	if(!empty($_SESSION['sea_user_name']))
 	{
 		$uname=$_SESSION['sea_user_name'];
@@ -206,12 +208,14 @@ function viewLeaveWord(){
 		"<input type=\"submit\"  value=\"提交留言\" class=\"sea_main_11\"/></div>".
 	"</div></div></form>".
 	"</div></div></div>".
-	"<div class=\"sea_main_12\">".leaveWordList($_GET['page'])."</div><script type=\"text/javascript\" src=\"js/base.js\"></script>";
+	"<div class=\"sea_main_12\">".leaveWordList(isset($_GET['page'])?$_GET['page']:1)."</div><script type=\"text/javascript\" src=\"js/base.js\"></script>";
 	return $mystr;
 }
 
 //开启验证码
 function viewLeaveWord2(){
+	$uname = '';
+	$userid = 0;
 	if(!empty($_SESSION['sea_user_name']))
 	{
 		$uname=$_SESSION['sea_user_name'];
@@ -238,7 +242,7 @@ function viewLeaveWord2(){
 		 	"<img id=\"vdimgck\" src=\"include/vdimgck.php\" alt=\"看不清？点击更换\"  align=\"absmiddle\"  style=\"cursor:pointer;display:none;\" onClick=\"this.src=this.src+'?get=' + new Date()\"/>&nbsp;<input name=\"validate\" type=\"text\" placeholder=\"验证码\" class=\"sea_main_9\" id=\"vdcode\" style=\"text-transform:uppercase;\" onClick=\"document.getElementById('vdimgck').style.display='inline';\" tabindex=\"3\"/>&nbsp;<input type=\"submit\"  value=\"提交留言\" class=\"sea_main_11\"/> </div>".
 	"</div></div></form>".
 	"</div></div></div>".
-	"<div class=\"sea_main_12\">".leaveWordList($_GET['page'])."</div><script type=\"text/javascript\" src=\"js/base.js\"></script>";
+	"<div class=\"sea_main_12\">".leaveWordList(isset($_GET['page'])?$_GET['page']:1)."</div><script type=\"text/javascript\" src=\"js/base.js\"></script>";
 	return $mystr;
 }
 function leaveWordList($currentPage){
@@ -274,7 +278,7 @@ function leaveWordList($currentPage){
 	$iiii=$iii+1;
 	$picsql = "Select pic From `sea_member` where username='$row->uname'";
 	$picrow = $dsql->GetOne($picsql);
-	if($picrow['pic']==""){$pic='uploads/user/a.png';}else{$pic=$picrow['pic'];}
+	if(is_array($picrow) && isset($picrow['pic']) && $picrow['pic']!=""){$pic=$picrow['pic'];}else{$pic='uploads/user/a.png';}
 	$txt.="<li class=\"sea_pannel\"><div class=\"sea_pannel-box\"><div class=\"sea_c-pd\"><div class=\"sea_topwords\"><span class=\"sea_text-name\"><img class=\"sea_face\" src=\"/".$pic."\">".$row->uname."</span><span class=\"sea_text-muted\">发表于 ".MyDate('',$row->dtime)."</span><span class=\"sea_text-red\">#".$iiii."</span></div><div class=\"sea_top-line\">".showFace($row->msg)."</div></div></div></li>";
 	//$i--;
 	}
