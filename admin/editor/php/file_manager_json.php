@@ -66,7 +66,7 @@ $file_list = array();
 if ($handle = opendir($current_path)) {
 	$i = 0;
 	while (false !== ($filename = readdir($handle))) {
-		if ($filename{0} == '.') continue;
+		if ($filename[0] == '.') continue;
 		$file = $current_path . $filename;
 		if (is_dir($file)) {
 			$file_list[$i]['is_dir'] = true; //是否文件夹

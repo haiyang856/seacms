@@ -1508,12 +1508,12 @@ function cnSubStr($string,$sublen)
 	$s=""; 
 	for($i=0;$i<$sublen;$i++) 
 	{ 
-		if(ord($string{$i})>127) 
+		if(ord($string[$i])>127) 
 		{ 
-			$s.=$string{$i}.$string{++$i}; 
+			$s.=$string[$i].$string[++$i]; 
 			continue; 
 		}else{ 
-			$s.=$string{$i}; 
+			$s.=$string[$i]; 
 			continue; 
 		} 
 	} 
