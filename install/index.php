@@ -51,6 +51,7 @@ if($step==1)
 
 else if($step==2)
 {
+	 $nondirect = 0;
 	 $phpv = phpversion();
 	 $sp_os = PHP_OS;
 	 //$sp_gd = gdversion();
@@ -129,17 +130,35 @@ else if($step==4)
 {
   @include sea_DATA.'/config.ucenter.php';
   $configfile = sea_DATA.'/config.ucenter.php';
-  $handle = fopen($configfile,'r');
-  $configstr = fread($handle,filesize($configfile));
-  $configstr = trim($configstr);
-  $configstr = substr($configstr, -2) == '?>' ? substr($configstr, 0, -2) : $configstr;
-  fclose($handle);
-  $configstr = str_replace("define('INTEG_UC', ".addslashes(INTEG_UC).")", "define('INTEG_UC', ".$inuc.")", $configstr);
-  $fp = fopen($configfile,'w');
-  flock($fp,3);
-  fwrite($fp,$configstr);
-  fclose($fp);
+  // PHP 8 兼容:文件不存在或为空时不能 fread(0),改为直接写入默认内容
+  $inuc = isset($inuc) ? (is_numeric($inuc) ? intval($inuc) : 0) : 0;
+  if (!file_exists($configfile) || filesize($configfile) == 0) {
+      $configstr = "<?php\r\n//UCenter 整合开关\r\ndefine('INTEG_UC', " . $inuc . ");\r\n?>";
+      $fp = fopen($configfile, 'w');
+      flock($fp, LOCK_EX);
+      fwrite($fp, $configstr);
+      fclose($fp);
+  } else {
+      $handle = fopen($configfile,'r');
+      $configstr = fread($handle,filesize($configfile));
+      $configstr = trim($configstr);
+      $configstr = substr($configstr, -2) == '?>' ? substr($configstr, 0, -2) : $configstr;
+      fclose($handle);
+      $integUc = defined('INTEG_UC') ? INTEG_UC : 0;
+      $configstr = str_replace("define('INTEG_UC', ".addslashes($integUc).")", "define('INTEG_UC', ".$inuc.")", $configstr);
+      $fp = fopen($configfile,'w');
+      flock($fp,3);
+      fwrite($fp,$configstr);
+      fclose($fp);
+  }
   
+
+  // PHP 8:未经过 step=3 表单时引导回上一步,并关闭 mysqli 异常抛出以保留原有 or die 行为
+  if (!isset($dbhost, $dbuser, $dbpwd, $dbname, $dbport)) {
+      echo "<script>alert('请先完成数据库配置(步骤3)！');location.href='index.php?step=3';</script>";
+      exit();
+  }
+  mysqli_report(MYSQLI_REPORT_OFF);
 
   $conn = mysqli_connect($dbhost,$dbuser,$dbpwd,'',$dbport) or die("<script>alert('数据库服务器或登录密码无效，\\n\\n无法连接数据库，请重新设定！');history.go(-1);</script>");
 
