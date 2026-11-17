@@ -1,0 +1,1 @@
+<?php  $ai_open = "off"; $ai_provider = "deepseek"; $ai_api_url = "https://api.deepseek.com/v1"; $ai_api_key = " "; $ai_model = "deepseek-chat"; $ai_temperature = "0.7"; $ai_max_tokens = "800"; $ai_search_correct = "on";  ?>

@@ -1,0 +1,21 @@
+﻿a						{ text-decoration: none; color:#454545;font-size: 13px;}
+a:hover					{ font-size: 13px;text-decoration: underline }
+body					{ font-size: 13px;color:#454545 }
+table					{ font-size: 13px; }
+input,select	{ font-size: 13px;height:25px; }
+select					{ font-size: 13px;font-weight: normal; }
+.nav					{ font-size: 13px;color:#454545font-size: 13px; }
+.nav a					{ font-size: 13px;color:#454545}
+.header					{ font-size: 13px;color:#0099CC;; font-weight: bold; background-color: #e6f2fb }
+.header a				{font-size: 13px; color:#454545}
+.category				{ font-size: 13px; background-color: #ff0000;color:#454545; }
+.tableborder			{ background: #E0EEF5; } 
+.singleborder			{ font-size: 0px; line-height: 1px; padding: 0px; background-color: #ff0000 }
+.smalltxt				{ font-size: 13px;color:#454545 }
+.outertxt				{ font-size: 13px;color:#454545 }
+.outertxt a				{font-size: 13px; }
+.bold					{font-size: 13px;color:#454545}
+.hback {
+	background:#E0EEF5;font-size: 13px;
+}
+.bottom2{color:#454545;font-size: 13px;}

@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>后台管理中心</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="js/css/style.css" rel="stylesheet" type="text/css" />
+<link href="js/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="js/css/styles1.css" title="styles1" media="screen" />
+<style>
+.submit_btn{background: #00b7ee;}
+#ajax_result{padding: 10px;margin: 10px 0;border-radius: 4px;display:none;text-align: center;font-size: 14px;}
+.ajax_success{background-color: #dff0d8;color: #3c763d;border: 1px solid #d6e9c6;}
+.ajax_error{background-color: #f2dede;color: #a94442;border: 1px solid #ebccd1;}
+.loading{color: #666;background-color: #fff3cd;border: 1px solid #faebcc;}
+</style>
+
+<style type="text/css">
+  html,body{height: 100%;position: relative;background-color:#5fb878!important;background-image: linear-gradient(to right bottom, #0066CC , #5fb878)!important;}
+  .admin_login{box-shadow:0 0 15px #555555;}
+</style>
+</head>
+<body onload="javascript:document.formsearch.userid.focus();">
+  <div class="admin_login">
+    <form method="post" action="login.php" name="formsearch" id="formsearch">
+	 <input type="hidden" name="gotopage" value="<?php if(!empty($gotopage)) echo $gotopage;?>" />
+      	<input type="hidden" name="dopost" value="login" />
+    <div class="admin_title">
+       <strong>海洋<span style="color:#5FB878">CMS</span> 站点管理系统</strong>
+       <em>SeA Content Management System</em>
+    </div>
+    <div id="ajax_result"></div>
+    <div class="admin_user">
+       <input type="text" name="userid" placeholder="管理员账号" class="login_txt">
+    </div>
+    <div class="admin_pwd">
+       <input type="password" name="pwd" placeholder="管理员密码" class="login_txt">
+    </div>
+	
+	<?php $v=file_get_contents("../data/admin/adminvcode.txt"); ?>
+    <div class="admin_val" style="<?php if($v==0) echo 'display:none;'; ?>">
+       <input type="text" name="validate" placeholder="验证码" maxlength="4" class="login_txt left" style="text-transform:uppercase;">
+       <div id="yzm" class="right"><img id='code_img' onClick="this.src=this.src+'?get=' + new Date()" src='../include/vdimgck.php'></div>
+    </div>
+	
+    <div class="admin_sub">
+<?php
+//检测后台目录是否更名
+$cdir=strtolower($cdir);
+if($cdir=="/admin/login.php")
+{
+	echo '<font style="color: #c10f0f;font-weight: bold;font-size: 13px;">后台目录名不能是admin，请修改后重试！';
+}
+else
+{
+	echo '<input type="submit" value="立即登陆" class="submit_btn">';
+}
+?>
+    </div>
+    <div class="admin_info">
+        <p style="color: #555">POWER BY SEACMS</p>
+    </div>
+    </form>
+  </div>
+
+<script type="text/javascript">
+document.getElementById('formsearch').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    var userid = this.userid.value.trim();
+    var pwd = this.pwd.value.trim();
+    var validate = this.validate ? this.validate.value.trim() : '';
+    var gotopage = this.gotopage.value;
+    var dopost = 'login';
+    var resultDiv = document.getElementById('ajax_result');
+    
+    if(!userid) {
+        showResult('请输入管理员账号！', 'error');
+        return false;
+    }
+    
+    if(!pwd) {
+        showResult('请输入管理员密码！', 'error');
+        return false;
+    }
+    
+
+    
+    showResult('正在验证，请稍候...', 'loading');
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'login.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState === 4) {
+            if(xhr.status === 200) {
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    if(response.code === 1 || response.success === true) {
+                        showResult(response.msg || '登录成功，正在跳转...', 'success');
+                        setTimeout(function() {
+                            window.location.href = (response.data && response.data.url) ? response.data.url : 
+                                                   (gotopage && gotopage !== '' ? gotopage : 'index.php');
+                        }, 1000);
+                    } else {
+                        showResult(response.msg || '登录失败：' + (response.error || '未知错误'), 'error');
+                        refreshCode();
+                    }
+                } catch(e) {
+                    console.log('AJAX Response:', xhr.responseText);
+                    var responseText = xhr.responseText.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+                    if(responseText.length > 0) {
+                        showResult('服务器返回：' + responseText, 'error');
+                    } else {
+                        showResult('登录响应异常，请检查网络或联系管理员', 'error');
+                    }
+                    refreshCode();
+                }
+            } else {
+                showResult('网络错误（状态码：' + xhr.status + '），请检查网络连接后重试', 'error');
+                refreshCode();
+            }
+        }
+    };
+    
+    xhr.send('userid=' + encodeURIComponent(userid) + '&pwd=' + encodeURIComponent(pwd) + 
+             '&validate=' + encodeURIComponent(validate) + '&gotopage=' + encodeURIComponent(gotopage) + 
+             '&dopost=' + dopost);
+    
+    return false;
+});
+
+function showResult(message, type) {
+    var resultDiv = document.getElementById('ajax_result');
+    resultDiv.style.display = 'block';
+    resultDiv.className = '';
+    resultDiv.innerHTML = message;
+    
+    switch(type) {
+        case 'success':
+            resultDiv.classList.add('ajax_success');
+            break;
+        case 'error':
+            resultDiv.classList.add('ajax_error');
+            break;
+        case 'loading':
+            resultDiv.classList.add('loading');
+            break;
+    }
+}
+
+function refreshCode() {
+    var codeImg = document.getElementById('code_img');
+    if(codeImg) {
+        codeImg.src = codeImg.src.split('?')[0] + '?get=' + new Date().getTime();
+    }
+}
+</script>
+</body>
+</html>
