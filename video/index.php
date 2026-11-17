@@ -167,7 +167,7 @@ function echoPlay($vId)
 	$contentLink = getContentLink($vType,$vId,"",date('Y-n',$row['v_addtime']),$row['v_enname']);
 	$contentLink2 = getContentLink($vType,$vId,"link",date('Y-n',$row['v_addtime']),$row['v_enname']);
 	$currentTypeId=$vType;
-	$GLOBALS[tid]=$currentTypeId;
+	$GLOBALS['tid']=$currentTypeId;
 	$typeFlag = "parse_play_" ;
 	$cacheName = $typeFlag.$vType.$GLOBALS['cfg_mskin'].$GLOBALS['isMobile'];
 	if($cfg_iscache){
@@ -237,7 +237,7 @@ function echoPlay($vId)
 	$content=str_replace("{playpage:typeid}",$row['tid'],$content); 
 	$content=str_replace("{playpage:diggnum}",$row['v_digg'],$content);
 	$content=str_replace("{playpage:treadnum}",$row['v_tread'],$content);
-	$score=number_format($row[v_score]/$row[v_scorenum],1);
+	$score=number_format($row['v_score']/$row['v_scorenum'],1);
 	$content=str_replace("{playpage:score}",$score,$content);
 	$content=str_replace("{playpage:scorenum}",$row['v_score'],$content);
 	$content=str_replace("{playpage:scorenumer}",$row['v_scorenum'],$content);

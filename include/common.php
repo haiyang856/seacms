@@ -1,5 +1,5 @@
 <?php
-//error_reporting(0);
+error_reporting(1);
 require_once('webscan/webscan.php');
 define('sea_INC', preg_replace("|[/\\\]{1,}|",'/',dirname(__FILE__) ) );
 define('sea_ROOT', preg_replace("|[/\\\]{1,}|",'/',substr(sea_INC,0,-8) ) );

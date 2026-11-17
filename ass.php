@@ -12,12 +12,12 @@ $vid=intval($_GET['vid']);
 $vfrom=$_GET['vfrom'];
 $vpart=$_GET['vpart']+1;
 
-$sug=array('q'=>"",'p'=>false,s=>array(''));
+$sug=array('q'=>"",'p'=>false,'s'=>array(''));
 
 if($wd=='' && $url=='')
 {
-   $sug[p]=true;
-   $sug[q]="input error！";
+   $sug['p']=true;
+   $sug['q']="input error！";
    echo $cb."(".json_encode($sug).");" ;
    exit();
 }
@@ -26,12 +26,12 @@ $myObj = new SetQuerybyseacms();
 
 if($wd!=''){
 	
-	$sug[q]=$wd;
-	$sug[s]=$myObj->Querykey($wd,"v_name",10);
+	$sug['q']=$wd;
+	$sug['s']=$myObj->Querykey($wd,"v_name",10);
 	
 	}elseif($url!=''){
-	$sug[q]=$url;
-	$sug[s]=$myObj->Queryurl($vid,$vfrom,$vpart);
+	$sug['q']=$url;
+	$sug['s']=$myObj->Queryurl($vid,$vfrom,$vpart);
 	
 }
 

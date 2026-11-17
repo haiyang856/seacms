@@ -87,7 +87,7 @@ function cn_substr_utf8($str, $length, $start=0)
     return $str;
 }
 
-function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true){
+function msubstr($str, $start, $length, $charset="utf-8", $suffix=true){
 	$re['utf-8']   = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
 	$re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
 	$re['gbk']    = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
@@ -188,8 +188,8 @@ function ResetVdValue()
 function ExecTime()
 {
 	$time = explode(" ", microtime());
-	$usec = (double)$time[0];
-	$sec = (double)$time[1];
+	$usec = (float)$time[0];
+	$sec = (float)$time[1];
 	return $sec + $usec;
 }
 
@@ -817,7 +817,7 @@ function getPageLink($page=1,$pageListType='channel',$currentTypeId=0)
 	
 }
 
-function newsSubPageLinkInfo($currentPage=1,$pageListLen=10,$TotalPages=1,$currentTypeId,$videoId)
+function newsSubPageLinkInfo($currentPage, $pageListLen, $TotalPages, $currentTypeId, $videoId)
 {
 	$pageNumber=makePageNumber($currentPage,$pageListLen,$TotalPages,'newssubpage',$currentTypeId,$videoId);
 	if ($currentPage==1){
@@ -1321,7 +1321,7 @@ function getDownUrlList($url,$starget,$listyle='li',$linkstr=false){
 	return $urlStr;
 }
 
-function getDownUrlList2($url,$starget,$listyle='li',$k,$linkstr=false){
+function getDownUrlList2($url, $starget, $listyle, $k, $linkstr=false){
 	global $cfg_isalertwin;
 	if(empty($url)) return '';
 	if($starget!=""){

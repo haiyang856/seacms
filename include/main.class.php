@@ -351,7 +351,7 @@ class MainClass_Template {
 			return $content;
 		}
 	}
-	function parseSearchItemList($content, $str = "",$jqupid) {
+	function parseSearchItemList($content, $str, $jqupid) {
 		if (strpos ( $content, 'itemlist}' ) === false) {
 			return $content;
 		}
@@ -874,7 +874,7 @@ class MainClass_Template {
 		}
 		return $attrDictionary;
 	}
-	function parseNewsList($content, $currentTypeId = -444, $vtag) {
+	function parseNewsList($content, $currentTypeId, $vtag) {
 		if (strpos ( $content, '{seacms:newslist' ) === false) {
 			return $content;
 		} else {
@@ -1205,7 +1205,7 @@ class MainClass_Template {
 			return $content;
 		}
 	}
-	function parseVideoList($content, $currentTypeId = -444, $topicId = 10, $vtag) {
+	function parseVideoList($content, $currentTypeId, $topicId, $vtag) {
 		if (strpos ( $content, '{seacms:videolist' ) === false) {
 			return $content;
 		} else {

@@ -47,7 +47,7 @@ function echoContent($vId)
 	$contentLink=getContentLink($vType,$vId,"link",date('Y-n',$row['v_addtime']),$row['v_enname']);
 	$typeText = getTypeText($vType);
 	$currentTypeId=$vType;
-	$GLOBALS[tid]=$currentTypeId;
+	$GLOBALS['tid']=$currentTypeId;
 	$typeFlag = "parse_content_" ;
 	$cacheName = $typeFlag.$vType.$GLOBALS['cfg_mskin'].$GLOBALS['isMobile'];
 	
@@ -115,7 +115,7 @@ function echoContent($vId)
 	$content=str_replace("{playpage:diggnum}",$row['v_digg'],$content);
 	$content=str_replace("{playpage:scorenum}",$row['v_score'],$content);
 	$content=str_replace("{playpage:scorenumer}",$row['v_scorenum'],$content);
-	$score=number_format($row[v_score]/$row[v_scorenum],1);
+	$score=number_format($row['v_score']/$row['v_scorenum'],1);
 	$content=str_replace("{playpage:score}",$score,$content);
 	$content=str_replace("{playpage:treadnum}",$row['v_tread'],$content);
 	$content=str_replace("{playpage:nolinkkeywords}",$row['v_tags'],$content);

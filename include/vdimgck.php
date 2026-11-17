@@ -63,7 +63,7 @@ if(function_exists("imagecreate"))
 		header("content-type:image/png\r\n");
 		imagepng($im);
 	}
-	ImageDestroy($im);
+	// PHP 8: imagedestroy 已无效果(8.5 起废弃),资源自动释放
 	exit();
 }
 else

@@ -104,7 +104,7 @@ class webscan_http {
 
 function webscan_error() {
   if (ini_get('display_errors')) {
-    ini_set('display_errors', '0');
+    ini_set('display_errors', '1');
   }
 }
 

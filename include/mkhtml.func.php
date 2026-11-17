@@ -306,7 +306,7 @@ function makeArticleById($vId)
 	$content=str_replace("{news:diggnum}",$row['n_digg'],$content);
 	$content=str_replace("{news:scorenum}",$row['n_score'],$content);
 	$content=str_replace("{news:scorenumer}",$row['n_scorenum'],$content);
-	$score=number_format($row[n_score]/$row[n_scorenum],1);
+	$score=number_format($row['n_score']/$row['n_scorenum'],1);
 	$content=str_replace("{news:score}",$score,$content);
 	$content=str_replace("{news:treadnum}",$row['n_tread'],$content);
 	$content=str_replace("{news:nolinkkeywords}",$row['n_keyword'],$content);
@@ -354,7 +354,7 @@ function makeArticleById($vId)
 	$content=str_replace("{news:addtime2}",MyDate('Y-m-d\TH:i:s',$row['n_addtime']),$content);
 	$content=str_replace("{news:scorenum}",$row['n_score'],$content);
 	$content=str_replace("{news:scorenumer}",$row['n_scorenum'],$content);
-	$score=number_format($row[n_score]/$row[n_scorenum],1);
+	$score=number_format($row['n_score']/$row['n_scorenum'],1);
 	$content=str_replace("{news:score}",$score,$content);
 	$content=str_replace("{news:outline}",$row['n_outline'],$content);
 	$content=str_replace("{news:commend}",$row['n_commend'],$content);
@@ -432,7 +432,7 @@ function makeContentById($vId)
 	$contentLink2=getContentLink($vType,$vId,"link",date('Y-n',$row['v_addtime']),$row['v_enname']);
 	$typeText = getTypeText($vType);
 	$currentTypeId=$vType;
-	$GLOBALS[tid]=$currentTypeId;
+	$GLOBALS['tid']=$currentTypeId;
 	if ($cfg_ismakeplay=='0') $playn=1;
 	$stringecho = '';
 	for($n=$playn;$n<=1;$n++)
@@ -520,7 +520,7 @@ function makeContentById($vId)
 		$content=str_replace("{playpage:note}",$row['v_note'],$content);
 		$content=str_replace("{playpage:longtxt}",$row['v_longtxt'],$content);
 		$content=str_replace("{playpage:diggnum}",$row['v_digg'],$content);
-		$score=number_format($row[v_score]/$row[v_scorenum],1);
+		$score=number_format($row['v_score']/$row['v_scorenum'],1);
 	    $content=str_replace("{playpage:score}",$score,$content);
 		$content=str_replace("{playpage:scorenum}",$row['v_score'],$content);
 		$content=str_replace("{playpage:scorenumer}",$row['v_scorenum'],$content);
@@ -892,7 +892,7 @@ function makeChannelById($typeId)
 	if($mend>$pCount) $mend = $pCount;
 	echoBegin($typename,"channel",$mstart,$mend);
 	$currentTypeId = $typeId;
-	$GLOBALS[tid]=$currentTypeId;
+	$GLOBALS['tid']=$currentTypeId;
 	$cacheName = "parse_channel_".$currentTypeId;
 	if($cfg_iscache){
 		if(chkFileCache($cacheName)){
@@ -1458,7 +1458,7 @@ function makeTopicById($topicId)
 	}
 }
 
-function parseCachePart($pageType,$templatePath,$currentTypeId="-444",$vtag)
+function parseCachePart($pageType, $templatePath, $currentTypeId, $vtag)
 {
 	global $mainClassObj;
 	switch ($pageType) {

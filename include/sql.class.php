@@ -87,6 +87,8 @@ class DB_MySQL
 		}
 		else
 		{
+			// PHP 8.1+ mysqli 默认抛异常,传统代码依赖返回 false 的旧行为,此处显式关闭
+			mysqli_report(MYSQLI_REPORT_OFF);
 			if($this->dbPort=="" OR empty($this->dbPort)){$this->dbPort=3306;}
 			if(!$pconnect)
 			{

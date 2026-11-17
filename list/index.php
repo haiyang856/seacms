@@ -31,7 +31,7 @@ if($tid==0){
 	showmsg('参数丢失，请返回！', -1);
 	exit;
 }
-$GLOBALS[tid]=$tid;
+$GLOBALS['tid']=$tid;
 echoChannel($tid);
 
 function echoChannel($typeId)

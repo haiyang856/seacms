@@ -427,7 +427,7 @@ function GetHtmlArea($sptag,$areaRule,$html)
 	}
 }
 
-function Gettrimvalue($trimRule='',$trimvalue)
+function Gettrimvalue($trimRule, $trimvalue)
 {
 	if($trimRule=='' || strpos($trimRule,'{seacms:trim')=== false){
 		return $trimvalue;

@@ -479,7 +479,7 @@ function gettaglink($tag,$page=1)
 
 function getCascadeLink($str,$value,$tid)
 {
-	$tid=$GLOBALS[tid];
+	$tid=$GLOBALS['tid'];
 	switch(trim($str))
 	{
 		case "type":

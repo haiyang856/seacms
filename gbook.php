@@ -74,7 +74,7 @@ if($cfg_feedback_ck=='1')
 	if(!empty($cfg_feedback_times))
 	{
 		$row = $dsql->GetOne("SELECT dtime FROM `sea_guestbook` WHERE `ip` = '$ip' ORDER BY `id` DESC ");
-		if($dtime - $row['dtime'] < $cfg_feedback_times)
+		if(is_array($row) && $dtime - $row['dtime'] < $cfg_feedback_times)
 		{
 			ShowMsg("发布频繁，请稍后再操作！","-1");
 			exit();

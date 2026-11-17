@@ -5,7 +5,7 @@ require_once('../include/link.func.php');
 require_once('../data/admin/weixin.php');
 require_once('../data/common.inc.php');
 //////////////////////////////////
-define('SINA_APPKEY', dwztoken);
+define('SINA_APPKEY', 'dwztoken'); // PHP8: 裸常量按字符串字面量处理
 function curlQuery($url) {
     $addHead = array(
         "Content-type: application/json"
