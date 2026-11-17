@@ -34,11 +34,22 @@ function _FilterAll($fk, &$svar)
 }
  
 /* 对_GET,_POST,_COOKIE进行过滤 */
+/* 安全:注册为全局变量前先校验键名,禁止覆盖超全局数组/系统配置/内部变量 */
+function _FilterCheckKey($_k)
+{
+    return (strlen($_k) > 0
+        && !preg_match('/^(cfg_|GLOBALS|_GET|_POST|_COOKIE|_REQUEST|_SERVER|_FILES|_SESSION|_ENV|arrs1|arrs2|dsql|db|isMobile|needFilter|cronnextrun|timestamp|admincachefile|sea_INC|sea_ROOT|sea_DATA)/i', $_k)
+        && preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $_k));
+}
+
 foreach(Array('_GET','_POST','_COOKIE') as $_request)
 {
     foreach($$_request as $_k => $_v)
     {
-        ${$_k} = _FilterAll($_k,$_v);
+        if (_FilterCheckKey($_k))
+        {
+            ${$_k} = _FilterAll($_k,$_v);
+        }
     }
 }
 

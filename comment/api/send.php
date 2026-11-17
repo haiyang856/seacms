@@ -107,7 +107,8 @@ exit();
 		$rs = $dsql->ExecuteNoneQuery($inquery);
 		if(!$rs)
 		{
-			echo $dsql->GetError();
+			// 安全:不向客户端回显数据库错误详情
+			http_response_code(500);
 			exit();
 		}
 	}

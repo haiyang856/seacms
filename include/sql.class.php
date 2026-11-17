@@ -511,22 +511,6 @@ class DB_MySQL
 	
 }
 
-//特殊操作
-$arrs1 = array(); $arrs2 = array();
-if(isset($GLOBALS['arrs1']))
-{
-	$v1 = $v2 = '';
-	for($i=0;isset($arrs1[$i]);$i++)
-	{
-		$v1 .= ParCv($arrs1[$i]);
-	}
-	for($i=0;isset($arrs2[$i]);$i++)
-	{
-		$v2 .= ParCv($arrs2[$i]);
-	}
-	$GLOBALS[$v1] .= $v2;
-}
-
 //复制一个对象副本
 function CopySQLPoint(&$ndsql)
 {

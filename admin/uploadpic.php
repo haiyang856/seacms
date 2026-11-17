@@ -1,4 +1,7 @@
-<?php 
+<?php
+// 后台鉴权:本文件为编辑器上传接口,必须登录管理员方可调用
+require_once(dirname(__FILE__) . "/config.php");
+
 $config=array();
 
 $config['type']=array("flash","img"); //上传允许type值
@@ -27,7 +30,7 @@ global $config;
 //判断是否是非法调用
 if(empty($_GET['CKEditorFuncNum']))
    mkhtml(1,"","错误的功能调用请求");
-$fn=$_GET['CKEditorFuncNum'];
+$fn=intval($_GET['CKEditorFuncNum']);
 if(!in_array($_GET['type'],$config['type']))
    mkhtml(1,"","错误的文件调用请求");
 $type=$_GET['type'];
@@ -38,6 +41,13 @@ if(is_uploaded_file($_FILES['upload']['tmp_name']))
    $filetype=$filearr["extension"];
    if(!in_array($filetype,$config[$type]))
     mkhtml($fn,"","错误的文件类型！");
+   if($type=="img")
+   {
+    // 图片内容校验:防止伪装扩展名上传恶意脚本
+    $imgInfo = @getimagesize($_FILES['upload']['tmp_name']);
+    if($imgInfo === false)
+     mkhtml($fn,"","文件内容不是有效图片！");
+   }
    //判断文件大小是否符合要求
    if($_FILES['upload']['size']>$config[$type."_size"]*1024)
     mkhtml($fn,"","上传的文件不能超过".$config[$type."_size"]."KB！");

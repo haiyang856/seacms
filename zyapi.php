@@ -59,9 +59,13 @@ function cj()
 	$sql1 = "select count(*) as dd from sea_data where v_recycled=0 ";
 	
 	if($ids!=""){
-		$ids = addslashes($ids);
-		$sql .= " AND d.v_id in (". $ids .")";
-		$sql1 .= " AND v_id in (". $ids .")";
+		// 逐个 ID 强制整数化,杜绝 IN() 注入
+		$idArr = array_filter(array_map('intval', explode(',', $ids)));
+		if (!empty($idArr)) {
+			$idsSafe = implode(',', $idArr);
+			$sql .= " AND d.v_id in (". $idsSafe .")";
+			$sql1 .= " AND v_id in (". $idsSafe .")";
+		}
 	}
 	if($rtype>0){
 		$sql .= " AND d.tid =".$rtype;

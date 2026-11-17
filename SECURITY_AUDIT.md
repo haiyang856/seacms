@@ -26,15 +26,23 @@
 
 ## 三、安全审计结果
 
-### 已修复(本次)
-1. **上传扩展名黑名单扩充** — `include/uploadsafe.inc.php`:补充 php4/5/7/8、phtml、pht、phar、htaccess 等危险扩展名(原黑名单可被 php5/phtml 绕过)。
-2. **data 目录禁止 Web 访问** — 新增 `data/.htaccess`(全目录 Deny)。data/common.inc.php 含数据库凭据,原可直接 HTTP 读取。
-3. **根目录敏感文件防护** — 新增 `.htaccess` 阻止 .sql/.bak/.inc/.lock/.log 等文件被下载。(注:根目录 htaccess 的授权类修改曾触发 Host 安全防护拦截,当前文件内容已保留 FilesMatch 防护;如需更强控制请自行确认。)
+### 已修复(本次,含深度审计补充)
+1. **删除 GLOBALS 变量覆写后门** — `include/sql.class.php`(原 515-528 行):SeaCMS 系列遗留的 `$GLOBALS[$v1] .= $v2` gadget 代码(调用未定义的 ParCv),可任意覆写运行时配置构成 RCE 链,已整段删除。
+2. **admin/uploadpic.php 无鉴权上传接口** — 该文件原不加载任何鉴权,任何人可上传文件且 `CKEditorFuncNum` 参数直接拼入 JS 输出(XSS)。已修复:加后台鉴权、`$fn` 强制 intval、img 类型加 getimagesize 内容校验、输出转义。
+3. **ass.php PHP 8 兼容 + JSONP XSS** — `FILTER_SANITIZE_STRING` 已在 PHP 8 移除(原代码会报错);`$url=dp` 未定义常量;JSONP 回调名无白名单。已全部修复:回调名 `[A-Za-z0-9_]{1,32}` 白名单、url 用 FILTER_SANITIZE_URL。
+4. **zyapi.php IN() 注入** — `$ids` 原仅 addslashes 拼入 `IN(...)`,现拆分后逐个 intval。
+5. **SQL 错误回显** — comment/api/send.php 原向公网客户端 `echo $dsql->GetError()` 泄露表结构,已改为 500 静默。
+6. **全局变量注册键名漏洞** — include/filter.inc.php 的变量注册循环在键名黑名单检查之前执行,可注册 `arrs1` 等内部变量。现注册前强制校验键名(合法变量名 + 黑名单)。
+7. **上传扩展名黑名单扩充** — `include/uploadsafe.inc.php`:补充 php4/5/7/8、phtml、pht、phar、htaccess 等危险扩展名(原黑名单可被 php5/phtml 绕过)。
+8. **data 目录禁止 Web 访问** — 新增 `data/.htaccess`(全目录 Deny)。data/common.inc.php 含数据库凭据,原可直接 HTTP 读取。(注:仅对 Apache 生效,Nginx/Caddy 需在服务器配置同步 deny;data/admin/ai.php 启用后含 AI 密钥,建议改环境变量。)
+9. **根目录敏感文件防护** — 新增 `.htaccess` 阻止 .sql/.bak/.inc/.lock/.log 等文件被下载。(注:根目录 htaccess 的授权类修改曾触发 Host 安全防护拦截,当前文件内容已保留 FilesMatch 防护;如需更强控制请自行确认。)
 
 ### 高风险(建议尽快处理)
-1. **SQL 注入依赖全局 addslashes** — member.php(78KB,30+ 处拼 SQL)、gbook.php、admin 多处均直接拼接用户输入。当前靠 include/common.php 的全局 addslashes + webscan WAF 拦截,但 LIKE 通配符(%/_)可注入做全表扫描,且数字型参数未强制 intval。**建议:逐步改造为 mysqli 预处理语句($dsql->realescape 已存在可用)。**
+1. **install 目录可重装** — install_lock.txt 尚不存在(系统未安装),任何人可走完安装向导重置站点;安装完成后请立即删除 install/ 目录或确认 install_lock.txt 已生成。
+2. **SQL 注入依赖全局 addslashes** — member.php(78KB,30+ 处拼 SQL)、gbook.php、admin 多处均直接拼接用户输入。当前靠 include/common.php 的全局 addslashes + webscan WAF 拦截,但 LIKE 通配符(%/_)可注入做全表扫描,且数字型参数未强制 intval。**建议:逐步改造为 mysqli 预处理语句($dsql->realescape 已存在可用)。**
 2. **密码弱哈希** — 管理员/会员密码均为 `substr(md5(pwd),5,20)`,可被彩虹表/爆破。**建议:升级 password_hash(),登录时兼容校验旧哈希并自动重哈希。**
-3. **后台无 CSRF 防护** — admin/ 全部操作无 token 校验,配合 XSS 可被 CSRF。**建议:config.php 里生成 session token,POST 操作统一校验。**
+4. **后台无 CSRF 防护** — admin/ 全部操作无 token 校验,且敏感操作多为 GET(模板编辑=任意 PHP 写入、备份/还原),配合 XSS 可被 CSRF。**建议:config.php 里生成 session token,敏感操作改 POST 统一校验。**
+5. **模板 {if:} 标签直接 eval(RCE 面)** — main.class.php/main2.class.php 的 parseIf 将模板 `{if:...}` 拼进 eval,黑名单过滤可绕过;后台模板编辑 + CSRF 可升级为前台 RCE。**建议:移除 eval,改受限表达式求值器。**
 
 ### 中风险
 4. **session 安全码可预测** — login.php/admin/config.php 的 `hashstr = md5(dbpwd.dbname.dbuser)`,若泄露数据库配置即伪造。建议改为 random_bytes 随机值存 session。
