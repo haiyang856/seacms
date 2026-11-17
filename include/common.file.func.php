@@ -1362,7 +1362,7 @@ function escape($str){
 
 function unescape($str) {
 
- if(function_exists(mb_convert_encoding))
+ if(function_exists('mb_convert_encoding'))
  {
  $str = rawurldecode($str);
  preg_match_all("/%u.{4}|&#x.{4};|&#d+;|.+/U",$str,$r);

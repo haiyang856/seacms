@@ -5,6 +5,7 @@ $id = (isset($gid) && is_numeric($gid)) ? $gid : 0;
 $page = (isset($page) && is_numeric($page)) ? $page : 1;
 $type = (isset($type) && is_numeric($type)) ? $type : 1;
 $pCount = 0;
+$rlist = array();
 $jsoncachefile = sea_DATA."/cache/review/$type/$id.js";
 //缓存第一页的评论
 if($page<2)
@@ -53,7 +54,7 @@ function Readmlist($id,$page,$size)
 	{
 		$sqlCount = "SELECT count(*) as dd FROM sea_comment WHERE m_type=$type AND v_id=$id AND ischeck=1 ORDER BY id DESC";
 		$rs = $dsql ->GetOne($sqlCount);
-		$pCount = ceil($rs['dd']/$size);
+		$pCount = is_array($rs) ? ceil($rs['dd']/$size) : 0;
 		$sql = "SELECT id,uid,username,dtime,reply,msg,agree,anti,pic,vote,ischeck FROM sea_comment WHERE m_type=$type AND v_id=$id AND ischeck=1 ORDER BY id DESC limit ".($page-1)*$size.",$size ";
 		$dsql->setQuery($sql);
 		$dsql->Execute('commentmlist');
@@ -62,12 +63,12 @@ function Readmlist($id,$page,$size)
 			$uname=$row['username'];
 			$picsql = "select pic from sea_member where username='$uname'";
 			$picrow = $dsql->GetOne($picsql);
-			if($picrow['pic']==""){$upic='uploads/user/a.png';}else{$upic=$picrow['pic'];}
+			if(is_array($picrow) && isset($picrow['pic']) && $picrow['pic']!=""){$upic=$picrow['pic'];}else{$upic='uploads/user/a.png';}
 			$row['reply'].=ReadReplyID($id,$row['reply'],$rlist);
 			$ml[]="{\"cmid\":".$row['id'].",\"uid\":".$row['uid'].",\"tmp\":\"\",\"nick\":\"".$row['username']."\",\"face\":\"\",\"star\":\"\",\"anony\":".(empty($row['username'])?1:0).",\"from\":\"".$row['username']."\",\"time\":\"".date("Y/n/j H:i:s",$row['dtime'])."\",\"reply\":\"".$row['reply']."\",\"content\":\"".$row['msg']."\",\"agree\":".$row['agree'].",\"aginst\":".$row['anti'].",\"pic\":\"".$row['pic']."\",\"vote\":\"".$row['vote']."\",\"allow\":\"".(empty($row['anti'])?0:1)."\",\"check\":\"".$row['ischeck']."\",\"upic\":\"".$upic."\"}";
 		}
 	}
-	$readmlist=join($ml,",");
+	$readmlist=join(",",$ml);
 	return $readmlist;
 }
 
@@ -82,7 +83,7 @@ function Readrlist($ids,$page,$size)
 	{
 		$rl[]="\"".$row['id']."\":{\"uid\":".$row['uid'].",\"tmp\":\"\",\"nick\":\"".$row['username']."\",\"face\":\"\",\"star\":\"\",\"anony\":".(empty($row['username'])?1:0).",\"from\":\"".$row['username']."\",\"time\":\"".$row['dtime']."\",\"reply\":\"".$row['reply']."\",\"content\":\"".$row['msg']."\",\"agree\":".$row['agree'].",\"aginst\":".$row['anti'].",\"pic\":\"".$row['pic']."\",\"vote\":\"".$row['vote']."\",\"allow\":\"".(empty($row['anti'])?0:1)."\",\"check\":\"".$row['ischeck']."\"}";
 	}
-	$readrlist=join($rl,",");
+	$readrlist=join(",",$rl);
 	return $readrlist;
 }
 

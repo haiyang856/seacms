@@ -53,7 +53,7 @@ exit();
 	if(!empty($cfg_comment_times))
 	{
 		$row = $dsql->GetOne("SELECT dtime FROM `sea_comment` WHERE `ip` = '$ip' ORDER BY `id` desc ");
-		if($dtime - $row['dtime'] < $cfg_comment_times)
+		if(is_array($row) && $dtime - $row['dtime'] < $cfg_comment_times)
 		{
 			echo "<script>alert('评论太快，请休息一下再来评论！');</script>";
 			exit();
@@ -120,12 +120,12 @@ exit();
 	$addagree = "update `sea_comment` set agree=agree+1 where id=".$id;
 	$dsql->ExecuteNoneQuery($addagree);
 	$rs = $dsql->GetOne("select v_id,typeid from sea_comment where id=".$id);
-	delfile("../../data/cache/review/".$rs['typeid']."/".$rs['v_id'].".js");
+	if(is_array($rs)) delfile("../../data/cache/review/".$rs['typeid']."/".$rs['v_id'].".js");
 }
 elseif($action=='3')
 {
 	$addagree = "update `sea_comment` set anti=anti+1 where id=".$id;
 	$dsql->ExecuteNoneQuery($addagree);
 	$rs = $dsql->GetOne("select v_id,typeid from sea_comment where id=".$id);
-	delfile("../../data/cache/review/".$rs['typeid']."/".$rs['v_id'].".js");
+	if(is_array($rs)) delfile("../../data/cache/review/".$rs['typeid']."/".$rs['v_id'].".js");
 }
