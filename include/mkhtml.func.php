@@ -306,7 +306,8 @@ function makeArticleById($vId)
 	$content=str_replace("{news:diggnum}",$row['n_digg'],$content);
 	$content=str_replace("{news:scorenum}",$row['n_score'],$content);
 	$content=str_replace("{news:scorenumer}",$row['n_scorenum'],$content);
-	$score=number_format($row['n_score']/$row['n_scorenum'],1);
+	$scorenum = intval($row['n_scorenum']);
+	$score = $scorenum > 0 ? number_format($row['n_score']/$scorenum,1) : '0.0';
 	$content=str_replace("{news:score}",$score,$content);
 	$content=str_replace("{news:treadnum}",$row['n_tread'],$content);
 	$content=str_replace("{news:nolinkkeywords}",$row['n_keyword'],$content);
@@ -354,7 +355,8 @@ function makeArticleById($vId)
 	$content=str_replace("{news:addtime2}",MyDate('Y-m-d\TH:i:s',$row['n_addtime']),$content);
 	$content=str_replace("{news:scorenum}",$row['n_score'],$content);
 	$content=str_replace("{news:scorenumer}",$row['n_scorenum'],$content);
-	$score=number_format($row['n_score']/$row['n_scorenum'],1);
+	$scorenum = intval($row['n_scorenum']);
+	$score = $scorenum > 0 ? number_format($row['n_score']/$scorenum,1) : '0.0';
 	$content=str_replace("{news:score}",$score,$content);
 	$content=str_replace("{news:outline}",$row['n_outline'],$content);
 	$content=str_replace("{news:commend}",$row['n_commend'],$content);

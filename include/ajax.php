@@ -246,9 +246,9 @@ function vpingfen(){
 function npingfen(){
 	global $id,$dsql;
 	$row = $dsql->GetOne("Select n_score,n_scorenum From `sea_news` where n_id=$id ");
-	$num=$row['n_scorenum'];
+	$num=intval($row['n_scorenum']);
 	$sum=$row['n_score'];
-	$sc=number_format($sum/$num,1);
+	$sc=$num > 0 ? number_format($sum/$num,1) : '0.0';
 	return "$num,$sum,$sc";
 }
 function member()

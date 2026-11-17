@@ -93,7 +93,8 @@ function echoContent($vId)
 		$content=str_replace("{news:subpagenumber".$substr."}",$subpagenum,$content);
 	}
 	$content=str_replace("{news:diggnum}",$row['n_digg'],$content);
-	$score=number_format($row['n_score']/$row['n_scorenum'],1);
+	$scorenum = intval($row['n_scorenum']);
+	$score = $scorenum > 0 ? number_format($row['n_score']/$scorenum,1) : '0.0';
 	$content=str_replace("{news:score}",$score,$content);
 	$content=str_replace("{news:scorenum}",$row['n_score'],$content);
 	$content=str_replace("{news:scorenumer}",$row['n_scorenum'],$content);
