@@ -180,7 +180,7 @@ function viewMain(){
 }
 
 function viewLeaveWord(){
-	$uname = '';
+	$uname = null;
 	$userid = 0;
 	if(!empty($_SESSION['sea_user_name']))
 	{
@@ -214,7 +214,7 @@ function viewLeaveWord(){
 
 //开启验证码
 function viewLeaveWord2(){
-	$uname = '';
+	$uname = null;
 	$userid = 0;
 	if(!empty($_SESSION['sea_user_name']))
 	{
