@@ -1,6 +1,6 @@
 <?php 
 @set_time_limit(0);
-//error_reporting(0);
+error_reporting(0);
 $verMsg = ' V12.x UTF8';
 $s_lang = 'utf-8';
 $dfDbname = 'seacms';
@@ -21,6 +21,11 @@ foreach(Array('_GET','_POST','_COOKIE') as $_request)
 }
 
 
+// 安装向导禁止浏览器缓存,确保每步显示的都是最新状态
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
 if( file_exists(dirname(__FILE__).'/install_lock.txt') )
 {
 	exit(" 程序已运行安装，如果你确定要重新安装，请先从FTP中删除 install/install_lock.txt！");
@@ -33,10 +38,16 @@ if(empty($step))
 
 $PHP_SELF = $_SERVER['PHP_SELF'] ? $_SERVER['PHP_SELF'] : $_SERVER['SCRIPT_NAME'];
 
-// 协议检测:优先依据 HTTPS/REQUEST_SCHEME,兼容反向代理场景
-$isHttps = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
-    || (isset($_SERVER['REQUEST_SCHEME']) && strtolower($_SERVER['REQUEST_SCHEME']) === 'https')
-    || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+// 协议检测:HTTPS / REQUEST_SCHEME / 443 端口 / 反向代理 X-Forwarded-Proto,依次判断
+$isHttps = false;
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+    // 反向代理场景:以代理透传的协议为准(取第一段,处理 "https, http" 链式写法)
+    $isHttps = strtolower(trim(current(explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'])))) === 'https';
+} else {
+    $isHttps = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+        || (isset($_SERVER['REQUEST_SCHEME']) && strtolower($_SERVER['REQUEST_SCHEME']) === 'https')
+        || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+}
 $siteScheme = $isHttps ? 'https' : 'http';
 // 主机名:HTTP_HOST 由浏览器请求头提供,FPM 下 SERVER_NAME 可能为空或占位值,故优先 HTTP_HOST
 $siteHost = !empty($_SERVER['HTTP_HOST']) ? preg_replace("/[^A-Za-z0-9\.\:\-]/", '', $_SERVER['HTTP_HOST']) : $_SERVER['SERVER_NAME'];
