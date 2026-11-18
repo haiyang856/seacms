@@ -2,6 +2,10 @@
 require_once(dirname(__FILE__)."/config.php");
 require_once(sea_DATA."/config.user.inc.php");
 CheckPurview();
+$climit = isset($climit) ? $climit : '';
+$ckey = isset($ckey) ? $ckey : '';
+$cstatus = isset($cstatus) ? $cstatus : '';
+$copy = isset($copy) ? $copy : '';
 
 if(empty($action))
 {

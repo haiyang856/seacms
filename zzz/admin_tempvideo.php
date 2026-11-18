@@ -93,7 +93,7 @@ elseif($action=="save")
 	$v_name = htmlspecialchars(cn_substrR($v_name,60));
 	$v_actor = cn_substrR($v_actor,200);
 	$v_director = cn_substrR($v_director,10);
-	$v_publishyear = empty($v_publishyear) ? date(Y) : intval($v_publishyear);
+	$v_publishyear = empty($v_publishyear) ? date('Y') : intval($v_publishyear);
 	$v_publisharea = cn_substrR($v_publisharea,10);
 	$v_note = cn_substrR($v_note,30);
 	$v_enname = Pinyin($v_name);

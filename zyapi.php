@@ -23,12 +23,12 @@ if($v==0){echo "服务已关闭";exit;}
 
 $app_apipagenum=20; //每页显示条数
 //接收相关参数
-$action = addslashes($_GET['ac']);
-$rtype  = addslashes($_GET['t']);
-$rpage  = addslashes($_GET['pg']);
-$rkey   = addslashes($_GET['wd']);
-$rday   = addslashes($_GET['h']);
-$ids    =addslashes($_GET['ids']);
+$action = addslashes($_GET['ac'] ?? '');
+$rtype  = addslashes($_GET['t'] ?? '');
+$rpage  = addslashes($_GET['pg'] ?? '');
+$rkey   = addslashes($_GET['wd'] ?? '');
+$rday   = addslashes($_GET['h'] ?? '');
+$ids    =addslashes($_GET['ids'] ?? '');
 
 //判断相关参数并格式化
 if (!isNum($rtype)) { $rtype=0;} else { $rtype= intval($rtype);}
@@ -99,7 +99,7 @@ function cj()
 			
 			$query = "select body  from sea_content  where v_id='$row->v_id' ";
 			$rowccc = $dsql->GetOne($query);
-			$ccc=$rowccc['body'];
+			$rowccc=is_array($rowccc)?$rowccc:array(); $ccc=$rowccc['body'];
 
 			$plink = $cfg_basehost."/detail/?".$row->v_id.".html"; //来源页面网址
 		    $xml .= "<video>";
@@ -151,6 +151,8 @@ function vlist()
 	$sql ="select d.v_id,d.v_name,d.v_state,d.v_note,d.tid,d.v_addtime,p.body as v_playdata,p.body1 as v_playdata1,t.tname from sea_data d left join `sea_type` t on t.tid=d.tid left join `sea_playdata` p on p.v_id=d.v_id where d.v_recycled=0 ";
 	$sql1 = "select count(*) as dd from sea_data where v_recycled=0 ";
 	
+	$where = '';
+	$where1 = '';
 	if ($rtype > 0) { $where .= " and d.tid=" . $rtype; $where1 .= " and tid=" . $rtype;}
 	if ($rkey !="") { $where .= " and d.v_name like '%".$rkey."%' "; $where1 .= " and v_name like '%".$rkey."%' "; }
 	$sql .= $where.$orderStr;

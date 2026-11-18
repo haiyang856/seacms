@@ -78,6 +78,7 @@ function getScore($operType){
 
 function scoreVideo($operType){
 	global $id,$dsql,$score;
+	$score = isset($score) ? $score : 0;
 	$score = RemoveXSS(stripslashes($score));
 	$score = addslashes(cn_substr($score,20));
 	
@@ -118,6 +119,7 @@ function scoreVideo($operType){
 
 function scoreNews($operType){
 	global $id,$dsql,$score;
+	$score = isset($score) ? $score : 0;
 	$score = RemoveXSS(stripslashes($score));
 	$score = addslashes(cn_substr($score,20));
 	if($id < 1) return "err";
@@ -161,7 +163,7 @@ function updateHit(){
 	$dsql->ExecuteNoneQuery("Update `sea_data` set v_hit = v_hit + 1 where v_id=$id");
 	$row = $dsql->GetOne("Select v_hit,v_daytime,v_weektime,v_monthtime From `sea_data` where v_id=$id ");
 	$n=time(); //当前时间
-	$day=$row['v_daytime'];
+	$row=is_array($row)?$row:array(); $day=$row['v_daytime'];
 	$week=$row['v_weektime'];
 	$month=$row['v_monthtime'];
 
@@ -237,16 +239,16 @@ function addfav(){
 function vpingfen(){
 	global $id,$dsql;
 	$row = $dsql->GetOne("Select v_score,v_scorenum From `sea_data` where v_id=$id ");
-	$num=$row['v_scorenum'];
+	$row=is_array($row)?$row:array(); $num=$row['v_scorenum'];
 	$sum=$row['v_score'];
-	$sc=number_format($sum/$num,1);
+	$sc=$num > 0 ? number_format($sum/$num,1) : '0.0';
 	return "$num,$sum,$sc";
 }
 
 function npingfen(){
 	global $id,$dsql;
 	$row = $dsql->GetOne("Select n_score,n_scorenum From `sea_news` where n_id=$id ");
-	$num=intval($row['n_scorenum']);
+	$row=is_array($row)?$row:array(); $num=intval($row['n_scorenum']);
 	$sum=$row['n_score'];
 	$sc=$num > 0 ? number_format($sum/$num,1) : '0.0';
 	return "$num,$sum,$sc";

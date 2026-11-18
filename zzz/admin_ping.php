@@ -98,7 +98,7 @@ else
 $pagesize=$tnum;
 $wheresql = "where n_push = 0 ";
 $trow = $dsql->GetOne("Select count(*) as dd From `sea_news` $wheresql");
-$totalnum = $trow['dd'];
+$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 //当总页数小于每页数目的时候，替换pagesize
 if($totalnum<$pagesize)
     $pagesize = $totalnum;
@@ -185,7 +185,7 @@ else
 $pagesize=$tnum;
 $wheresql = "where v_push = 0 ";
 $trow = $dsql->GetOne("Select count(*) as dd From `sea_data` $wheresql");
-$totalnum = $trow['dd'];
+$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 //当总页数小于每页数目的时候，替换pagesize
 if($totalnum<$pagesize)
     $pagesize = $totalnum;

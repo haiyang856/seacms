@@ -47,7 +47,7 @@ if($action=='modifyallside')
 	$a = 0;
 	foreach($xml as $item){
 		$i++;
-		if(in_array($i,$e_id)){
+		if(in_array($i,(array)$e_id)){
 			$item['item_url']=${'item_url'.$e_id[$a]};
 			$item['link']=${'link'.$e_id[$a]};
 			$item['title']=${'title'.$e_id[$a]};

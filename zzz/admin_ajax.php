@@ -16,7 +16,7 @@ if($action=="gettopicdes")
 	{
 		echo "err";
 	}else{
-		echo htmlspecialchars(stripslashes(decodeHtml($row['des'])));
+		$row=is_array($row)?$row:array(); echo htmlspecialchars(stripslashes(decodeHtml($row['des'])));
 	}
 }
 elseif($action=="submittopicdes")
@@ -70,14 +70,14 @@ elseif($action=="updatepic")
 {
 	require_once(sea_DATA."/config.ftp.php");
 	$row=$dsql->GetOne("select count(*) as dd from sea_data where instr(v_pic,'#err')=0".($app_ftp==0?"":" and instr(v_pic,'$app_ftpurl')=0")." and instr(v_pic,'http')<>0");
-	$num=$row['dd'];
+	$row=is_array($row)?$row:array(); $num=$row['dd'];
 	echo $num;
 }
 elseif($action=="checkrepeat")
 {
 	$v_name=iconv('utf-8','utf-8',$_GET["v_name"]); 
 	$row=$dsql->GetOne("select count(*) as dd from sea_data where v_name='$v_name'");
-	$num=$row['dd'];
+	$row=is_array($row)?$row:array(); $num=$row['dd'];
 	if($num==0){echo "ok";}else{echo "err";}
 }
 elseif($action=="getselflabel")
@@ -88,14 +88,14 @@ elseif($action=="getselflabel")
 	{
 		echo "err";
 	}else{
-		echo htmlspecialchars($row['tagcontent']);
+		$row=is_array($row)?$row:array(); echo htmlspecialchars($row['tagcontent']);
 	}
 }
 elseif($action=="checkuser")
 {
 	if(m_ereg("[^0-9a-zA-Z_@!\.-]",$username)) exit('no');
 	$row=$dsql->GetOne("select count(*) as dd from sea_admin where name='$username'");
-	$num=$row['dd'];
+	$row=is_array($row)?$row:array(); $num=$row['dd'];
 	if($num==0){echo "0";}else{echo "1";}
 }
 elseif($action=="updatecache")
@@ -118,7 +118,7 @@ elseif($action=="clearColHis")
 elseif($action=="locks")
 {
 	$row=$dsql->GetOne("select password as dd from sea_admin where name='$uname'");
-	$spwd=$row['dd'];
+	$row=is_array($row)?$row:array(); $spwd=$row['dd'];
 	$upwd = substr(md5($upwd),5,20);
 	if($spwd==$upwd){echo "ok";}else{echo "err";}
 }

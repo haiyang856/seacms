@@ -39,6 +39,7 @@ function echoIndex()
 function parseIndexPart($templatePath)
 {
 	global $mainClassObj;
+	$currentTypeId = -444;
 	$content=loadFile(sea_ROOT.$templatePath);
 	$content=$mainClassObj->parseTopAndFoot($content);
 	$content=replaceCurrentTypeId($content,-444);

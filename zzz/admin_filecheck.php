@@ -30,7 +30,7 @@ $adminDir = m_ereg_replace("(.*)[/\\\]","",dirname(__FILE__));
 $safefile = trim(str_replace('admin/',$adminDir.'/',$safefile));
 if($safefile==""){
 $safefiles="";}else{
-$safefiles = preg_split("[\r\n]{1,}",$safefile);}
+$safefiles = preg_split("/[\r\n]{1,}/",$safefile);}
 
 function TestOneFile($f)
 {

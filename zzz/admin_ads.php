@@ -6,6 +6,7 @@ if(empty($action))
 	$action = '';
 }
 $id = empty($id) ? 0 : intval($id);
+$page = isset($page) ? intval($page) : 1;
 
 if($action=="add")
 {
@@ -15,6 +16,7 @@ if($action=="add")
 elseif($action=="edit")
 {
 	$row = $dsql->GetOne("Select * From `sea_myad` where aid='$id'");
+	$row=is_array($row)?$row:array();
 	include(sea_ADMIN.'/templets/admin_ads_edit.htm');
 	exit();
 }
@@ -63,7 +65,7 @@ elseif($action=="addsave")
 elseif($action=="del")
 {
 	$row = $dsql->GetOne("Select adenname From `sea_myad` where aid='$id'");
-	$filename=$row['adenname'];
+	$row=is_array($row)?$row:array(); $filename=$row['adenname'];
 	@unlink("../js/".$cfg_ads_dir."/".$filename.".js");
 	$dsql->ExecuteNoneQuery("Delete From `sea_myad` where aid='$id' ");
 	ShowMsg("删除成功！","admin_ads.php");
@@ -78,7 +80,7 @@ elseif($action=="delall")
 	}
 	foreach($e_id as $id){
 		$row = $dsql->GetOne("Select adenname From `sea_myad` where aid='$id'");
-		$filename=$row['adenname'];
+		$row=is_array($row)?$row:array(); $filename=$row['adenname'];
 		@unlink("../js/".$cfg_ads_dir."/".$filename.".js");
 		$dsql->ExecuteNoneQuery("Delete From `sea_myad` where aid='$id' ");
 	}
@@ -88,7 +90,7 @@ elseif($action=="delall")
 elseif($action=="single")
 {
 	$row = $dsql->GetOne("Select adenname,adsbody From `sea_myad` where aid='$id'");
-	$adsbody=$row['adsbody'];
+	$row=is_array($row)?$row:array(); $adsbody=$row['adsbody'];
 	$adenname=$row['adenname'];
 	createTextFile($adsbody,sea_ROOT."/js/".$cfg_ads_dir."/".$adenname.".js");
 	header("Location:?admin_ads.php");

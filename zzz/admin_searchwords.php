@@ -1,6 +1,7 @@
 <?php 
 require_once(dirname(__FILE__)."/config.php");
 require_once(sea_DATA."/config.user.inc.php");
+$tid = isset($tid) ? intval($tid) : 0;
 
 if($action=='delall'){
 	$query="TRUNCATE sea_search_keywords";

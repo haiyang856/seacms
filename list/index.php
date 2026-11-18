@@ -20,8 +20,8 @@ if($GLOBALS['cfg_runmode']==2||$GLOBALS['cfg_paramset']==0){
 	$tid = isset($tid) && is_numeric($tid) ? $tid : 0;
 	$page = isset($page) && is_numeric($page) ? $page : 1;
 }else{
-	$tid = $$GLOBALS['cfg_paramid'];
-	$page = $$GLOBALS['cfg_parampage'];
+	$tid = ${$GLOBALS['cfg_paramid']};
+	$page = ${$GLOBALS['cfg_parampage']};
 	$tid = isset($tid) && is_numeric($tid) ? $tid : 0;
 	$page = isset($page) && is_numeric($page) ? $page : 1;
 }

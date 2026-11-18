@@ -8,9 +8,9 @@ require_once(sea_INC."/main.class.php");
 $cb = preg_match('/^[A-Za-z0-9_]{1,32}$/', $_GET['cb'] ?? '') ? $_GET['cb'] : 'callback';
 $wd = isset($_GET['wd']) ? trim(strip_tags($_GET['wd'])) : '';
 $url = isset($_GET['url']) ? filter_var($_GET['url'], FILTER_SANITIZE_URL) : '';
-$vid=intval($_GET['vid']);
-$vfrom=$_GET['vfrom'];
-$vpart=$_GET['vpart']+1;
+$vid=intval($_GET['vid'] ?? 0);
+$vfrom=$_GET['vfrom'] ?? '';
+$vpart=intval($_GET['vpart'] ?? 0)+1;
 
 $sug=array('q'=>"",'p'=>false,'s'=>array(''));
 
@@ -40,6 +40,7 @@ echo $myObj->out_json($cb,$sug);
 //seacms 查询类 by nohacks.cn
 class SetQuerybyseacms
 {
+  public $dsql;
 
   public function Querykey($keyword,$key,$num)
   
@@ -87,7 +88,7 @@ class SetQuerybyseacms
    		$row=$dsql->GetOne("SELECT * FROM `sea_playdata` WHERE `v_id` ='$vid'");
 		
        //来源分组
-        $fromArray1=explode("$$$",$row['body']); $fromArray2=explode("$$",$fromArray1[$from]);
+        $row=is_array($row)?$row:array(); $fromArray1=explode("$$$",$row['body']); $fromArray2=explode("$$",$fromArray1[$from]);
        
        //剧集分组
         $pratArray=explode("#",$fromArray2[1]);
@@ -103,7 +104,7 @@ class SetQuerybyseacms
 	  $houz=getfileSuffix();
 	  
 	$row2=$dsql->GetOne("SELECT tid,v_vip,v_try,v_money FROM sea_data where v_id=".$vid);
-	$vip=$row2['v_vip'];
+	$row2=is_array($row2)?$row2:array(); $vip=$row2['v_vip'];
 	$try=$row2['v_try'];
 	$vType=$row2['tid'];
 	$jifen=$row2['v_money'];
@@ -144,7 +145,7 @@ class SetQuerybyseacms
 		$viparr2=explode(',',$vip);
 		foreach ($viparr2 as $value)
 		{
-		  $viparr[]=$value-1;
+		  $viparr[]=intval($value)-1;
 		}
 	}
 	

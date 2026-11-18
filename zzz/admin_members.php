@@ -67,6 +67,7 @@ elseif($ac=='clear')
 }elseif($ac=='edit')
 {
 	$row = $dsql->GetOne("select * from sea_member where id='$id'");
+	$row=is_array($row)?$row:array();
 }
 elseif($ac=='editsave')
 {

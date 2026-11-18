@@ -10,6 +10,14 @@ if(empty($action))
 	$action = '';
 }
 $id = empty($id) ? 0 : intval($id);
+foreach(array('cofrom','keyword','playfrom','type','inbase','export') as $__vname)
+{
+	if(!isset($$__vname)) $$__vname='';
+}
+if(!isset($page)) $page=1;
+if(!isset($TotalPage)) $TotalPage=0;
+if(!isset($TotalResult)) $TotalResult=0;
+if(!isset($numPerPage)) $numPerPage=20;
 
 if($action=="add")
 {
@@ -46,7 +54,7 @@ if($action=="addrule")
 		$listconfig = "{seacms:listrule cid=\"$id\" tname=\"$itemname\" intodatabase=\"$intodatabase\" isupdate=\"$isupdate\" getherday=\"$getherday\" siteurl=\"$siteurl\" playfrom=\"$playfrom\" autocls=\"$autocls\" classid=\"$classid\" removecode=\"$removecode\" inithit=\"$inithit\" pageset=\"$pageset\" pageurl0=\"$pageurl0\" pageurl1=\"$pageurl1\" istart=\"$istart\" iend=\"$iend\" reverse=\"$reverse\"}";
 		include(sea_ADMIN.'/templets/admin_collect_ruleadd2.htm');
 		exit();
-	}elseif($step==test){
+	}elseif($step=='test'){
 		$listconfig = urldecode($listconfig);
 		$listconfig.="
 			{seacms:pageurl2}$pageurl2{/seacms:pageurl2}
@@ -133,7 +141,7 @@ elseif($action=="editrulesingle")
 		$listconfig = "{seacms:listrule cid=\"$id\" tname=\"$itemname\" intodatabase=\"$intodatabase\" isupdate=\"$isupdate\" getherday=\"$getherday\" siteurl=\"$siteurl\" playfrom=\"$playfrom\" autocls=\"$autocls\" classid=\"$classid\" removecode=\"$removecode\" inithit=\"$inithit\" pageset=\"$pageset\" pageurl0=\"$pageurl0\" pageurl1=\"$pageurl1\" istart=\"$istart\" iend=\"$iend\" reverse=\"$reverse\"}";
 		include(sea_ADMIN.'/templets/admin_collect_ruleedit2.htm');
 		exit();
-	}elseif($step==test){
+	}elseif($step=='test'){
 		$listconfig = urldecode($listconfig);
 		$listconfig.="
 			{seacms:pageurl2}$pageurl2{/seacms:pageurl2}
@@ -299,7 +307,7 @@ elseif($action=="getcontestsingle")
 {
 	$sql = "select coding,sock,listconfig from  sea_co_type where tid=$id";
 	$vrow = $dsql->GetOne($sql);
-	$coding=$vrow['coding'];
+	$vrow=is_array($vrow)?$vrow:array(); $coding=$vrow['coding'];
 	$sock=$vrow['sock'];
 	$listconfig=$vrow['listconfig'];
 	$links=array();
@@ -334,6 +342,7 @@ elseif($action=="clearlist")
 elseif($action=="editrule")
 {
 	$row=$dsql->GetOne("select * from sea_co_config where cid='$id'");
+	$row=is_array($row)?$row:array();
 	include(sea_ADMIN.'/templets/admin_collect_edit.htm');
 	exit();
 }
@@ -359,6 +368,7 @@ elseif($action=="delrule")
 elseif($action=="exportrule")
 {
 	$row=$dsql->GetOne("select * from sea_co_config where cid='$id'");
+	$row=is_array($row)?$row:array();
 	$rule['config']=$row;
 	$dsql->SetQuery("Select * From `sea_co_type` where cid='$id' order by tid");
 	$dsql->Execute('cotype_list');
@@ -659,7 +669,7 @@ function getlistsbyid($id,$cid='',$action2='',$index='')
 	if($id==0) return false;
 	global $dsql,$page,$pcount;
 	$row = $dsql->GetOne("Select t.coding,t.sock,t.playfrom,t.autocls,t.classid,t.getherday,t.listconfig,c.cid,c.getlistnum from `sea_co_type` t left join `sea_co_config` c on c.cid=t.cid where t.tid='$id'");
-	$listconfig=$row['listconfig'];
+	$row=is_array($row)?$row:array(); $listconfig=$row['listconfig'];
 	$coding=$row['coding'];
 	$sock=$row['sock'];
 	$playfrom=$row['playfrom'];
@@ -818,7 +828,7 @@ function getconbyid($id,$cid='',$action2='',$index='')
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$row = $dsql->GetOne("Select t.coding,t.sock,t.playfrom,t.autocls,t.classid,t.getherday,t.listconfig,t.itemconfig,c.cid,c.getconnum from `sea_co_type` t left join `sea_co_config` c on c.cid=t.cid where t.tid='$id'");
-	$listconfig=$row['listconfig'];
+	$row=is_array($row)?$row:array(); $listconfig=$row['listconfig'];
 	$itemconfig=$row['itemconfig'];
 	$coding=$row['coding'];
 	$sock=$row['sock'];
@@ -1236,7 +1246,7 @@ $playStr=str_replace(chr(13),"#",str_replace(chr(10),"",str_replace("$$","",str_
 $playStr=rtrim(rtrim($playStr, ","),"#");
 $fromArray=$fromStr;
 $playArray=explode(", ",$playStr);
-$fromLen=count($fromArray);
+$fromLen=count((array)$fromArray);
 $playLen=count($playArray);
 	if($fromLen!=$playLen){
 		ShowMsg("来源或者地址没有填写完整！","-1");
@@ -1280,7 +1290,7 @@ function updatetags($videoid, $newkeywords, $oldkeywords) {
 				if(!$tag) {
 					$dsql->ExecuteNoneQuery("INSERT INTO sea_tags (tag,usenum,vids) VALUES ('$arrtag[$i]', '1', '$videoid')");
 				} else {						
-					$vids = $tag['vids'].','.$videoid;
+					$tag=is_array($tag)?$tag:array(); $vids = $tag['vids'].','.$videoid;
 					$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum+1, vids='$vids' WHERE tag='$arrtag[$i]'");
 				}
 			}
@@ -1291,7 +1301,7 @@ function updatetags($videoid, $newkeywords, $oldkeywords) {
 	for($i=0; $i<$arrold_num; $i++) {
 		if ($arrold[$i] && !in_array($arrold[$i], $arrtag)) {
 			$tag = $dsql->GetOne("SELECT vids FROM sea_tags WHERE tag='$arrold[$i]' LIMIT 1");
-			$tag['vids'] = str_replace(','.$videoid, '', $tag['vids']);
+			$tag=is_array($tag)?$tag:array(); $tag['vids'] = str_replace(','.$videoid, '', $tag['vids']);
 			$tag['vids'] = str_replace($videoid.',', '', $tag['vids']);
 			$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum-1, vids='".$tag['vids']."' WHERE tag='$arrold[$i]'");
 		}
@@ -1320,7 +1330,7 @@ function addtags($v_tags,$v_id)
 				if(!$tag) {
 					$dsql->ExecuteNoneQuery("INSERT INTO sea_tags (tag,usenum,vids) VALUES ('$tagdb[$i]', '1', '$v_id')");
 				}else{
-					$vids = $tag['vids'].','.$v_id;
+					$tag=is_array($tag)?$tag:array(); $vids = $tag['vids'].','.$v_id;
 					$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum+1, vids='$vids' WHERE tag='$tagdb[$i]'");
 				}
 			}

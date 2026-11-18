@@ -8,6 +8,14 @@ if(empty($action))
 }
 
 $id = empty($id) ? 0 : intval($id);
+foreach(array('v_recycled','v_isunion','order','type','keyword','v_state','v_commend','repeat','topic','playfrom','downfrom','empty','rlen','jqtype','area','year','yuyan','letter','commend','ver','jumpurl') as $__vname)
+{
+	if(!isset($$__vname)) $$__vname='';
+}
+if(!isset($TotalPage)) $TotalPage=0;
+if(!isset($TotalResult)) $TotalResult=0;
+if(!isset($numPerPage)) $numPerPage=20;
+if(!isset($page)) $page=1;
 
 if($action=="add")
 {
@@ -28,7 +36,7 @@ if($action=="add")
 	if(empty($sort)) 
 		{
 		$trow = $dsql->GetOne("select max(sort)+1 as dd from sea_topic");
-		$sort = $trow['dd'];
+		$trow=is_array($trow)?$trow:array(); $sort = $trow['dd'];
 		}
 	if (!is_numeric($sort)) $sort=1;
 	$addtime=time();
@@ -48,13 +56,13 @@ include(sea_ADMIN.'/templets/admin_topic_ztadd.htm');
 elseif($action=="last")
 {
 	$row=$dsql->GetOne("select sort from `sea_topic` where id='$id'");
-	$cur=$row['sort'];
+	$row=is_array($row)?$row:array(); $cur=$row['sort'];
 	$row=$dsql->GetOne("select count(*) as dd from `sea_topic` where sort<'$cur'");
-	$cou=$row['dd'];
+	$row=is_array($row)?$row:array(); $cou=$row['dd'];
 	if($cou>0)
 	{
 		$row=$dsql->GetOne("select sort from `sea_topic` where sort<'$cur' order by sort desc");
-		$flag=$row['sort'];
+		$row=is_array($row)?$row:array(); $flag=$row['sort'];
 		$dsql->ExecuteNoneQuery("update `sea_topic` set sort='$flag' where id='$id'");
 	}
 	else
@@ -67,13 +75,13 @@ elseif($action=="last")
 elseif($action=="next")
 {
 	$row=$dsql->GetOne("select sort from `sea_topic` where id='$id'");
-	$cur=$row['sort'];
+	$row=is_array($row)?$row:array(); $cur=$row['sort'];
 	$row=$dsql->GetOne("select count(*) as dd from `sea_topic` where sort>'$cur'");
-	$cou=$row['dd'];
+	$row=is_array($row)?$row:array(); $cou=$row['dd'];
 	if($cou>0)
 	{
 		$row=$dsql->GetOne("select sort from `sea_topic` where sort>'$cur' order by sort desc");
-		$flag=$row['sort'];
+		$row=is_array($row)?$row:array(); $flag=$row['sort'];
 		$dsql->ExecuteNoneQuery("update `sea_topic` set sort='$flag' where id='$id'");
 	}
 	else
@@ -120,7 +128,7 @@ elseif($action=="edit")
 	if(empty($sort)) 
 		{
 		$trow = $dsql->GetOne("select max(torder)+1 as dd from sea_topic");
-		$sort = $trow['dd'];
+		$trow=is_array($trow)?$trow:array(); $sort = $trow['dd'];
 		}
 	if (!is_numeric($sort)) $sort=1;
 	$dsql->ExecuteNoneQuery("update sea_topic set sort='$sort' where id=".$id);

@@ -964,7 +964,7 @@ function getTopicPageLink($topicId,$page)
 	global $dsql;
 	if($GLOBALS['cfg_runmode']=='0'){
 		$row=$dsql->GetOne("select enname from sea_topic where id=".$topicId);
-		$topicname=$row['enname'];
+		$row=is_array($row)?$row:array(); $topicname=$row['enname'];
 		if (intval($page)==1) $tempStr=""; else $tempStr="-".$page;
 		$linkStr="/".$GLOBALS['cfg_cmspath'].$GLOBALS['cfg_filesuffix']."/".$topicname.$tempStr.$GLOBALS['cfg_filesuffix2'];
 	}elseif($GLOBALS['cfg_runmode']=='1'){
@@ -1164,7 +1164,7 @@ function getPlayerParas()
 	$paras=str_replace($fileSuffix,'',$_SERVER['QUERY_STRING']);
 	if(strpos($paras,"-")>0){
 		$parasArray=explode("-",$paras);
-		if(count($parasArray>1)){
+		if(count($parasArray)>1){
 			$getPlayerParas[0]=$parasArray[1];
 			$getPlayerParas[1]=$parasArray[2];
 		}else{
@@ -1181,7 +1181,7 @@ function getPlayerParas()
 function getPlayUrlList($ifrom,$url,$typeid,$vId,$starget,$sdate,$enname,$listyle='li'){
 	global $cfg_isalertwin,$dsql;
 	$row=$dsql->GetOne("SELECT v_vip FROM sea_data where v_id=".$vId);
-	$vip=$row['v_vip'];
+	$row=is_array($row)?$row:array(); $vip=$row['v_vip'];
 
 	$paras=getPlayerParas();
 	if(empty($url)) return '';
@@ -1218,7 +1218,7 @@ function getPlayUrlList($ifrom,$url,$typeid,$vId,$starget,$sdate,$enname,$listyl
 		$viparr2=explode(',',$vip);
 		foreach ($viparr2 as $value)
 		{
-		  $viparr[]=$value-1;
+		  $viparr[]=intval($value)-1;
 		}
 	}
 	//print_r($viparr);die;
@@ -1743,11 +1743,11 @@ function getDataCount($countType){
 	switch ($countType) {
 		case "all":
 		$row = $dsql->GetOne("select count(*) as dd From `sea_data`");
-		$DataCount=$row['dd'];
+		$row=is_array($row)?$row:array(); $DataCount=$row['dd'];
 		break;
 		case "day":
 		$row = $dsql->GetOne("select count(*) as dd From `sea_data` $whereStr");
-		$DataCount=$row['dd'];
+		$row=is_array($row)?$row:array(); $DataCount=$row['dd'];
 		break;
 	}
 	return $DataCount;
@@ -1761,11 +1761,11 @@ function getNewsDataCount($countType){
 	switch ($countType) {
 		case "all":
 		$row = $dsql->GetOne("select count(*) as dd From `sea_news`");
-		$DataCount=$row['dd'];
+		$row=is_array($row)?$row:array(); $DataCount=$row['dd'];
 		break;
 		case "day":
 		$row = $dsql->GetOne("select count(*) as dd From `sea_news` $whereStr");
-		$DataCount=$row['dd'];
+		$row=is_array($row)?$row:array(); $DataCount=$row['dd'];
 		break;
 	}
 	return $DataCount;
@@ -2269,21 +2269,21 @@ function getNewsTitle($Id)
 {
 	global $dsql;
 	$row = $dsql->GetOne("SELECT n_title FROM sea_news WHERE n_id=$Id");
-	return $row['n_title'];
+	$row=is_array($row)?$row:array(); return $row['n_title'];
 }
 
 function getNewsEnname($Id)
 {
 	global $dsql;
 	$row = $dsql->GetOne("SELECT n_entitle FROM sea_news WHERE n_id=$Id");
-	return $row['n_entitle'];
+	$row=is_array($row)?$row:array(); return $row['n_entitle'];
 }
 
 function getVideoEnname($videoId)
 {
 	global $dsql;
 	$row = $dsql->GetOne("SELECT v_name,v_enname FROM sea_data WHERE v_id=$videoId");
-	if($row['v_enname']!="")
+	$row=is_array($row)?$row:array(); if($row['v_enname']!="")
 	{
 		return $row['v_enname'];
 	}
@@ -2297,21 +2297,21 @@ function getVideoName($videoId)
 {
 	global $dsql;
 	$row = $dsql->GetOne("SELECT v_name FROM sea_data WHERE v_id=$videoId");
-	return $row['v_name'];
+	$row=is_array($row)?$row:array(); return $row['v_name'];
 }
 
 function getVideoSdate($videoId)
 {
 	global $dsql;
 	$row = $dsql->GetOne("SELECT v_addtime FROM sea_data WHERE v_id=$videoId");
-	return $row['v_addtime'];
+	$row=is_array($row)?$row:array(); return $row['v_addtime'];
 }
 
 function getNewsSdate($Id)
 {
 	global $dsql;
 	$row = $dsql->GetOne("SELECT n_addtime FROM sea_news WHERE n_id=$Id");
-	return $row['n_addtime'];
+	$row=is_array($row)?$row:array(); return $row['n_addtime'];
 }
 
 function getletterlist()
@@ -2685,7 +2685,7 @@ function getTopicName($id)
 	global $dsql;
 	$sql="select name from sea_topic where id=".$id;
 	$row=$dsql->GetOne($sql);
-	$tpname=$row['name'];
+	$row=is_array($row)?$row:array(); $tpname=$row['name'];
 	return $tpname;
 }
 
@@ -2971,7 +2971,7 @@ function getTopicNum($topicId)
 {
 	global $dsql;
 	$rowc=$dsql->GetOne("select vod as dd from sea_topic where id=".$topicId);
-	$topicvod = $rowc['dd'];
+	$rowc=is_array($rowc)?$rowc:array(); $topicvod = $rowc['dd'];
 	$topicvodArr = explode("ttttt",$topicvod);
 	$rowd = count($topicvodArr)-1;
 	return $rowd;
@@ -3013,7 +3013,7 @@ function updatecronscache()
 	global $dsql;
 	$cachefile = sea_DATA.'/cron.cache.php';
 	$row = $dsql->GetOne("SELECT nextrun,filename FROM sea_crons WHERE available>'0' AND nextrun>'0' ORDER BY nextrun");
-	$contents = "\$cronnextrun = '".$row['nextrun']."';";
+	$row=is_array($row)?$row:array(); $contents = "\$cronnextrun = '".$row['nextrun']."';";
 	$filename = $row['filename'];
 	if(strpos($filename,'$')!==false){
 		$filenameArr=explode("$",$filename);
@@ -3318,7 +3318,7 @@ function getUserAuth($id,$flag)
 	$ccuid=intval($_SESSION['sea_user_id']);
 	global $dsql;
 	$cc2=$dsql->GetOne("select vipendtime from sea_member where id=$ccuid");
-	$ccvipendtime=$cc2['vipendtime'];
+	$cc2=is_array($cc2)?$cc2:array(); $ccvipendtime=$cc2['vipendtime'];
 		if($ccvipendtime<time()){
 			$_SESSION['sea_user_group'] = 2;
 			$dsql->ExecuteNoneQuery("update `sea_member` set gid=2 where id=$ccuid");

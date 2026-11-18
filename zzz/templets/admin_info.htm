@@ -274,8 +274,7 @@ function getLast30DaysData($table, $timeField, $where = '') {
             $sql .= " AND $where";
         }
         
-        $row = $dsql->GetOne($sql);
-        $data[] = intval($row['dd']);
+        $row = $dsql->GetOne($sql);$row=is_array($row)?$row:array();         $data[] = intval($row['dd']);
     }
     
     return array('data' => $data, 'labels' => $labels);
@@ -295,8 +294,7 @@ function getLast30DaysDataStr($table, $timeField, $where = '') {
             $sql .= " AND $where";
         }
         
-        $row = $dsql->GetOne($sql);
-        $data[] = intval($row['dd']);
+        $row = $dsql->GetOne($sql);$row=is_array($row)?$row:array();         $data[] = intval($row['dd']);
     }
     
     return array('data' => $data, 'labels' => $labels);
@@ -326,8 +324,7 @@ function getLast30DaysDataMultiField($table, $timeFields, $where = '') {
             $sql .= " AND $where";
         }
         
-        $row = $dsql->GetOne($sql);
-        $data[] = intval($row['dd']);
+        $row = $dsql->GetOne($sql);$row=is_array($row)?$row:array();         $data[] = intval($row['dd']);
     }
     
     return array('data' => $data, 'labels' => $labels);
@@ -354,8 +351,7 @@ function getLast30DaysDataMultiFieldStr($table, $timeFields, $where = '') {
             $sql .= " AND $where";
         }
         
-        $row = $dsql->GetOne($sql);
-        $data[] = intval($row['dd']);
+        $row = $dsql->GetOne($sql);$row=is_array($row)?$row:array();         $data[] = intval($row['dd']);
     }
     
     return array('data' => $data, 'labels' => $labels);
@@ -498,17 +494,7 @@ var danmakuLabels = <?php echo json_encode($danmakuResult['labels']); ?>;
 </div>
 
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_data where TO_DAYS(from_unixtime(v_addtime)) = TO_DAYS(NOW()) AND v_recycled != 1");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data where YEARWEEK(DATE_FORMAT(from_unixtime(v_addtime),'%Y-%m-%d')) = YEARWEEK(NOW()) AND v_recycled != 1");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data where DATE_FORMAT(from_unixtime(v_addtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND v_recycled != 1");$n3=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data where v_recycled=1");$n4=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data where v_commend>0 AND v_recycled != 1");$n5=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data where v_state>0 AND v_recycled != 1");$n6=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data where v_isunion=1 AND v_recycled != 1");$n7=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data where v_psd != '' AND v_recycled != 1");$n8=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data where v_money !=0 AND v_recycled != 1");$n9=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_data");$n=$row['dd'];
-?>	
+$row=$dsql->GetOne("select count(*) as dd from sea_data where TO_DAYS(from_unixtime(v_addtime)) = TO_DAYS(NOW()) AND v_recycled != 1");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data where YEARWEEK(DATE_FORMAT(from_unixtime(v_addtime),'%Y-%m-%d')) = YEARWEEK(NOW()) AND v_recycled != 1");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data where DATE_FORMAT(from_unixtime(v_addtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND v_recycled != 1");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data where v_recycled=1");$row=is_array($row)?$row:array(); $n4=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data where v_commend>0 AND v_recycled != 1");$row=is_array($row)?$row:array(); $n5=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data where v_state>0 AND v_recycled != 1");$row=is_array($row)?$row:array(); $n6=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data where v_isunion=1 AND v_recycled != 1");$row=is_array($row)?$row:array(); $n7=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data where v_psd != '' AND v_recycled != 1");$row=is_array($row)?$row:array(); $n8=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data where v_money !=0 AND v_recycled != 1");$row=is_array($row)?$row:array(); $n9=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_data");$row=is_array($row)?$row:array(); $n=$row['dd'];?>	
 <div class="v_info mtop" ><ul><li>【视频数据】</li>
 <li>今日<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>本周<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -522,13 +508,7 @@ $row=$dsql->GetOne("select count(*) as dd from sea_data");$n=$row['dd'];
 <li>总计<font color='#ff0000'><?php echo $n; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_news where TO_DAYS(from_unixtime(n_addtime)) = TO_DAYS(NOW()) AND n_recycled != 1");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_news where YEARWEEK(DATE_FORMAT(from_unixtime(n_addtime),'%Y-%m-%d')) = YEARWEEK(NOW()) AND n_recycled != 1");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_news where DATE_FORMAT(from_unixtime(n_addtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND n_recycled != 1");$n3=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_news where n_recycled=1");$n4=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_news where n_commend>0 AND n_recycled != 1");$n5=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_news");$n=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_news where TO_DAYS(from_unixtime(n_addtime)) = TO_DAYS(NOW()) AND n_recycled != 1");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_news where YEARWEEK(DATE_FORMAT(from_unixtime(n_addtime),'%Y-%m-%d')) = YEARWEEK(NOW()) AND n_recycled != 1");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_news where DATE_FORMAT(from_unixtime(n_addtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND n_recycled != 1");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_news where n_recycled=1");$row=is_array($row)?$row:array(); $n4=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_news where n_commend>0 AND n_recycled != 1");$row=is_array($row)?$row:array(); $n5=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_news");$row=is_array($row)?$row:array(); $n=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【文章数据】</li>
 <li>今日<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>本周<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -538,21 +518,14 @@ $row=$dsql->GetOne("select count(*) as dd from sea_news");$n=$row['dd'];
 <li>总计<font color='#ff0000'><?php echo $n; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_type where tptype=0");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_type where tptype=1");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_jqtype");$n3=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_type where tptype=0");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_type where tptype=1");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_jqtype");$row=is_array($row)?$row:array(); $n3=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【分类数据】</li>
 <li>视频<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>文章<font color='#ff0000'><?php echo $n2; ?></font></li>
 <li>剧情<font color='#ff0000'><?php echo $n3; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_topic where TO_DAYS(from_unixtime(addtime)) = TO_DAYS(NOW())");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_topic where YEARWEEK(DATE_FORMAT(from_unixtime(addtime),'%Y-%m-%d')) = YEARWEEK(NOW())");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_topic where DATE_FORMAT(from_unixtime(addtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m')");$n3=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_topic");$n=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_topic where TO_DAYS(from_unixtime(addtime)) = TO_DAYS(NOW())");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_topic where YEARWEEK(DATE_FORMAT(from_unixtime(addtime),'%Y-%m-%d')) = YEARWEEK(NOW())");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_topic where DATE_FORMAT(from_unixtime(addtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m')");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_topic");$row=is_array($row)?$row:array(); $n=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【专题数据】</li>
 <li>今日<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>本周<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -560,11 +533,7 @@ $row=$dsql->GetOne("select count(*) as dd from sea_topic");$n=$row['dd'];
 <li>总计<font color='#ff0000'><?php echo $n; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_member where TO_DAYS(from_unixtime(regtime)) = TO_DAYS(NOW())");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_member where YEARWEEK(DATE_FORMAT(from_unixtime(regtime),'%Y-%m-%d')) = YEARWEEK(NOW())");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_member where DATE_FORMAT(from_unixtime(regtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m')");$n3=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_member");$n=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_member where TO_DAYS(from_unixtime(regtime)) = TO_DAYS(NOW())");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_member where YEARWEEK(DATE_FORMAT(from_unixtime(regtime),'%Y-%m-%d')) = YEARWEEK(NOW())");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_member where DATE_FORMAT(from_unixtime(regtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m')");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_member");$row=is_array($row)?$row:array(); $n=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【用户数据】</li>
 <li>今日<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>本周<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -572,12 +541,7 @@ $row=$dsql->GetOne("select count(*) as dd from sea_member");$n=$row['dd'];
 <li>总计<font color='#ff0000'><?php echo $n; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_guestbook where ischeck=0");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_guestbook where TO_DAYS(from_unixtime(dtime)) = TO_DAYS(NOW())");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_guestbook where YEARWEEK(DATE_FORMAT(from_unixtime(dtime),'%Y-%m-%d')) = YEARWEEK(NOW())");$n3=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_guestbook where DATE_FORMAT(from_unixtime(dtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m')");$n4=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_guestbook");$n=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_guestbook where ischeck=0");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_guestbook where TO_DAYS(from_unixtime(dtime)) = TO_DAYS(NOW())");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_guestbook where YEARWEEK(DATE_FORMAT(from_unixtime(dtime),'%Y-%m-%d')) = YEARWEEK(NOW())");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_guestbook where DATE_FORMAT(from_unixtime(dtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m')");$row=is_array($row)?$row:array(); $n4=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_guestbook");$row=is_array($row)?$row:array(); $n=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【留言数据】</li>
 <li>待审<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>今日<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -586,12 +550,7 @@ $row=$dsql->GetOne("select count(*) as dd from sea_guestbook");$n=$row['dd'];
 <li>总计<font color='#ff0000'><?php echo $n; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_erradd where ischeck=0");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_erradd where TO_DAYS(from_unixtime(sendtime)) = TO_DAYS(NOW())");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_erradd where YEARWEEK(DATE_FORMAT(from_unixtime(sendtime),'%Y-%m-%d')) = YEARWEEK(NOW())");$n3=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_erradd where DATE_FORMAT(from_unixtime(sendtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m')");$n4=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_erradd");$n=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_erradd where ischeck=0");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_erradd where TO_DAYS(from_unixtime(sendtime)) = TO_DAYS(NOW())");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_erradd where YEARWEEK(DATE_FORMAT(from_unixtime(sendtime),'%Y-%m-%d')) = YEARWEEK(NOW())");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_erradd where DATE_FORMAT(from_unixtime(sendtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m')");$row=is_array($row)?$row:array(); $n4=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_erradd");$row=is_array($row)?$row:array(); $n=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【报错数据】</li>
 <li>待审<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>今日<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -600,12 +559,7 @@ $row=$dsql->GetOne("select count(*) as dd from sea_erradd");$n=$row['dd'];
 <li>总计<font color='#ff0000'><?php echo $n; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where ischeck=0 AND m_type !=1 ");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where TO_DAYS(from_unixtime(dtime)) = TO_DAYS(NOW()) AND m_type !=1 ");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where YEARWEEK(DATE_FORMAT(from_unixtime(dtime),'%Y-%m-%d')) = YEARWEEK(NOW()) AND m_type !=1 ");$n3=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where DATE_FORMAT(from_unixtime(dtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND m_type !=1");$n4=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where m_type !=1 ");$n=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_comment where ischeck=0 AND m_type !=1 ");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_comment where TO_DAYS(from_unixtime(dtime)) = TO_DAYS(NOW()) AND m_type !=1 ");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_comment where YEARWEEK(DATE_FORMAT(from_unixtime(dtime),'%Y-%m-%d')) = YEARWEEK(NOW()) AND m_type !=1 ");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_comment where DATE_FORMAT(from_unixtime(dtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND m_type !=1");$row=is_array($row)?$row:array(); $n4=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_comment where m_type !=1 ");$row=is_array($row)?$row:array(); $n=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【视频评论】</li>
 <li>待审<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>今日<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -614,12 +568,7 @@ $row=$dsql->GetOne("select count(*) as dd from sea_comment where m_type !=1 ");$
 <li>总计<font color='#ff0000'><?php echo $n; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where ischeck=0 AND m_type =1 ");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where TO_DAYS(from_unixtime(dtime)) = TO_DAYS(NOW()) AND m_type =1 ");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where YEARWEEK(DATE_FORMAT(from_unixtime(dtime),'%Y-%m-%d')) = YEARWEEK(NOW()) AND m_type =1 ");$n3=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where DATE_FORMAT(from_unixtime(dtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND m_type =1");$n4=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_comment where m_type =1 ");$n=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_comment where ischeck=0 AND m_type =1 ");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_comment where TO_DAYS(from_unixtime(dtime)) = TO_DAYS(NOW()) AND m_type =1 ");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_comment where YEARWEEK(DATE_FORMAT(from_unixtime(dtime),'%Y-%m-%d')) = YEARWEEK(NOW()) AND m_type =1 ");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_comment where DATE_FORMAT(from_unixtime(dtime),'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND m_type =1");$row=is_array($row)?$row:array(); $n4=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_comment where m_type =1 ");$row=is_array($row)?$row:array(); $n=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【文章评论】</li>
 <li>待审<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>今日<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -629,10 +578,8 @@ $row=$dsql->GetOne("select count(*) as dd from sea_comment where m_type =1 ");$n
 </ul></div>
 <?php
 require_once(sea_DATA."/config.ftp.php");
-$row=$dsql->GetOne("select count(*) as dd from sea_data where instr(v_pic,'#err')=0".($app_ftp=='0'?"":" and instr(v_pic,'$app_ftpurl')=0")." and instr(v_pic,'http')!=0");
-$vnum=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_news where instr(n_pic,'#err')=0".($app_ftp=='0'?"":" and instr(n_pic,'$app_ftpurl')=0")." and instr(n_pic,'http')!=0");
-$nnum=$row['dd'];
+$row=$dsql->GetOne("select count(*) as dd from sea_data where instr(v_pic,'#err')=0".($app_ftp=='0'?"":" and instr(v_pic,'$app_ftpurl')=0")." and instr(v_pic,'http')!=0");$row=is_array($row)?$row:array(); $vnum=$row['dd'];
+$row=$dsql->GetOne("select count(*) as dd from sea_news where instr(n_pic,'#err')=0".($app_ftp=='0'?"":" and instr(n_pic,'$app_ftpurl')=0")." and instr(n_pic,'http')!=0");$row=is_array($row)?$row:array(); $nnum=$row['dd'];
 $tnum=$vnum+$nnum;
 ?>
 <div class="v_info mtop" ><ul><li>【远程图片】</li>
@@ -641,10 +588,8 @@ $tnum=$vnum+$nnum;
 <li>总计<font color='#ff0000'><?php echo $tnum; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_data where v_pic='' ");
-$vnum=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_news where n_pic='' ");
-$nnum=$row['dd'];
+$row=$dsql->GetOne("select count(*) as dd from sea_data where v_pic='' ");$row=is_array($row)?$row:array(); $vnum=$row['dd'];
+$row=$dsql->GetOne("select count(*) as dd from sea_news where n_pic='' ");$row=is_array($row)?$row:array(); $nnum=$row['dd'];
 $tnum=$vnum+$nnum;
 ?>
 <div class="v_info mtop" ><ul><li>【图址空白】</li>
@@ -653,10 +598,8 @@ $tnum=$vnum+$nnum;
 <li>总计<font color='#ff0000'><?php echo $tnum; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_data where instr(v_pic,'#err') !=0");
-$vnum=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_news where instr(n_pic,'#err') !=0");
-$nnum=$row['dd'];
+$row=$dsql->GetOne("select count(*) as dd from sea_data where instr(v_pic,'#err') !=0");$row=is_array($row)?$row:array(); $vnum=$row['dd'];
+$row=$dsql->GetOne("select count(*) as dd from sea_news where instr(n_pic,'#err') !=0");$row=is_array($row)?$row:array(); $nnum=$row['dd'];
 $tnum=$vnum+$nnum;
 ?>
 <div class="v_info mtop" ><ul><li>【图同步错】</li>
@@ -665,10 +608,8 @@ $tnum=$vnum+$nnum;
 <li>总计<font color='#ff0000'><?php echo $tnum; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_admin where groupid=1 ");
-$anum=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_admin where groupid=2 ");
-$bnum=$row['dd'];
+$row=$dsql->GetOne("select count(*) as dd from sea_admin where groupid=1 ");$row=is_array($row)?$row:array(); $anum=$row['dd'];
+$row=$dsql->GetOne("select count(*) as dd from sea_admin where groupid=2 ");$row=is_array($row)?$row:array(); $bnum=$row['dd'];
 $tnum=$anum+$bnum;
 ?>
 <div class="v_info mtop" ><ul><li>【管理账户】</li>
@@ -677,12 +618,7 @@ $tnum=$anum+$bnum;
 <li>总计<font color='#ff0000'><?php echo $tnum; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where TO_DAYS(usetime) = TO_DAYS(NOW()) AND status=1");$n1=$row['dd'];
-$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where YEARWEEK(DATE_FORMAT(usetime,'%Y-%m-%d')) = YEARWEEK(NOW()) AND status=1");$n2=$row['dd'];
-$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where DATE_FORMAT(usetime,'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND status=1");$n3=$row['dd'];
-$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where status=1");$n4=$row['dd'];
-$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where status=0");$n5=$row['dd'];
-if($n1=="" OR empty($n1)){$n1=0;}
+$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where TO_DAYS(usetime) = TO_DAYS(NOW()) AND status=1");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where YEARWEEK(DATE_FORMAT(usetime,'%Y-%m-%d')) = YEARWEEK(NOW()) AND status=1");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where DATE_FORMAT(usetime,'%Y%m') = DATE_FORMAT( CURDATE(),'%Y%m') AND status=1");$row=is_array($row)?$row:array(); $n3=$row['dd'];$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where status=1");$row=is_array($row)?$row:array(); $n4=$row['dd'];$row=$dsql->GetOne("SELECT SUM(climit) AS dd FROM sea_cck where status=0");$row=is_array($row)?$row:array(); $n5=$row['dd'];if($n1=="" OR empty($n1)){$n1=0;}
 if($n2=="" OR empty($n2)){$n2=0;}
 if($n3=="" OR empty($n3)){$n3=0;}
 if($n4=="" OR empty($n4)){$n4=0;}
@@ -696,19 +632,14 @@ if($n5=="" OR empty($n5)){$n5=0;}
 <li>未充<font color='#ff0000'><?php echo $n5; ?></font></li>
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_danmaku_list");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_danmaku_report");$n2=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_danmaku_list");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_danmaku_report");$row=is_array($row)?$row:array(); $n2=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【弹幕数据】</li>
 <li>弹幕<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>举报<font color='#ff0000'><?php echo $n2; ?></font></li>
 
 </ul></div>
 <?php
-$row=$dsql->GetOne("select count(*) as dd from sea_myad");$n1=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_zyk");$n2=$row['dd'];
-$row=$dsql->GetOne("select count(*) as dd from sea_flink");$n3=$row['dd'];
-?>
+$row=$dsql->GetOne("select count(*) as dd from sea_myad");$row=is_array($row)?$row:array(); $n1=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_zyk");$row=is_array($row)?$row:array(); $n2=$row['dd'];$row=$dsql->GetOne("select count(*) as dd from sea_flink");$row=is_array($row)?$row:array(); $n3=$row['dd'];?>
 <div class="v_info mtop" ><ul><li>【其它数据】</li>
 <li>广告<font color='#ff0000'><?php echo $n1; ?></font></li>
 <li>资源<font color='#ff0000'><?php echo $n2; ?></font></li>
@@ -717,8 +648,7 @@ $row=$dsql->GetOne("select count(*) as dd from sea_flink");$n3=$row['dd'];
 </ul></div>
 
 <?php 
-$row=$dsql->GetOne("select count(distinct v_publishyear) as dd from sea_data");$n1=$row['dd'];
-$sql="select distinct v_publishyear from sea_data";
+$row=$dsql->GetOne("select count(distinct v_publishyear) as dd from sea_data");$row=is_array($row)?$row:array(); $n1=$row['dd'];$sql="select distinct v_publishyear from sea_data";
 $dsql->SetQuery($sql);
 $dsql->Execute('al');
 ?>
@@ -731,6 +661,7 @@ $dsql->Execute('al');
 $sql="select distinct v_jq from sea_data";
 $dsql->SetQuery($sql);
 $dsql->Execute('al');
+$str='';
 while($row=$dsql->GetObject('al')){$str.=$row->v_jq.',';} 
 $find = array('/','\\',' ','*','(','`',')','、');
 $str=str_replace($find,',',$str);
@@ -743,8 +674,7 @@ $strARR=array_filter(array_unique(explode(',',$str)));
 </div>
 
 <?php 
-$row=$dsql->GetOne("select count(distinct v_lang) as dd from sea_data");$n1=$row['dd'];
-$sql="select distinct v_lang from sea_data";
+$row=$dsql->GetOne("select count(distinct v_lang) as dd from sea_data");$row=is_array($row)?$row:array(); $n1=$row['dd'];$sql="select distinct v_lang from sea_data";
 $dsql->SetQuery($sql);
 $dsql->Execute('al');
 ?>
@@ -754,8 +684,7 @@ $dsql->Execute('al');
 </div>
 
 <?php 
-$row=$dsql->GetOne("select count(distinct v_publisharea) as dd from sea_data");$n1=$row['dd'];
-$sql="select distinct v_publisharea from sea_data";
+$row=$dsql->GetOne("select count(distinct v_publisharea) as dd from sea_data");$row=is_array($row)?$row:array(); $n1=$row['dd'];$sql="select distinct v_publisharea from sea_data";
 $dsql->SetQuery($sql);
 $dsql->Execute('al');
 ?>

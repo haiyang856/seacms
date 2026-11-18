@@ -30,7 +30,7 @@ if($action=='send')
 echo "<script>alert('对不起，需要登陆后发表评论！');</script>";
 exit();
 }
-	$validate = $captcha;
+	$validate = $captcha ?? '';
 	if($cfg_feedback_ck=='1')
 	{
 		$svali = strtolower(trim(GetCkVdValue()));

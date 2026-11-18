@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 @set_time_limit(0);
 ob_implicit_flush();
 require_once(dirname(__FILE__)."/config.php");
@@ -8,6 +8,9 @@ if(empty($action))
 {
 	$action = '';
 }
+$page = isset($page) ? intval($page) : 1;
+$pageval = isset($pageval) ? intval($pageval) : 1;
+$pagenum = isset($pagenum) ? $pagenum : '';
 
 if($action=="downpic")
 {
@@ -16,7 +19,7 @@ if($action=="downpic")
 	$isDownOk=false;
 	$wheresql="where instr(v_pic,'#err')=0".($app_ftp==0?"":" and instr(v_pic,'$app_ftpurl')=0")." and instr(v_pic,'http')<>0";
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_data` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$pagesize=30;
@@ -78,7 +81,7 @@ if($action=="downpic")
 	$wheresql="where instr(body,'#err')=0 ".($app_ftp==0?"":" and instr(body,'$app_ftpurl')=0")." and  instr(body,'http')<>0 and instr(body,'img')<>0";
 	
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_content` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$pagesize=30;
@@ -103,7 +106,7 @@ foreach($picuelarr as $key){
     //echo $key."</br>";
 		
 		$drow = $dsql->GetOne("Select v_name as dd From `sea_data` where v_id=$v_id");
-		$d_name = $drow['dd'];
+		$drow=is_array($drow)?$drow:array(); $d_name = $drow['dd'];
 		$picUrl = $image->downPicHandle($key,$d_name);
 		if($app_ftp==0){$picUrl='/'.$picUrl;}
 		$nr=str_replace($key,$picUrl,$nr);
@@ -123,7 +126,7 @@ foreach($picuelarr as $key){
 	//修复内容页图片下载 
    $wheresql="where instr(body,'#err')=0  and instr(body,'www.seacms.net')<>0 and  instr(body,'http')<>0 and instr(body,'img')<>0".($app_ftp==0?"":" and instr(body,'$app_ftpurl')<>0");
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_content` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$pagesize=30;
@@ -148,7 +151,7 @@ foreach($picuelarr as $key){
     //echo $key."</br>";
 
 		$drow = $dsql->GetOne("Select v_name as dd From `sea_data` where v_id=$v_id");
-		$d_name = $drow['dd'];
+		$drow=is_array($drow)?$drow:array(); $d_name = $drow['dd'];
 		$picUrl = $image->downPicHandle($key,$d_name);
 		if($app_ftp==0){$picUrl='/'.$picUrl;}
 		$nr=str_replace($key,$picUrl,$nr);
@@ -169,7 +172,7 @@ elseif($action=="downpicnrN"){
 	$wheresql="where instr(n_content,'#err')=0 ".($app_ftp==0?"":" and instr(n_content,'$app_ftpurl')=0")." and  instr(n_content,'http')<>0 and instr(n_content,'img')<>0";
 	
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_news` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$pagesize=30;
@@ -212,7 +215,7 @@ foreach($picuelarr as $key){
 	//修复内容页图片下载 
    $wheresql="where instr(n_content,'#err')=0  and instr(n_content,'www.seacms.net')<>0 and  instr(n_content,'http')<>0 and instr(n_content,'img')<>0".($app_ftp==0?"":" and instr(n_content,'$app_ftpurl')<>0");
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_news` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$pagesize=30;
@@ -256,7 +259,7 @@ elseif($action=="uplpictoftp")
 	$isDownOk=false;
 	$wheresql="where v_pic like 'uploads/%' ";
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_data` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$pagesize=30;
@@ -299,7 +302,7 @@ elseif($action=="uplpictoftpN")
 	$isDownOk=false;
 	$wheresql="where n_pic like 'uploads/%' ";
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_news` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$pagesize=30;
@@ -340,7 +343,7 @@ elseif($action=="watermark")
 	@session_write_close();
 	$wheresql="where v_pic like 'uploads/%' and v_pic not like '%marked' ";
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_data` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	$pagesize=30;
 	if(empty($totalpage)) $totalpage=ceil($totalnum/$pagesize);
@@ -371,7 +374,7 @@ elseif($action=="watermarkN")
 	@session_write_close();
 	$wheresql="where n_pic like 'uploads/%' and n_pic not like '%marked' ";
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_news` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	$pagesize=30;
 	if(empty($totalpage)) $totalpage=ceil($totalnum/$pagesize);
@@ -692,8 +695,8 @@ elseif($action=="repairplaydata")
 	     		$zongye=$num/$pagesize;
 	    	}
 	    	if($pageval<=1)$pageval=1;
-			if($_GET['page']){
-				$pageval=$_GET['page'];
+			if(isset($_GET['page']) && $_GET['page']){
+				$pageval=intval($_GET['page']);
 				$page=($pageval-1)*$pagesize; 
 				$page.=',';
 			}
@@ -836,8 +839,8 @@ elseif($action=="dorandomset"){
 		$zongye=$num/$pagesize;
 	}
 	if($pageval<=1)$pageval=1;
-	if($_GET['page']){
-		$pageval=$_GET['page'];
+	if(isset($_GET['page']) && $_GET['page']){
+		$pageval=intval($_GET['page']);
 		$page=($pageval-1)*$pagesize; 
 		$page.=',';
 	}
@@ -923,8 +926,8 @@ elseif($action=="dorandomsetscore"){
 		$zongye=$num/$pagesize;
 	}
 	if($pageval<=1)$pageval=1;
-	if($_GET['page']){
-		$pageval=$_GET['page'];
+	if(isset($_GET['page']) && $_GET['page']){
+		$pageval=intval($_GET['page']);
 		$page=($pageval-1)*$pagesize; 
 		$page.=',';
 	}
@@ -1025,7 +1028,7 @@ elseif($action=="downnewspic")
 	$isDownOk=false;
 	$wheresql="where instr(n_pic,'#err')=0".($app_ftp==0?"":" and instr(n_pic,'$app_ftpurl')=0")." and instr(n_pic,'http')<>0";
 	$trow = $dsql->GetOne("Select count(*) as dd From `sea_news` $wheresql");
-	$totalnum = $trow['dd'];
+	$trow=is_array($trow)?$trow:array(); $totalnum = $trow['dd'];
 	$page = isset($page) ? intval($page) : 1;
 	if($page==0) $page=1;
 	$pagesize=30;
@@ -1199,6 +1202,7 @@ function makePlayerSelect($flag)
 function makePlayerSelect2($flag)
 {
 	$playerArray=array();
+	$allstr='';
 	$m_file = sea_DATA."/admin/playerKinds.xml";
 	
 	$xml = simplexml_load_file($m_file);
@@ -1221,6 +1225,7 @@ function makePlayerSelect2($flag)
 function makePlayerSelect3($flag)
 {
 	$playerArray=array();
+	$allstr='';
 	$m_file = sea_DATA."/admin/downKinds.xml";
 	
 	$xml = simplexml_load_file($m_file);

@@ -22,7 +22,7 @@ if($action=="add")
 	if(empty($sortrank)) 
 		{
 		$trow = $dsql->GetOne("select max(sortrank)+1 as dd from sea_flink");
-		$sortrank = $trow['dd'];
+		$trow=is_array($trow)?$trow:array(); $sortrank = $trow['dd'];
 		}
 	if (!is_numeric($sortrank)) $sortrank=1;
 	$dtime = time();
@@ -54,7 +54,7 @@ elseif($action=="save")
 	if(empty($sortrank)) 
 		{
 		$trow = $dsql->GetOne("select max(sortrank)+1 as dd from sea_flink");
-		$sortrank = $trow['dd'];
+		$trow=is_array($trow)?$trow:array(); $sortrank = $trow['dd'];
 		}
 	if(!is_numeric($sortrank)) $sortrank=1;
 	if($v_type=="font") $logo="";
@@ -66,13 +66,13 @@ elseif($action=="save")
 elseif($action=="last")
 {
 	$row=$dsql->GetOne("select sortrank from `sea_flink` where id='$id'");
-	$cur=$row['sortrank'];
+	$row=is_array($row)?$row:array(); $cur=$row['sortrank'];
 	$row=$dsql->GetOne("select count(*) as dd from `sea_flink` where sortrank<'$cur'");
-	$cou=$row['dd'];
+	$row=is_array($row)?$row:array(); $cou=$row['dd'];
 	if($cou>0)
 	{
 		$row=$dsql->GetOne("select sortrank from `sea_flink` where sortrank<'$cur' order by sortrank desc");
-		$flag=$row['sortrank'];
+		$row=is_array($row)?$row:array(); $flag=$row['sortrank'];
 		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank='$flag' where id='$id'");
 	}
 	else
@@ -85,13 +85,13 @@ elseif($action=="last")
 elseif($action=="next")
 {
 	$row=$dsql->GetOne("select sortrank from `sea_flink` where id='$id'");
-	$cur=$row['sortrank'];
+	$row=is_array($row)?$row:array(); $cur=$row['sortrank'];
 	$row=$dsql->GetOne("select count(*) as dd from `sea_flink` where sortrank>'$cur'");
-	$cou=$row['dd'];
+	$row=is_array($row)?$row:array(); $cou=$row['dd'];
 	if($cou>0)
 	{
 		$row=$dsql->GetOne("select sortrank from `sea_flink` where sortrank>'$cur' order by sortrank desc");
-		$flag=$row['sortrank'];
+		$row=is_array($row)?$row:array(); $flag=$row['sortrank'];
 		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank='$flag' where id='$id'");
 	}
 	else
@@ -144,7 +144,7 @@ elseif($action=="editall")
 	if(empty($sortrank)) 
 		{
 		$trow = $dsql->GetOne("select max(sortrank)+1 as dd from sea_flink");
-		$sortrank = $trow['dd'];
+		$trow=is_array($trow)?$trow:array(); $sortrank = $trow['dd'];
 		}
 	if (!is_numeric($sortrank)) $sortrank=1;
 	$dsql->ExecuteNoneQuery("update sea_flink set webname='$webname',url='$url',sortrank='$sortrank' where id=".$id);

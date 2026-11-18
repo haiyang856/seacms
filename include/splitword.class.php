@@ -53,11 +53,13 @@ class SplitWord
   	  //高级分词，预先载入词典以提分词高速度
   	  $dicfile = dirname(__FILE__)."/data/ek-wwwdic.dat";
   	  $fp = fopen($dicfile,'r');
+  	  if(is_resource($fp)){
   	  while($line = fgets($fp,64)){
   		  $ws = explode(' ',$line);
   		  $this->RankDic[strlen($ws[0])][$ws[0]] = $ws[1];
   	  }
   	  fclose($fp);
+  	  }
     }//是否载入词典，如果不需要用分词功能，可以不载入。
   }
 

@@ -57,8 +57,7 @@ function checkForm(){
 	<input type="hidden" name="id" value="<?php echo $id; ?>" />
 	<?php 
     	$sql = "select * from sea_co_filters where ID=".$id;
-		$row = $dsql->GetOne($sql);
-    ?>
+		$row = $dsql->GetOne($sql);$row=is_array($row)?$row:array();     ?>
 	<tr>
 		<td class="label">过滤器名称</td>
 		<td><input type="text" class="txt" id="name" name="name" value="<?php echo $row['Name']; ?>" /></td>

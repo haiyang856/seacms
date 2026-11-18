@@ -36,8 +36,7 @@
       	}
       	foreach($srow as $row)
         {
-        	$rs = $dsql->GetOne("select gname from sea_member_group where gid = ".$row['gid']);
-        	echo '<tr bgcolor="#FFF" style="background-color:#FFF" onmouseover="style.backgroundColor=\'#E6F2FB\'" onmouseout="style.backgroundColor=\'#FFF\'">';
+        	$rs = $dsql->GetOne("select gname from sea_member_group where gid = ".$row['gid']);$rs=is_array($rs)?$rs:array();         	echo '<tr bgcolor="#FFF" style="background-color:#FFF" onmouseover="style.backgroundColor=\'#E6F2FB\'" onmouseout="style.backgroundColor=\'#FFF\'">';
             echo '<td class="td_border" height="30" ><input class="checkbox" type="checkbox" value="'.$row['id'].'" name="uidarray[]"></td>';
             echo '<td class="td_border" height="30" >'.$row['id'].'</td>';
             echo '<td class="td_border" height="30" >'.$row['username'].'</td>';

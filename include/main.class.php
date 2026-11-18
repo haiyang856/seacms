@@ -7,6 +7,8 @@ if (! defined ( 'sea_INC' )) {
 $t1 = ExecTime ();
 
 class MainClass_Template {
+	public $dsql;
+	public $templateDir;
 	function __construct() {
 		global $dsql, $cfg_basedir, $cfg_df_style, $cfg_df_html,$cfg_mskin,$cfg_df_mstyle;
 		$this->dsql = $dsql;
@@ -120,15 +122,15 @@ class MainClass_Template {
 		$content = str_replace ( "{seacms:sitepath}", $GLOBALS ['cfg_cmspath'], $content );
 		$content = str_replace ( "{seacms:adfolder}", $GLOBALS ['cfg_ads_dir'], $content );
 		$content = str_replace ( "{seacms:sitename}", $GLOBALS ['cfg_webname'], $content );
-		$content = str_replace ( "{seacms:kami}", $GLOBALS ['cfg_kami'], $content );
+		$content = str_replace ( "{seacms:kami}", $GLOBALS ['cfg_kami'] ?? '', $content );
 		$content = str_replace ( "{seacms:ewm}", $GLOBALS ['cfg_ewm'], $content );
 		$content = str_replace ( "{seacms:copyright}", decodeHtml ( $GLOBALS ['cfg_powerby'] ), $content );
 		$content = str_replace ( "{seacms:des}", decodeHtml ( $GLOBALS ['cfg_description'] ), $content );
 		$content = str_replace ( "{seacms:sitevisitjs}", stripslashes ( $GLOBALS ['cfg_sitevisitejs'] ), $content );
 		$content = str_replace ( "{seacms:sitenotice}", decodeHtml ( $GLOBALS ['cfg_site_notice'] ), $content );
-		$content = str_replace ( "{seacms:vipname}", $_SESSION['sea_user_name'], $content );
-		$content = str_replace ( "{seacms:vipid}", $_SESSION['sea_user_id'], $content );
-		$content = str_replace ( "{seacms:vipgid}", $_SESSION['sea_user_group'], $content );
+		$content = str_replace ( "{seacms:vipname}", $_SESSION['sea_user_name'] ?? '', $content );
+		$content = str_replace ( "{seacms:vipid}", $_SESSION['sea_user_id'] ?? '', $content );
+		$content = str_replace ( "{seacms:vipgid}", $_SESSION['sea_user_group'] ?? '', $content );
 		if (strpos ( $content, "{seacms:hotkeywords" ) !== false) {
 			$labelHaveLen = buildregx ( "{seacms:hotkeywords\s+len=(\d+)?\s*}", "is" );
 			preg_match_all ( $labelHaveLen, $content, $labelHaveLenar );
@@ -562,7 +564,7 @@ class MainClass_Template {
 			$loopstrMenulist = $mar [2] [$m];
 			$attrDictionary = $this->parseAttr ( $attrStr );
 			$vtype = empty ( $attrDictionary ["type"] ) ? "top" : $attrDictionary ["type"];
-			$vby = $attrDictionary ["by"];
+			$vby = $attrDictionary ["by"] ?? '';
 			unset ( $attrDictionary );
 			switch (trim ( $vtype )) {
 				case "top" :
@@ -686,7 +688,7 @@ class MainClass_Template {
 				$loopArealist = $ar [2] [$m];
 				$attrDictionary = $this->parseAttr ( $attrStr );
 				$areaType = empty ( $attrDictionary ["areatype"] ) ? "all" : $attrDictionary ["areatype"];
-				$letterHas = $attrDictionary ["letter"];
+				$letterHas = $attrDictionary ["letter"] ?? '';
 				$tagHas = $attrDictionary ["tag"];
 				if (! empty ( $letterHas ))
 					$areaType = "letter";
@@ -796,7 +798,7 @@ class MainClass_Template {
 				$loopArealist = $ar [2] [$m];
 				$attrDictionary = $this->parseAttr ( $attrStr );
 				$areaType = empty ( $attrDictionary ["areatype"] ) ? "all" : $attrDictionary ["areatype"];
-				$letterHas = $attrDictionary ["letter"];
+				$letterHas = $attrDictionary ["letter"] ?? '';
 				if (! empty ( $letterHas ))
 					$areaType = "letter";
 				if ($areaType == "letter") {
@@ -869,7 +871,7 @@ class MainClass_Template {
 		for($i = 0; $i < $strLen; $i ++) {
 			$singleAttr = explode ( chr ( 61 ), $attrArray [$i] );
 			$singleAttrKey = $singleAttr [0];
-			$singleAttrValue = $singleAttr [1];
+			$singleAttrValue = $singleAttr [1] ?? '';
 			$attrDictionary [$singleAttrKey] = $singleAttrValue;
 		}
 		return $attrDictionary;
@@ -892,11 +894,12 @@ class MainClass_Template {
 				$vtype = empty ( $attrDictionary ["type"] ) ? "all" : $attrDictionary ["type"];
 				$vtime = empty ( $attrDictionary ["time"] ) ? "time" : $attrDictionary ["time"];
 				$vstart = empty ( $attrDictionary ["start"] ) ? 0 : intval ( $attrDictionary ["start"] ) - 1;
-				$vid = $attrDictionary ["id"];
-				$vcommend = $attrDictionary ["commend"];
-				$vletter = $attrDictionary ["letter"];
-				$vrel = $attrDictionary ["rel"];
+				$vid = $attrDictionary ["id"] ?? '';
+				$vcommend = $attrDictionary ["commend"] ?? '';
+				$vletter = $attrDictionary ["letter"] ?? '';
+				$vrel = $attrDictionary ["rel"] ?? '';
 				unset ( $attrDictionary );
+				$orderStr = " order by n_addtime desc";
 				switch ($vorder) {
 					case "id" :
 						$orderStr = " order by n_id desc";
@@ -1238,21 +1241,21 @@ class MainClass_Template {
 				$vtime = empty ( $attrDictionary ["time"] ) ? "time" : $attrDictionary ["time"];
 				$vstart = empty ( $attrDictionary ["start"] ) ? 0 : intval ( $attrDictionary ["start"] ) - 1;
 				$vstate = ! isset ( $attrDictionary ["state"] ) ? "all" : $attrDictionary ["state"];
-				$vcommend = $attrDictionary ["commend"];
-				$vletter = $attrDictionary ["letter"];
-				$vlang = $attrDictionary ["lang"];
-				$varea = $attrDictionary ["area"];
-				$vyear = $attrDictionary ["year"];
-				$vsid = $attrDictionary ["sid"];
-				$vtopic = $attrDictionary ["zt"];
-				$vjq = $attrDictionary ["jq"];
-				$vtvs = $attrDictionary ["tvs"];
-				$vver = $attrDictionary ["ver"];
-				$vcompany = $attrDictionary ["company"];
-				$vreweek = $attrDictionary ["reweek"];
-				$vrel = $attrDictionary ["rel"];
-				$vdirector = $attrDictionary ["director"];
-				$vactor = $attrDictionary ["actor"];
+				$vcommend = $attrDictionary ["commend"] ?? '';
+				$vletter = $attrDictionary ["letter"] ?? '';
+				$vlang = $attrDictionary ["lang"] ?? '';
+				$varea = $attrDictionary ["area"] ?? '';
+				$vyear = $attrDictionary ["year"] ?? '';
+				$vsid = $attrDictionary ["sid"] ?? '';
+				$vtopic = $attrDictionary ["zt"] ?? '';
+				$vjq = $attrDictionary ["jq"] ?? '';
+				$vtvs = $attrDictionary ["tvs"] ?? '';
+				$vver = $attrDictionary ["ver"] ?? '';
+				$vcompany = $attrDictionary ["company"] ?? '';
+				$vreweek = $attrDictionary ["reweek"] ?? '';
+				$vrel = $attrDictionary ["rel"] ?? '';
+				$vdirector = $attrDictionary ["director"] ?? '';
+				$vactor = $attrDictionary ["actor"] ?? '';
 				unset ( $attrDictionary );
 				switch ($vorder) {
 					case "id" :
@@ -1355,6 +1358,14 @@ class MainClass_Template {
 				}
 				$vtypeStr = "";
 				$extrasql = "";
+				$whereRel = "";
+				$whereSid = "";
+				$wherePLid = "";
+				$whereSCid = "";
+				$whereNtag = "";
+				$whereVer = "";
+				$whereDirector = "";
+				$whereActor = "";
 				if ($vtype != "all") {
 					if ($vtype == "current") {
 						$vtypeStr = getTypeId ( $currentTypeId );
@@ -2804,6 +2815,7 @@ class MainClass_Template {
 					$TotalResult = 0;
 				}
 				$sql = "select * from sea_topic" . $whereTopic . " order by sort desc limit $start,$num";
+				$rows = array();
 				if ($TotalResult == 0) {
 					$loopstrTotal = $lang ['topicpageInfo'] ['0'];
 				} else {
@@ -3011,7 +3023,7 @@ class MainClass_Template {
 				$matchfieldarr = $lar [1];
 				$matchfieldstrarr = $lar [0];
 				$i = 1;
-				foreach ( $rows as $row ) {
+				foreach ( $rows ?? [] as $row ) {
 					$loopstrTopiclistNew = $loopstrTopiclist;
 					foreach ( $matchfieldarr as $f => $matchfieldstr ) {
 						$matchfieldvalue = $matchfieldstrarr [$f];
@@ -3200,9 +3212,9 @@ class MainClass_Template {
 				$k = 0;
 				if ($str == 'down') {
 					for($i = 0; $i < $vnum; $i ++) {
-						$singlePlayData = explode ( "$$", $playDataArray [$i] );
+						$singlePlayData = explode ( "$$", isset($playDataArray [$i]) ? $playDataArray [$i] : '' );
 						$videoFrom = $i;
-						$videoUrl = $singlePlayData [1];
+						$videoUrl = isset($singlePlayData [1]) ? $singlePlayData [1] : '';
 						$loopstrPlaylistNew = $loopstrPlaylist;
 						if ($videoUrl != "") {
 							$k = $k + 1;
@@ -3250,12 +3262,12 @@ class MainClass_Template {
 					}
 				} else {
 					for($i = 0; $i <= $vnum; $i ++) {
-						$singlePlayData = explode ( "$$", $playDataArray [$i] );
+						$singlePlayData = explode ( "$$", isset($playDataArray [$i]) ? $playDataArray [$i] : '' );
 						$videoFrom = $i;
-						$videoUrl = $singlePlayData [1];
-						$playerSingleInfoArray = $playerDic [$singlePlayData [0]];
+						$videoUrl = isset($singlePlayData [1]) ? $singlePlayData [1] : '';
+						$playerSingleInfoArray = isset($playerDic [$singlePlayData [0]]) ? $playerDic [$singlePlayData [0]] : array();
 						$loopstrPlaylistNew = $loopstrPlaylist;
-						if ($playerSingleInfoArray ['open'] == 1) {
+						if (isset($playerSingleInfoArray ['open']) && $playerSingleInfoArray ['open'] == 1) {
 							$k = $k + 1;
 							foreach ( $matchfieldarr as $f => $matchfieldstr ) {
 								$matchfieldvalue = $matchfieldstrarr [$f];
@@ -3312,6 +3324,8 @@ class MainClass_Template {
 							$loopstrPlaylistNew = "";
 						}
 						$j = getArrayElementID ( $PlayerIntroArray, "flag", $singlePlayData [0] );
+						if ($j === false || $j === null) { $j = ''; }
+						if (!isset($loopstrTotal [$j])) { $loopstrTotal [$j] = ''; }
 						$loopstrTotal [$j] .= $loopstrPlaylistNew;
 					}
 				}
@@ -3581,6 +3595,20 @@ class MainClass_Template {
 					continue;
 				}
 			}
+			// 非 ASCII 裸标识符(如中文播放来源名)在 PHP 8 下同样会触发未定义常量致命错误
+			if ( ord ( $c ) >= 128 && ! preg_match ( '/(?:\$|->|::)$/', $out ) ) {
+				if ( preg_match ( '/^(?:[\x80-\xFF]|[A-Za-z0-9_])+/', substr ( $expr, $i ), $m ) ) {
+					$word = $m [0];
+					$after = substr ( $expr, $i + strlen ( $word ) );
+					if ( preg_match ( '/^\s*\(/', $after ) ) {
+						$out .= $word;
+					} else {
+						$out .= "'" . $word . "'";
+					}
+					$i += strlen ( $word );
+					continue;
+				}
+			}
 			$out .= $c;
 			$i++;
 		}
@@ -3616,7 +3644,7 @@ class MainClass_Template {
 					if (strpos ( $strThen, $labelRule3 ) >= 0) {
 						$elsearray = explode ( $labelRule3, $strThen );
 						$strThen1 = $elsearray [0];
-						$strElse1 = $elsearray [1];
+						$strElse1 = isset ( $elsearray [1] ) ? $elsearray [1] : '';
 						@eval ( "if(" . $strIf . "){\$ifFlag=true;}else{\$ifFlag=false;}" );
 						if ($ifFlag) {
 							$content = str_replace ( $iar [0] [$m], $strThen1, $content );
@@ -3634,7 +3662,7 @@ class MainClass_Template {
 					$elseIfArray = explode ( $labelRule2, $strThen );
 					$elseIfArrayLen = count ( $elseIfArray );
 					$elseIfSubArray = explode ( $labelRule3, $elseIfArray [$elseIfArrayLen - 1] );
-					$resultStr = $elseIfSubArray [1];
+					$resultStr = $elseIfSubArray [1] ?? '';
 					$elseIfArraystr0 = addslashes ( $elseIfArray [0] );
 					@eval ( "if($strIf){\$resultStr=\"$elseIfArraystr0\";}" );
 					for($elseIfLen = 1; $elseIfLen < $elseIfArrayLen; $elseIfLen ++) {
@@ -3658,7 +3686,7 @@ class MainClass_Template {
 					if (strpos ( $strElseIf0, ']' ) > 0)$strElseIf0 = str_replace ( ']', '', $strElseIf0 );
 					$strElseIf0 = $this->quoteBareIdents ( $strElseIf0 );
 					@eval ( "if(" . $strElseIf0 . "){\$resultStr=\"$strElseIfThen0\";\$elseIfFlag=true;}" );
-					$content = str_replace ( $iar [0] [$m], $resultStr, $content );
+					$content = str_replace ( $iar [0] [$m], $resultStr ?? '', $content );
 				}
 			}
 			return $content;
@@ -3694,7 +3722,7 @@ class MainClass_Template {
 					if (strpos ( $strThen, $labelRule3 ) >= 0) {
 						$elsearray = explode ( $labelRule3, $strThen );
 						$strThen1 = $elsearray [0];
-						$strElse1 = $elsearray [1];
+						$strElse1 = isset ( $elsearray [1] ) ? $elsearray [1] : '';
 						@eval ( "if(" . $strIf . "){\$ifFlag=true;}else{\$ifFlag=false;}" );
 						if ($ifFlag) {
 							$content = str_replace ( $iar [0] [$m], $strThen1, $content );
@@ -4113,7 +4141,7 @@ class MainClass_Template {
 			$vidArr = explode ( ',', $vid );
 			$row = $dsql->GetOne ( "select body as v_playdata from sea_playdata where v_id=" . $vidArr [0] );
 			if ($cfg_playaddr_enc == 'escape') {
-				$content = str_replace ( $matchfieldvalue, "<script>var VideoInfoList=unescape(\"" . escape ( $row ['v_playdata'] ) . "\");var paras='" . $vid . "'.split(',');_lOlOl10l(paras[2],paras[1])</script>", $content );
+				$row=is_array($row)?$row:array(); $content = str_replace ( $matchfieldvalue, "<script>var VideoInfoList=unescape(\"" . escape ( $row ['v_playdata'] ) . "\");var paras='" . $vid . "'.split(',');_lOlOl10l(paras[2],paras[1])</script>", $content );
 			} elseif ($cfg_playaddr_enc == 'base64') {
 				$content = str_replace ( $matchfieldvalue, "<script>var VideoInfoList=base64decode(\"" . base64_encode ( $row ['v_playdata'] ) . "\");var paras='" . $vid . "'.split(',');_lOlOl10l(paras[2],paras[1])</script>", $content );
 			} else {

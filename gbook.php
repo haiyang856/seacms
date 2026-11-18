@@ -118,9 +118,10 @@ if($cfg_feedback_ck=='1')
 	if($reid != 0)
 	{
 		$row = $dsql->GetOne("Select msg From `sea_guestbook` where id='$reid' ");
-		$msg = "<div class=\\'rebox\\'>".addslashes($row['msg'])."</div>\n".$msg;
+		$row=is_array($row)?$row:array(); $msg = "<div class=\\'rebox\\'>".addslashes($row['msg'])."</div>\n".$msg;
 	}
 	$msg = _Replace_Badword($msg);
+	$g_mid = isset($g_mid) ? intval($g_mid) : 0;
 	$query = "INSERT INTO `sea_guestbook`(title,mid,uname,uid,msg,ip,dtime,ischeck)
                   VALUES ('$title','{$g_mid}','$uname','$userid','$msg','$ip','$dtime','$needCheck'); ";
 	$dsql->ExecuteNoneQuery($query);
@@ -255,6 +256,7 @@ function leaveWordList($currentPage){
 		$currentPage=1;
 	}
 	$limitstart = ($currentPage-1) * $vsize;
+	$txt = '';
 	$sql="select * from `sea_guestbook` where ischeck='1' ORDER BY id DESC limit $limitstart,$vsize";
 	$cquery = "Select count(*) as dd From `sea_guestbook` where ischeck='1'";
 	$row = $dsql->GetOne($cquery);

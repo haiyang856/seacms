@@ -134,7 +134,7 @@ function isExistSub($bigType,$operFlag)
 			$row = $dsql->GetOne("select count(*) as dd from sea_data where tid=".$bigType);
 		break;
 	}
-	if($row['dd']>0)
+	$row=is_array($row)?$row:array(); if($row['dd']>0)
 	{
 		return true;
 	}else{
@@ -147,7 +147,7 @@ function getjqnumber($tname)
 	global $dsql;
 	$sql="select count(*) as dd from sea_data where v_jq like '%$tname%'";
 	$row = $dsql->GetOne($sql);
-	return $row['dd'];
+	$row=is_array($row)?$row:array(); return $row['dd'];
 }
 
 function typeList($topId,$separateStr,$span="")

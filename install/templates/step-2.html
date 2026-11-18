@@ -37,7 +37,7 @@
 			<tr>
 					<td>PHP</td>
 					<td>On</td>
-					<td><?php if(version_compare($phpv, '5.2', '<')){$nondirect=1;echo'<font color=red>[×]Off</font>';}else{echo'<font color=green>[√]On</font>';} ?> <small> (本程序已适配 PHP 8.x,当前版本为<?php echo $phpv ?>)</small></td>
+					<td><?php if(version_compare($phpv, '8.0', '<')){$nondirect=1;echo'<font color=red>[×]Off</font>';}else{echo'<font color=green>[√]On</font>';} ?> <small> (本程序要求 PHP 8X 版本,当前版本为<?php echo $phpv ?>)</small></td>
 			</tr>
 			<tr>
 					<td>MySQLi</td>

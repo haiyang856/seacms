@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 error_reporting(0);
 @set_time_limit(0);
 libxml_disable_entity_loader(true);
@@ -9,7 +9,7 @@ require_once(sea_ADMIN."/coplugins/Snoopy.class.php");
 header("Cache-Control:private");
 
 $pkey = $cfg_cookie_encode; //采集授权密码，请修改为自己的密码，防止被恶意采集
-$ukey=$_GET['password'];
+$ukey=$_GET['password'] ?? '';
 if($ukey != $pkey){die('PassWord ERR!');}
 
 function xmlSafeStr($str)
@@ -498,7 +498,7 @@ function viewHead($str)
 <TITLE>海洋影视管理系统</TITLE>
 <link href="img/style.css" rel="stylesheet" type="text/css" />
 <script src="js/common.js" type="text/javascript"></script>
-<script src="js/main.js" type="text/javascript"></script>
+<script src="js/main.js?v=20261118" type="text/javascript"></script>
 </head>
 <body>
 <?php  }?>
@@ -1137,7 +1137,7 @@ function intoDatabase($url,$gtype)
 		}
 	}else{
 		echo "<br/>暂停".$gatherWaitTime."秒--<font color=red>即将开始同步第".($page+1)."/".$pagecount."页</font><br/></div>";
-		$ukey=$_GET['password'];
+		$ukey=$_GET['password'] ?? '';
 		if ($action=="day"){
 			RWCache('collect_xml',"admin_reslib2.php?password=".$ukey."&action=day&rid=".$ressite."&pg=".($page+1)."&url=".$var_url."&backurl=".urlencode($backurl));
 			echo "<script language=\"javascript\">setTimeout(\"makeNextPage();\",".$gatherWaitTime."000);function makeNextPage(){location.href='?password=".$ukey."&action=day&rid=".$ressite."&pg=".($page+1)."&url=".$var_url."&backurl=".urlencode($backurl)."';}</script>";
@@ -1193,7 +1193,8 @@ function top()
 <link rel="stylesheet" type="text/css" href="img/res.css"/>
 <link href="img/admin.css" rel="stylesheet" type="text/css" />
 <script src="js/common.js"></script>
-<script src="js/main.js"></script>
+<script src="js/main.js?v=20261118"></script>
+<script src="js/e-admin.js"></script>
 <style type="text/css">
 	input{height:15px;}
 	.tb2 td{padding:2px 5px 2px 5px;height:25px}

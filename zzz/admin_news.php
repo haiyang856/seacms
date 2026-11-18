@@ -7,6 +7,15 @@ if(empty($action))
 {
 	$action = '';
 }
+foreach(array('keyword','n_commend','n_recycled','order','type','tid') as $__vname)
+{
+	if(!isset($$__vname)) $$__vname='';
+}
+if(!isset($n_id)) $n_id=0;
+if(!isset($TotalPage)) $TotalPage=0;
+if(!isset($TotalResult)) $TotalResult=0;
+if(!isset($numPerPage)) $numPerPage=20;
+if(!isset($page)) $page=1;
 
 if($action=="add")
 {
@@ -32,6 +41,10 @@ elseif($action=="edit")
 }
 elseif($action=="save")
 {
+	foreach(array('n_title','v_type','n_hit','n_money','n_rank','n_author','n_color','v_pic','v_spic','v_gpic','n_note','n_keyword','n_commend','n_entitle','n_from','n_outline','n_content','acttype','v_id','isupdatetime') as $__vname)
+	{
+		if(!isset($$__vname)) $$__vname='';
+	}
 	if(trim($n_title) == '')
 	{
 		ShowMsg("文章名不能为空！","-1");
@@ -99,7 +112,7 @@ elseif($action=="save")
 			$v_back='admin_news.php?action=edit&id='.$n_id;
 			if($cfg_runmode2=='0'){
 				$trow = $dsql->GetOne("select ishidden from sea_type where tid=".$tid);
-				if($trow['ishidden']==1){
+				$trow=is_array($trow)?$trow:array(); if($trow['ishidden']==1){
 					delArticleFile($tid,$n_id);
 					ShowMsg("文章更新成功",$v_back);
 					exit();
@@ -119,7 +132,7 @@ elseif($action=="del")
 	$back=$Pirurl;
 	$id = isset($id) && is_numeric($id) ? $id : 0;
 	$vtypeAndPic=$dsql->GetOne("select tid,n_pic from sea_news where n_id=".$id);
-	$vtype=$vtypeAndPic['tid'];
+	$vtypeAndPic=is_array($vtypeAndPic)?$vtypeAndPic:array(); $vtype=$vtypeAndPic['tid'];
 	$vpic=$vtypeAndPic['n_pic'];
 	if(substr($vpic,0,8)=='/uploads') delFile("../".$vpic);
 	if($cfg_runmode2=='0')
@@ -276,7 +289,7 @@ function addtags($v_tags,$v_id)
 				if(!$tag) {
 					$dsql->ExecuteNoneQuery("INSERT INTO sea_tags (tag,usenum,vids) VALUES ('$tagdb[$i]', '1', '$v_id')");
 				}else{
-					$vids = $tag['vids'].','.$v_id;
+					$tag=is_array($tag)?$tag:array(); $vids = $tag['vids'].','.$v_id;
 					$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum+1, vids='$vids' WHERE tag='$tagdb[$i]'");
 				}
 			}
@@ -342,7 +355,7 @@ function updatetags($videoid, $newkeywords, $oldkeywords) {
 				if(!$tag) {
 					$dsql->ExecuteNoneQuery("INSERT INTO sea_tags (tag,usenum,vids) VALUES ('$arrtag[$i]', '1', '$videoid')");
 				} else {						
-					$vids = $tag['vids'].','.$videoid;
+					$tag=is_array($tag)?$tag:array(); $vids = $tag['vids'].','.$videoid;
 					$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum+1, vids='$vids' WHERE tag='$arrtag[$i]'");
 				}
 			}
@@ -353,7 +366,7 @@ function updatetags($videoid, $newkeywords, $oldkeywords) {
 	for($i=0; $i<$arrold_num; $i++) {
 		if ($arrold[$i] && !in_array($arrold[$i], $arrtag)) {
 			$tag = $dsql->GetOne("SELECT vids FROM sea_tags WHERE tag='$arrold[$i]' LIMIT 1");
-			$tag['vids'] = str_replace(','.$videoid, '', $tag['vids']);
+			$tag=is_array($tag)?$tag:array(); $tag['vids'] = str_replace(','.$videoid, '', $tag['vids']);
 			$tag['vids'] = str_replace($videoid.',', '', $tag['vids']);
 			$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum-1, vids='".$tag['vids']."' WHERE tag='$arrold[$i]'");
 		}

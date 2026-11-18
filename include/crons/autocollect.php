@@ -26,7 +26,7 @@ function autogetlistsbyid($id)
 	if($id==0) return false;
 	global $dsql,$collectPageNum;
 	$row = $dsql->GetOne("Select t.coding,t.sock,t.playfrom,t.autocls,t.classid,t.getherday,t.listconfig,c.cid,c.getlistnum from `sea_co_type` t left join `sea_co_config` c on c.cid=t.cid where t.tid='$id'");
-	$listconfig=$row['listconfig'];
+	$row=is_array($row)?$row:array(); $listconfig=$row['listconfig'];
 	$coding=$row['coding'];
 	$sock=$row['sock'];
 	$playfrom=$row['playfrom'];
@@ -134,7 +134,7 @@ function autogetconbyid($id)
 	if($id==0) return false;
 	global $dsql,$col,$getconnum,$cfg_gatherset;
 	$row = $dsql->GetOne("Select t.coding,t.sock,t.playfrom,t.autocls,t.classid,t.getherday,t.listconfig,t.itemconfig,c.cid,c.getconnum from `sea_co_type` t left join `sea_co_config` c on c.cid=t.cid where t.tid='$id'");
-	$listconfig=$row['listconfig'];
+	$row=is_array($row)?$row:array(); $listconfig=$row['listconfig'];
 	$itemconfig=$row['itemconfig'];
 	//列表规则
 	$listlabelRule = buildregx("{seacms:listrule(.*?)}(.*?){/seacms:listrule}","is");

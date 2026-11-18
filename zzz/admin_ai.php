@@ -35,7 +35,7 @@ if($action=="batch_process")
 	// 查视频
 	$vrow = $dsql->GetOne("SELECT v_id,v_name,tid FROM sea_data WHERE v_id={$vid}");
 	if(!$vrow) { echo json_encode(array('ok'=>false,'error'=>'视频不存在')); exit; }
-	if(intval($vrow['v_ai']) === 1) { echo json_encode(array('ok'=>true,'skipped'=>true,'msg'=>'已标记处理完成')); exit; }
+	$vrow=is_array($vrow)?$vrow:array(); if(intval($vrow['v_ai']) === 1) { echo json_encode(array('ok'=>true,'skipped'=>true,'msg'=>'已标记处理完成')); exit; }
 
 	$vname = trim($vrow['v_name']);
 	if($vname === '') { echo json_encode(array('ok'=>false,'error'=>'视频名称为空')); exit; }
@@ -100,7 +100,7 @@ if($action=="batch_reset")
 {
 	header('Content-Type: application/json; charset=utf-8');
 	$cnt = $dsql->GetOne("SELECT COUNT(*) AS c FROM sea_data WHERE v_recycled=0 AND v_name<>''");
-	$total = intval($cnt['c']);
+	$cnt=is_array($cnt)?$cnt:array(); $total = intval($cnt['c']);
 	if($total === 0){ echo json_encode(array('ok'=>true,'total'=>0)); exit; }
 	$dsql->ExecuteNoneQuery("UPDATE sea_data SET v_ai=0 WHERE v_recycled=0 AND v_name<>''");
 	echo json_encode(array('ok'=>true,'total'=>$total), JSON_UNESCAPED_UNICODE);
@@ -227,9 +227,9 @@ $__ai_total = 0;
 if(isset($dsql))
 {
 	$__row = $dsql->GetOne("SELECT COUNT(*) AS c FROM sea_data WHERE v_ai=0 AND v_name<>'' AND v_recycled=0");
-	$__ai_count = intval($__row['c']);
+	$__row=is_array($__row)?$__row:array(); $__ai_count = intval($__row['c']);
 	$__row2 = $dsql->GetOne("SELECT COUNT(*) AS c FROM sea_data WHERE v_name<>'' AND v_recycled=0");
-	$__ai_total = intval($__row2['c']);
+	$__row2=is_array($__row2)?$__row2:array(); $__ai_total = intval($__row2['c']);
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

@@ -27,46 +27,47 @@ if($cfg_search_type =='2')
 $schwhere = '';
 foreach($_GET as $k=>$v)
 {
-	$$k=_RunMagicQuotes(RemoveXSS($v));
+	$tmpv = RemoveXSS($v);
+	$$k=_RunMagicQuotes($tmpv);
 	$schwhere.= "&$k=".urlencode($$k);
 }
 $schwhere = ltrim($schwhere,'&');
 $page = (isset($page) && is_numeric($page)) ? $page : 1;
-if($searchtype != 5){$searchtype=$cfg_search_type;}
+if(!isset($searchtype) || $searchtype != 5){$searchtype=$cfg_search_type;}
 $tid = (isset($tid) && is_numeric($tid)) ? $tid : 0;
 $uptypeid=GetTopid($tid);
 if($uptypeid== 0){$uptypeid=$tid;}
 if(!isset($searchword)) $searchword = '';
-$action = $_REQUEST['action'];
+$action = $_REQUEST['action'] ?? '';
 $searchword = RemoveXSS(stripslashes($searchword));
 $searchword = addslashes(cn_substr($searchword,20));
 $searchword = trim($searchword);
 
-$jq = RemoveXSS(stripslashes($jq));
+$jq = RemoveXSS(stripslashes($jq ?? ''));
 $jq = addslashes(cn_substr($jq,10));
 
-$area = RemoveXSS(stripslashes($area));
+$area = RemoveXSS(stripslashes($area ?? ''));
 $area = addslashes(cn_substr($area,10));
 
-$year = RemoveXSS(stripslashes($year));
+$year = RemoveXSS(stripslashes($year ?? ''));
 $year = addslashes(cn_substr($year,4));
 
-$yuyan = RemoveXSS(stripslashes($yuyan));
+$yuyan = RemoveXSS(stripslashes($yuyan ?? ''));
 $yuyan = addslashes(cn_substr($yuyan,10));
 
-$letter = RemoveXSS(stripslashes($letter));
+$letter = RemoveXSS(stripslashes($letter ?? ''));
 $letter = addslashes(cn_substr($letter,2));
 
-$state = RemoveXSS(stripslashes($state));
+$state = RemoveXSS(stripslashes($state ?? ''));
 $state = addslashes(cn_substr($state,2));
 
-$ver = RemoveXSS(stripslashes($ver));
+$ver = RemoveXSS(stripslashes($ver ?? ''));
 $ver = addslashes(cn_substr($ver,10));
 
-$money = RemoveXSS(stripslashes($money));
+$money = RemoveXSS(stripslashes($money ?? ''));
 $money = addslashes(cn_substr($money,2));
 
-$order = RemoveXSS(stripslashes($order));
+$order = RemoveXSS(stripslashes($order ?? ''));
 $order = addslashes(cn_substr($order,16));
 
 if($cfg_notallowsstr !='' && $searchtype!=5)
@@ -314,6 +315,7 @@ function parseSearchPart($templatePath)
 
 function checkSearchTimes($searchtime)
 {
+	global $cfg_search_time;
 	if(GetCookie("ssea2_search")=="ok")
 	{
 		ShowMsg('搜索限制为'.$searchtime.'秒一次','index.php','0',$cfg_search_time);

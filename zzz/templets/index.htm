@@ -1293,7 +1293,7 @@ html, body {
           <?php
             foreach($value AS $key1 => $value1)
             {
-              if($key1>0){
+              if($key1 !== 'link' && $key1 > 0){
                 if($value1==''){
           ?>
           <li class="menu-item"><div class="menu-space"></div></li>

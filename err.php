@@ -9,15 +9,15 @@ if($cfg_feedbackstart=='0'){
 	exit();
 }
 
-$id=$_GET['id'];
+$id=$_GET['id'] ?? 0;
 $id=intval($id);
 $row1 = $dsql->GetOne("SELECT v_name FROM `sea_data` WHERE `v_id` = '$id' ORDER BY `v_id` DESC ");
 		if(!is_array($row1)){
 			showMsg('请勿恶意提交报错数据','index.php');
 			exit();
 		}
-$errtxt2=$_GET['errtxt'];
-$id2=$_GET['id'];
+$errtxt2=$_GET['errtxt'] ?? '';
+$id2=$_GET['id'] ?? 0;
 if(empty($action)) $action = '';
 if($action=='add')
 {
@@ -40,7 +40,7 @@ if($cfg_feedback_ck=='1')
 	if(!empty($cfg_feedback_times))
 	{
 		$row = $dsql->GetOne("SELECT sendtime FROM `sea_erradd` WHERE `ip` = '$ip' ORDER BY `id` DESC ");
-		if($sendtime - $row['sendtime'] < $cfg_feedback_times)
+		$row=is_array($row)?$row:array(); if($sendtime - $row['sendtime'] < $cfg_feedback_times)
 		{
 			ShowMsg("提交过快，歇会再来报错吧","-1");
 			exit();

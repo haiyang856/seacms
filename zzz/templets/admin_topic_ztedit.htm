@@ -50,8 +50,7 @@ function onUploadBack(fn){
 <?php
 	$id=$_GET['id'];
 	$sql="SELECT * FROM sea_topic where id='$id' limit 1";
-	$row = $dsql->GetOne($sql);
-	//print_f($row);die();
+	$row = $dsql->GetOne($sql);$row=is_array($row)?$row:array(); 	//print_f($row);die();
 	
 	
 ?>

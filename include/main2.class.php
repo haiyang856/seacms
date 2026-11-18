@@ -6,6 +6,8 @@ if (! defined ( 'sea_INC' )) {
 $cfg_mskin ='1';$cfg_df_mstyle='old';
 $t1 = ExecTime ();
 class MainClass_Template {
+	public $dsql;
+	public $templateDir;
 	function __construct() {
 		global $dsql, $cfg_basedir, $cfg_df_style, $cfg_df_html,$cfg_mskin,$cfg_df_mstyle;
 		$this->dsql = $dsql;
@@ -4096,7 +4098,7 @@ class MainClass_Template {
 			$vidArr = explode ( ',', $vid );
 			$row = $dsql->GetOne ( "select body as v_playdata from sea_playdata where v_id=" . $vidArr [0] );
 			if ($cfg_playaddr_enc == 'escape') {
-				$content = str_replace ( $matchfieldvalue, "<script>var VideoInfoList=unescape(\"" . escape ( $row ['v_playdata'] ) . "\");var paras='" . $vid . "'.split(',');_lOlOl10l(paras[2],paras[1])</script>", $content );
+				$row=is_array($row)?$row:array(); $content = str_replace ( $matchfieldvalue, "<script>var VideoInfoList=unescape(\"" . escape ( $row ['v_playdata'] ) . "\");var paras='" . $vid . "'.split(',');_lOlOl10l(paras[2],paras[1])</script>", $content );
 			} elseif ($cfg_playaddr_enc == 'base64') {
 				$content = str_replace ( $matchfieldvalue, "<script>var VideoInfoList=base64decode(\"" . base64_encode ( $row ['v_playdata'] ) . "\");var paras='" . $vid . "'.split(',');_lOlOl10l(paras[2],paras[1])</script>", $content );
 			} else {

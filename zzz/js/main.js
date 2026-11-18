@@ -796,20 +796,28 @@ function selecPlan(selecVal)
 }
 
 function setBindType(curid,classid){
-	openWindow2(101,280,28,0)
+	openWindow2(101,340,46,0)
 	var msgDiv=document.getElementById("msg")
 	var topicTDObj = document.getElementById("bind_"+curid);
 	var topicTDTop = topicTDObj.offsetTop;
-    var topicTDLeft = topicTDObj.offsetLeft; 
+    var topicTDLeft = topicTDObj.offsetLeft;
     while (topicTDObj = topicTDObj.offsetParent){topicTDTop+=topicTDObj.offsetTop; topicTDLeft+=topicTDObj.offsetLeft;}
-    msgDiv.style.cssText+="border:1px solid #55BBFF;background: #C1E7FF;padding:3px 0px 3px 4px;"
+    msgDiv.style.cssText+="border:1px solid #55BBFF;background: #C1E7FF;padding:3px 0px 3px 4px;overflow:visible;"
 	msgDiv.style.top = (topicTDTop-2)+"px";
-    msgDiv.style.left = (topicTDLeft+1)+"px"; 
-	//msgDiv.innerHTML="正在加载内容....";	
+    // 视口边界修正: 弹窗靠近右缘时左移,避免"绑 定"按钮被裁出屏幕
+    var bindPopVW = document.documentElement.clientWidth;
+    var bindPopLeft = topicTDLeft + 1;
+    if (bindPopLeft + 360 > bindPopVW) { bindPopLeft = bindPopVW - 370; }
+    if (bindPopLeft < 0) { bindPopLeft = 4; }
+    msgDiv.style.left = bindPopLeft+"px";
+	//msgDiv.innerHTML="正在加载内容....";
 	ajax.get(
-		"admin_reslib.php?curid="+curid+"&ac=bind&classid="+classid, 
+		"admin_reslib.php?curid="+curid+"&ac=bind&classid="+classid,
 		function(obj) {
 			msgDiv.innerHTML=obj.responseText;
+			// 限制分类下拉宽度,避免长分类名把"绑 定/返 回"按钮挤出弹窗
+			var tidSel = document.getElementById("tid");
+			if (tidSel) { tidSel.style.maxWidth = "180px"; }
 		}
 	);
 }

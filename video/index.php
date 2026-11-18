@@ -12,7 +12,7 @@ if($GLOBALS['cfg_runmode']==2||$GLOBALS['cfg_paramset']==0){
 	$paras=str_replace(getfileSuffix(),'',$_SERVER['QUERY_STRING']);
 	if(strpos($paras,"-")>0){
 		$parasArray=explode("-",$paras);
-		if(count($parasArray>2)){
+		if(count($parasArray)>2){
 		$vid=$parasArray[0];
 		$id=$parasArray[1];
 		$from=$parasArray[2];
@@ -29,9 +29,9 @@ if($GLOBALS['cfg_runmode']==2||$GLOBALS['cfg_paramset']==0){
 	$from = (isset($from) && is_numeric($from) ? $from : 0);
 	$id = (isset($id) && is_numeric($id) ? $id : 0);
 }else{
-	$vid = $$GLOBALS['cfg_paramid'];
-	$id = $$GLOBALS['cfg_parampage'];
-	$from = $$GLOBALS['cfg_paramindex'];
+	$vid = ${$GLOBALS['cfg_paramid']};
+	$id = ${$GLOBALS['cfg_parampage']};
+	$from = ${$GLOBALS['cfg_paramindex']};
 	$vid = (isset($vid) && is_numeric($vid) ? $vid : 0);
 	$from = (isset($from) && is_numeric($from) ? $from : 0);
 	$id = (isset($id) && is_numeric($id) ? $id : 0);
@@ -46,17 +46,17 @@ if($vid==0){
 	require(dirname(__FILE__)."/../data/config.plus.inc.php"); 
 	//网站改版
     if($PLUS["JmpVideo"]['off']){$pID=$PLUS["JmpVideo"]['data'][$vid];if($pID){$vid=$pID;}}
-if($GLOBALS['cfg_runmode']==1) {$action=$_GET['action'];}
-$uid=$_SESSION['sea_user_id'];
+if($GLOBALS['cfg_runmode']==1) {$action=isset($_GET['action']) ? $_GET['action'] : '';}
+$uid=isset($_SESSION['sea_user_id']) ? $_SESSION['sea_user_id'] : 0;
 $uid = intval($uid);
 if($action=="pay")
 {
 		if(empty($_SESSION['sea_user_id'])){showMsg("请先登录","../login.php"); exit();}	
 		$row7=$dsql->GetOne("Select v_money from sea_data where v_id='$vid'");
-		$vmoney=intval($row7['v_money']);
+		$row7=is_array($row7)?$row7:array(); $vmoney=intval($row7['v_money']);
 		if($vmoney=="" OR empty($vmoney)){$vmoney=0;}
 		$row6=$dsql->GetOne("Select * from sea_member where id='$uid'");
-		if($row6['points']<$vmoney)
+		$row6=is_array($row6)?$row6:array(); if($row6['points']<$vmoney)
 		{
 			showMsg("抱歉，".$cfg_pointsname."不足，系统将跳转至充值中心","../member.php",0,5000); exit();
 		}
@@ -69,7 +69,7 @@ if($action=="pay")
 		if(!is_array($row3))
 		{
 			$rowpay = $dsql->GetOne("Select * From sea_data where v_id=$vid");
-			$vmoneypay=$rowpay['v_money'];
+			$rowpay=is_array($rowpay)?$rowpay:array(); $vmoneypay=$rowpay['v_money'];
 			$sqlpay="Update sea_member set points = points-$vmoneypay where id=$uid";
 			$dsql->ExecuteNoneQuery("$sqlpay");
 			$dsql->ExecuteNoneQuery("insert into sea_buy values('','$uid','$vid','$from2','$vmoneypay','".time()."')");
@@ -103,13 +103,14 @@ function echoPlay($vId)
 	if($vmoney=="" OR empty($vmoney)){$vmoney=0;}
 	$vtry=$row['v_try'];
 	$vExtraType = $row['v_extratype'];
-	$uid=$_SESSION['sea_user_id'];
+	$uid=isset($_SESSION['sea_user_id']) ? $_SESSION['sea_user_id'] : 0;
 	if (strpos(" ,".getHideTypeIDS().",",",".$vType.",")>0){ShowMsg("该内容已被删除或者隐藏","../index.php",0,10000);exit();}
 	if ($row['v_recycled']==1){ShowMsg("该内容已被删除或者隐藏","../index.php",0,10000);exit();};
+	$vipstop='';
 	if ($cfg_user == 1){
 		
 		$rowvip=$dsql->GetOne("SELECT v_vip FROM sea_data where v_id=".$vId);
-		$vip=$rowvip['v_vip'];
+		$rowvip=is_array($rowvip)?$rowvip:array(); $vip=$rowvip['v_vip'];
 		$urlArray=getLinkArr($row['v_playdata'],$id);
 		$totalLinkvip = count($urlArray);
 		
@@ -138,7 +139,7 @@ function echoPlay($vId)
 			$viparr2=explode(',',$vip);
 			foreach ($viparr2 as $value) 
 			{
-			  $viparr[]=$value-1;
+			  $viparr[]=intval($value)-1;
 			}
 		}
 
@@ -361,6 +362,7 @@ function echoPlay($vId)
 	
 	// 输出调试（可选）
 	//print_r($episodeList['url']); 
+	$eurls = '';
 	foreach($episodeList as $key=>$item)
 	{
 		$eurls.=$item['url'].",";
@@ -482,17 +484,17 @@ function parsePlayPart($templatePath,$currentTypeId,$vtag)
 }
 
 function getPartName2($playData,$m,$n){
-	$PartName=array();
+	$PartName=array('','','','');
 	$playDataarray1=explode("$$$",$playData);
-	if(strpos($playDataarray1[$m],"$$")>0){
+	if(strpos(isset($playDataarray1[$m]) ? $playDataarray1[$m] : '',"$$")>0){
 		$playDataarray2=explode("$$",$playDataarray1[$m]);
 		$PartName[0]=$playDataarray2[0];
-			$playDataarray3=explode("#",$playDataarray2[1]);
-			if(strpos($playDataarray3[$n],"$")>0){
+			$playDataarray3=explode("#",isset($playDataarray2[1]) ? $playDataarray2[1] : '');
+			if(strpos(isset($playDataarray3[$n]) ? $playDataarray3[$n] : '',"$")>0){
 				$playDataarray4=explode("$",$playDataarray3[$n]);
-				$PartName[1]=$playDataarray4[0];
-				$PartName[2]=$playDataarray4[1];
-				$PartName[3]=$playDataarray4[2];
+				$PartName[1]=isset($playDataarray4[0]) ? $playDataarray4[0] : '';
+				$PartName[2]=isset($playDataarray4[1]) ? $playDataarray4[1] : '';
+				$PartName[3]=isset($playDataarray4[2]) ? $playDataarray4[2] : '';
 			}
 	}
 

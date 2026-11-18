@@ -52,8 +52,7 @@ $sql="select * from sea_member ".$whereStr." ORDER BY  id DESC limit $limitstart
 	$dsql->Execute('al');
 	while($row=$dsql->GetObject('al'))
 	{
-	$rs = $dsql->GetOne("select gname from sea_member_group where gid = ".$row->gid);
-
+	$rs = $dsql->GetOne("select gname from sea_member_group where gid = ".$row->gid);$rs=is_array($rs)?$rs:array(); 
 ?>  
      <TR  bgcolor="#FFF" style="background-color:#FFF" onmouseover="style.backgroundColor='#E6F2FB'" onmouseout="style.backgroundColor='#FFF'" <?php if($id==$row->id){?> class="editlast"<?php }?> name="topictr" id="topictr<?php echo $row->id;?>" >
       

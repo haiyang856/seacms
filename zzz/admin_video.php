@@ -10,9 +10,19 @@ if(empty($action))
 {
 	$action = '';
 }
+// 列表页筛选参数的默认值(PHP 8 未定义变量告警)
+foreach(array('v_recycled','v_isunion','v_ismoney','v_ispsd','order','type','etype','keyword','v_state','v_commend','repeat','allrepeat','topic','playfrom','downfrom','empty','rlen','jqtype','area','year','yuyan','letter','commend','ver','reweek','whereStr','whereorder','jumpurl') as $__vname)
+{
+	if(!isset($$__vname)) $$__vname='';
+}
+if(!isset($TotalPage)) $TotalPage=0;
+if(!isset($TotalResult)) $TotalResult=0;
+if(!isset($numPerPage)) $numPerPage=20;
+if(!isset($limitstart)) $limitstart=0;
 
 if($action=="add")
 {
+$row=array('v_publishyear'=>'','v_lang'=>'','v_publisharea'=>'','v_ver'=>'');
 $makePlayerSelectStr=str_replace("'","\'",makePlayerSelect(""));
 $makeDownSelectStr = str_replace("'","\'",makedownSelect(""));
 $deepseek_cfg = deepseek_load_config();
@@ -48,6 +58,11 @@ elseif($action=="edit")
 }
 elseif($action=="save")
 {
+	// 表单可选字段默认值，避免 PHP 8 未定义变量告警
+	foreach(array('v_name','v_type','v_actor','v_director','v_publishyear','v_publisharea','v_note','v_tags','v_lang','v_color','v_nickname','v_tvs','v_company','v_len','v_total','v_pic','v_spic','v_gpic','v_ver','v_psd','v_try','v_longtxt','v_digg','v_tread','v_state','v_topic','v_hit','v_money','v_rank','v_vip','v_commend','v_dayhit','v_weekhit','v_monthhit','v_score','v_scorenum','v_douban','v_mtime','v_imdb','isupdatetime','ping','v_playurl','m_downurl','v_playfrom','m_downfrom','v_id','v_oldtags') as $__vname)
+	{
+		if(!isset($$__vname)) $$__vname='';
+	}
 	if(trim($v_name) == '')
 	{
 		ShowMsg("影片名不能为空！","-1");
@@ -58,10 +73,10 @@ elseif($action=="save")
 		ShowMsg("请选择分类！","-1");
 		exit();
 	}
-	$v_playurl = empty($v_playurl) ? $v_playurl : repairUrlForm($v_playurl,$v_playfrom);
-	$m_downurl = empty($m_downurl) ? $m_downurl : dwonUrlForm($m_downurl,$m_downfrom);
-	$v_playdata=transferUrl($v_playfrom,$v_playurl);
-	$v_downdata=transferUrl($m_downfrom,$m_downurl);
+	$v_playurl = empty($v_playurl) ? '' : repairUrlForm($v_playurl,$v_playfrom);
+	$m_downurl = empty($m_downurl) ? '' : dwonUrlForm($m_downurl,$m_downfrom);
+	$v_playdata = empty($v_playurl) ? '' : transferUrl($v_playfrom,$v_playurl);
+	$v_downdata = empty($m_downurl) ? '' : transferUrl($m_downfrom,$m_downurl);
 	$tid = empty($v_type) ? 0 : intval($v_type);
 	$v_state = empty($v_state) ? 0 : intval($v_state);
 	$v_topic = empty($v_topic) ? 0 : intval($v_topic);
@@ -71,10 +86,11 @@ elseif($action=="save")
 	$v_rank = empty($v_rank) ? 0 : intval($v_rank);
 	$v_name = htmlspecialchars(cn_substrR($v_name,250));
 	$v_name = str_replace(array('\\','()','\''),'/',$v_name);
+	$v_color = isset($v_color) ? $v_color : '';
 	$v_actor = htmlspecialchars(cn_substrR($v_actor,200));
 	$v_actor = str_replace('%', ' ', $v_actor);
 	if($v_actor=="" OR empty($v_actor)){$v_actor="内详";}
-	$v_publishyear = empty($v_publishyear) ? date(Y) : intval($v_publishyear);
+	$v_publishyear = empty($v_publishyear) ? date('Y') : intval($v_publishyear);
 	$v_publisharea = cn_substrR($v_publisharea,20);
 	$v_note = cn_substrR($v_note,30);
 	$v_tags = cn_substrR(strtolower($v_tags),255);
@@ -87,18 +103,18 @@ elseif($action=="save")
 	$v_commend =  empty($v_commend) ? 0 : intval($v_commend);
 	$v_enname = empty($v_enname)?Pinyin($v_name):$v_enname;
 	$v_letter = strtoupper(substr($v_enname,0,1));
-	$v_extratype = $_POST['v_type_extra'];
-	$v_extrajqtype = $_POST['v_jqtype_extra'];
-	$v_longtxt = $_POST['v_longtxt'];
-	$v_psd = $_POST['v_psd'];
-	$v_try = $_POST['v_try'];
-	$v_vip = $_POST['v_vip'];
+	$v_extratype = isset($_POST['v_type_extra']) ? $_POST['v_type_extra'] : array();
+	$v_extrajqtype = isset($_POST['v_jqtype_extra']) ? $_POST['v_jqtype_extra'] : array();
+	$v_longtxt = $_POST['v_longtxt'] ?? '';
+	$v_psd = $_POST['v_psd'] ?? '';
+	$v_try = $_POST['v_try'] ?? '';
+	$v_vip = $_POST['v_vip'] ?? '';
 
-	$v_extratype=implode(",",$v_extratype); //获取扩展分类数组
-	$v_jq=implode(",",$v_extrajqtype); //获取剧情分类数组
+	$v_extratype=isset($_POST['v_type_extra'])?implode(",",$_POST['v_type_extra']):''; //获取扩展分类数组
+	$v_jq=isset($_POST['v_jqtype_extra'])?implode(",",$_POST['v_jqtype_extra']):''; //获取剧情分类数组
 	
 	$v_nickname = htmlspecialchars(cn_substrR($v_nickname,200));
-	$v_reweek = implode(",",$v_reweek);
+	$v_reweek = isset($_POST['v_reweek'])?implode(",",$v_reweek):'';
 	$v_douban = empty($v_douban) ? 0 : $v_douban;
 	$v_mtime = empty($v_mtime) ? 0 : $v_mtime;
 	$v_imdb = empty($v_imdb) ? 0 : $v_imdb;
@@ -137,7 +153,7 @@ elseif($action=="save")
 				clearTypeCache();
 				
 				//推送新增
-				if($ping==1)	
+				if(!empty($ping))	
 				{   
 					@include("../data/admin/ping.php");
 					$u='http://';
@@ -172,10 +188,8 @@ elseif($action=="save")
 		break;
 		case "edit":
 			$v_id = isset($v_id) && is_numeric($v_id) ? $v_id : 0;
-			$v_extratype = $_POST['v_type_extra'];
-			$v_extrajqtype = $_POST['v_jqtype_extra'];
-			$v_extratype=implode(",",$v_extratype); //获取扩展分类数组
-			$v_jq=implode(",",$v_extrajqtype); //获取扩展分类数组
+			$v_extratype=isset($_POST['v_type_extra'])?implode(",",$_POST['v_type_extra']):''; //获取扩展分类数组
+			$v_jq=isset($_POST['v_jqtype_extra'])?implode(",",$_POST['v_jqtype_extra']):''; //获取扩展分类数组
 	
 			$updateSql = "tid = '$tid',v_name = '$v_name',v_letter = '$v_letter',v_state = '$v_state',v_topic = '$v_topic',v_hit = '$v_hit',v_money = '$v_money',v_vip = '$v_vip',v_rank = '$v_rank',v_actor = '$v_actor',v_color = '$v_color',v_publishyear = '$v_publishyear',v_publisharea = '$v_publisharea',v_pic = '$v_pic',v_spic = '$v_spic',v_gpic = '$v_gpic',v_note = '$v_note',v_tags = '$v_tags',v_lang='$v_lang',v_director='$v_director',v_enname='$v_enname',v_extratype='$v_extratype',v_jq='$v_jq',v_nickname='$v_nickname',v_reweek='$v_reweek',v_douban='$v_douban',v_mtime='$v_mtime',v_imdb='$v_imdb',v_tvs='$v_tvs',v_company='$v_company',v_dayhit='$v_dayhit',v_weekhit='$v_weekhit',v_monthhit='$v_monthhit',v_len='$v_len',v_total='$v_total',v_score='$v_score',v_scorenum='$v_scorenum',v_ver='$v_ver',v_psd='$v_psd',v_try='$v_try',v_longtxt='$v_longtxt',v_digg='$v_digg',v_tread='$v_tread'";
 			if(!empty($isupdatetime)) $updateSql .= ",v_addtime='$v_addtime'";
@@ -199,7 +213,7 @@ elseif($action=="save")
 			updatetags($v_id, $v_tags, $v_oldtags);
 			
 			//推送更新
-				if($ping==1)	
+				if(!empty($ping))	
 				{   
 					@include("../data/admin/ping.php");
 					$u='http://';
@@ -224,7 +238,7 @@ elseif($action=="save")
 			$v_back='admin_video.php?action=edit&id='.$v_id;
 			if($cfg_runmode=='0'){
 				$trow = $dsql->GetOne("select ishidden from sea_type where tid=".$tid);
-				if($trow['ishidden']==1){
+				$trow=is_array($trow)?$trow:array(); if($trow['ishidden']==1){
 					ShowMsg("影片更新成功",$v_back);
 					exit();
 				}else{
@@ -276,7 +290,7 @@ elseif($action=="del")
 	$back=$Pirurl;
 	$id = isset($id) && is_numeric($id) ? $id : 0;
 	$vtypeAndPic=$dsql->GetOne("select tid,v_pic,v_addtime,v_enname from sea_data where v_id=".$id);
-	$vtype=$vtypeAndPic['tid'];
+	$vtypeAndPic=is_array($vtypeAndPic)?$vtypeAndPic:array(); $vtype=$vtypeAndPic['tid'];
 	$vpic=$vtypeAndPic['v_pic'];
 	if(strpos($vpic,'uploads/')===0) delFile("../".$vpic);
 	//delContentFile($vtype,$id,date('Y-n',$vtypeAndPic['v_addtime']),$vtypeAndPic['v_enname']);
@@ -314,7 +328,7 @@ elseif($action=="delall")
 	
 	foreach($e_id as $id){
 	$vtypeAndPic=$dsql->GetOne("select tid,v_pic,v_addtime,v_enname from sea_data where v_id=".$id);
-	$vtype=$vtypeAndPic['tid'];
+	$vtypeAndPic=is_array($vtypeAndPic)?$vtypeAndPic:array(); $vtype=$vtypeAndPic['tid'];
 	$vpic=$vtypeAndPic['v_pic'];
 	if(strpos($vpic,'uploads/')===0) delFile("../".$vpic);
 	//delContentFile($vtype,$id,date('Y-n',$vtypeAndPic['v_addtime']),$vtypeAndPic['v_enname']);
@@ -525,11 +539,11 @@ function getVerSelect($selectName,$strSelect,$verId)
 	}
 	$str = '<select name="select4" id="select4"  onChange="v_ver.value=select4.value;v_ver.select()">';
 	if(!empty($strSelect)) $str .= "<option value=''>".$strSelect."</option>";
-	foreach($ver as &$ver)
+	foreach($ver as &$v)
 	{
-		$ver=str_replace("\r\n","",$ver);
-		if(!empty($verId) && ($ver==$verId)) $str .= "<option value='".$ver."' selected>$ver</option>";
-		else $str .= "<option value='".$ver."'>$ver</option>";
+		$v=str_replace("\r\n","",$v);
+		if(!empty($verId) && ($v==$verId)) $str .= "<option value='".$v."' selected>$v</option>";
+		else $str .= "<option value='".$v."'>$v</option>";
 	}
 	if(!in_array($verId,$ver)&&!empty($verId))
 	$str .= "<option value='".$verId."' selected>$verId</option>";
@@ -613,6 +627,7 @@ return $allstr;
 
 function dwonUrlForm($downurl,$downfrom)
 {
+	$rstr='';
 	foreach($downurl as $k=>$v)
 	{
 	$v = trim($v);
@@ -628,7 +643,8 @@ return rtrim($rstr, ", ");
 
 function repairUrlForm($playurl,$playfrom)
 {
-	if (count($playurl)!=count($playfrom))
+	$rstr='';
+	if (count((array)$playurl)!=count((array)$playfrom))
 	{
 		ShowMsg("未为每个数据选择数据来源！","-1");
 		return ;
@@ -669,11 +685,13 @@ return $stru;
 
 function transferUrl($fromStr,$playStr)
 {
+	$playStr = (string)$playStr;
+	$fromStr = (array)$fromStr;
 	$playStr=str_replace(chr(13),"#",str_replace(chr(10),"",str_replace("$$","",str_replace("#","",$playStr))));
 	$playStr=rtrim(rtrim($playStr, ","),"#");
 	$fromArray=$fromStr;
 	$playArray=explode(", ",$playStr);
-	$fromLen=count($fromArray);
+	$fromLen=count((array)$fromArray);
 	$playLen=count($playArray);
 /*	if($fromLen!=$playLen){
 		ShowMsg("来源或者地址没有填写完整！","-1");
@@ -748,7 +766,7 @@ function addtags($v_tags,$v_id)
 				if(!$tag) {
 					$dsql->ExecuteNoneQuery("INSERT INTO sea_tags (tag,usenum,vids) VALUES ('$tagdb[$i]', '1', '$v_id')");
 				}else{
-					$vids = $tag['vids'].','.$v_id;
+					$tag=is_array($tag)?$tag:array(); $vids = $tag['vids'].','.$v_id;
 					$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum+1, vids='$vids' WHERE tag='$tagdb[$i]'");
 				}
 			}
@@ -814,7 +832,7 @@ function updatetags($videoid, $newkeywords, $oldkeywords) {
 				if(!$tag) {
 					$dsql->ExecuteNoneQuery("INSERT INTO sea_tags (tag,usenum,vids) VALUES ('$arrtag[$i]', '1', '$videoid')");
 				} else {						
-					$vids = $tag['vids'].','.$videoid;
+					$tag=is_array($tag)?$tag:array(); $vids = $tag['vids'].','.$videoid;
 					$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum+1, vids='$vids' WHERE tag='$arrtag[$i]'");
 				}
 			}
@@ -825,7 +843,7 @@ function updatetags($videoid, $newkeywords, $oldkeywords) {
 	for($i=0; $i<$arrold_num; $i++) {
 		if ($arrold[$i] && !in_array($arrold[$i], $arrtag)) {
 			$tag = $dsql->GetOne("SELECT vids FROM sea_tags WHERE tag='$arrold[$i]'");
-			$tag['vids'] = str_replace(','.$videoid, '', $tag['vids']);
+			$tag=is_array($tag)?$tag:array(); $tag['vids'] = str_replace(','.$videoid, '', $tag['vids']);
 			$tag['vids'] = str_replace($videoid.',', '', $tag['vids']);
 			$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum-1, vids='".$tag['vids']."' WHERE tag='$arrold[$i]'");
 		}
@@ -849,6 +867,7 @@ function zzget($txt)
 	elseif($txt=='ver'){$txt=sea_DATA."/admin/verlist.txt";}
 	else{return '<option value=0>无内容</option>';exit();}
 	$cc = array();
+	$str = '';
 	if(filesize($txt)>0)
 	{
 		$cc = file($txt);

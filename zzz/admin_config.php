@@ -72,6 +72,7 @@ if($dopost=="save")
 		$content = str_replace("{articlepageName3}",$edit___cfg_articlepage_name3,$content);
 		createTextFile($content,sea_ROOT."/.htaccess");
 	}
+	$configstr = '';
 	foreach($_POST as $k=>$v)
 	{
 		if(m_ereg("^edit___",$k))
@@ -157,8 +158,8 @@ if($dopost=="save")
 	flock($fp,3);
 	fwrite($fp,$iplist);
 	fclose($fp);
-	$iplist = @fread($fp,filesize($iplisttxt));
-	@fclose($fp);
+	$iplist = is_resource($fp)? @fread($fp,filesize($iplisttxt)) : false;
+	if(is_resource($fp)) @fclose($fp);
 	$areaarr = explode('|',$publisharea);
 	$fp = @fopen($publishareatxt,'w');
 	@flock($fp,3);

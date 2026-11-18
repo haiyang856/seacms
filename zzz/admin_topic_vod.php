@@ -120,7 +120,7 @@ elseif($action=="save")
 	$v_rank = empty($v_rank) ? 0 : intval($v_rank);
 	$v_name = htmlspecialchars(cn_substrR($v_name,60));
 	$v_actor = cn_substrR($v_actor,200);
-	$v_publishyear = empty($v_publishyear) ? date(Y) : intval($v_publishyear);
+	$v_publishyear = empty($v_publishyear) ? date('Y') : intval($v_publishyear);
 	$v_publisharea = cn_substrR($v_publisharea,10);
 	$v_note = cn_substrR($v_note,30);
 	$v_tags = cn_substrR(strtolower(addslashes($v_tags)),30);
@@ -193,7 +193,7 @@ elseif($action=="save")
 			updatetags($v_id, $v_tags, $v_oldtags);
 			if($cfg_runmode=='0'){
 				$trow = $dsql->GetOne("select ishidden from sea_type where tid=".$tid);
-				if($trow['ishidden']==1){
+				$trow=is_array($trow)?$trow:array(); if($trow['ishidden']==1){
 					ShowMsg("影片更新成功",$v_back);
 					exit();
 				}else{
@@ -245,7 +245,7 @@ elseif($action=="del")
 	$back=$Pirurl;
 	$id = isset($id) && is_numeric($id) ? $id : 0;
 	$vtypeAndPic=$dsql->GetOne("select tid,v_pic,v_addtime,v_enname from sea_data where v_id=".$id);
-	$vtype=$vtypeAndPic['tid'];
+	$vtypeAndPic=is_array($vtypeAndPic)?$vtypeAndPic:array(); $vtype=$vtypeAndPic['tid'];
 	$vpic=$vtypeAndPic['v_pic'];
 	if(strpos($vpic,'uploads/')===0) delFile("../".$vpic);
 	//delContentFile($vtype,$id,date('Y-n',$vtypeAndPic['v_addtime']),$vtypeAndPic['v_enname']);
@@ -642,7 +642,7 @@ function addtags($v_tags,$v_id)
 				if(!$tag) {
 					$dsql->ExecuteNoneQuery("INSERT INTO sea_tags (tag,usenum,vids) VALUES ('$tagdb[$i]', '1', '$v_id')");
 				}else{
-					$vids = $tag['vids'].','.$v_id;
+					$tag=is_array($tag)?$tag:array(); $vids = $tag['vids'].','.$v_id;
 					$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum+1, vids='$vids' WHERE tag='$tagdb[$i]'");
 				}
 			}
@@ -708,7 +708,7 @@ function updatetags($videoid, $newkeywords, $oldkeywords) {
 				if(!$tag) {
 					$dsql->ExecuteNoneQuery("INSERT INTO sea_tags (tag,usenum,vids) VALUES ('$arrtag[$i]', '1', '$videoid')");
 				} else {						
-					$vids = $tag['vids'].','.$videoid;
+					$tag=is_array($tag)?$tag:array(); $vids = $tag['vids'].','.$videoid;
 					$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum+1, vids='$vids' WHERE tag='$arrtag[$i]'");
 				}
 			}
@@ -719,7 +719,7 @@ function updatetags($videoid, $newkeywords, $oldkeywords) {
 	for($i=0; $i<$arrold_num; $i++) {
 		if ($arrold[$i] && !in_array($arrold[$i], $arrtag)) {
 			$tag = $dsql->GetOne("SELECT vids FROM sea_tags WHERE tag='$arrold[$i]'");
-			$tag['vids'] = str_replace(','.$videoid, '', $tag['vids']);
+			$tag=is_array($tag)?$tag:array(); $tag['vids'] = str_replace(','.$videoid, '', $tag['vids']);
 			$tag['vids'] = str_replace($videoid.',', '', $tag['vids']);
 			$dsql->ExecuteNoneQuery("UPDATE sea_tags SET usenum=usenum-1, vids='".$tag['vids']."' WHERE tag='$arrold[$i]'");
 		}

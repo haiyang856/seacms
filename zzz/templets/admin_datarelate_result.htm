@@ -44,14 +44,11 @@
       <tr>
         <?php  
     $pagesize=30;
-    if($page){
-  		$pageval=$page;
-  		$pagenum=($pageval-1)*$pagesize; //计算分页的公式=（当前页数-1*每页条数，每页条数)
-  		$pagenum.=',';
-    }
-    if($pageval<=1){
-         $pageval=1;
-         }
+    $page = isset($page) ? intval($page) : 1;
+    if($page<1)$page=1;
+    $pageval=$page;
+    $pagenum=($pageval-1)*$pagesize; //计算分页的公式=（当前页数-1*每页条数，每页条数)
+    $pagenum.=',';
 	$sql = stripslashes($sql);
     if(strtolower(substr(trim($sql),0,6))!='select')
     {
@@ -85,13 +82,12 @@
      	$zongye=$num/$pagesize;
     }
     $moye=$zongye;
-    $n = count($dsql->GetArray('sqlhelper'));
+    $n = count((array)$dsql->GetArray('sqlhelper'));
     $n = $n/2;
     $sql1 = $sql." limit $pagenum $pagesize";
     $dsql->SetQuery($sql1);
     $dsql->Execute('sqlhelper2');
-    $row1=$dsql->GetOne();
-    foreach($row1 as $key=>$value){
+    $row1=$dsql->GetOne();$row1=is_array($row1)?$row1:array();     foreach($row1 as $key=>$value){
     if(is_string($key)){
 ?>
         <td><?php

@@ -11,5 +11,5 @@ $videotime = $_POST['videotime'];
 $ip = $_POST['ip'];
 $time = $_POST['time'];
 // 更新数据
-mysqli_query("UPDATE sea_danmaku_report SET text='$text' WHERE cid=$cid", $link) or die('修改数据出错：' . mysql_error());
-mysqli_query("UPDATE sea_danmaku_list SET text='$text' WHERE cid=$cid", $link) or die('修改数据出错：' . mysql_error());
+mysqli_query("UPDATE sea_danmaku_report SET text='$text' WHERE cid=$cid", $link) or die('修改数据出错：' . mysqli_error($link));
+mysqli_query("UPDATE sea_danmaku_list SET text='$text' WHERE cid=$cid", $link) or die('修改数据出错：' . mysqli_error($link));

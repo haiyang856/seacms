@@ -50,8 +50,7 @@ $aid=$row->id;
 </form> 
 <?php
 if($action=="edit"){
-$row = $dsql->GetOne("Select * From `sea_admin` where id='$id'");
-?>
+$row = $dsql->GetOne("Select * From `sea_admin` where id='$id'");$row=is_array($row)?$row:array(); ?>
 <form action="?action=save&id=<?php echo $id;?>" method="post" name="editmanager" >
 <table class="tb mt20">
 <tr class="thead"><th colspan="2">编辑管理员</th></tr>

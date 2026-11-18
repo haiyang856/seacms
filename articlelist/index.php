@@ -22,8 +22,8 @@ if($GLOBALS['cfg_runmode2']==2||$GLOBALS['cfg_newsparamset']==0){
 	$tid = isset($tid) && is_numeric($tid) ? $tid : 0;
 	$page = isset($page) && is_numeric($page) ? $page : 1;
 }else{
-	$tid=$$GLOBALS['cfg_newsparamid'];
-	$page=$$GLOBALS['cfg_newsparampage'];
+	$tid=${$GLOBALS['cfg_newsparamid']};
+	$page=${$GLOBALS['cfg_newsparampage']};
 	$tid = isset($tid) && is_numeric($tid) ? $tid : 0;
 	$page = isset($page) && is_numeric($page) ? $page : 1;
 }

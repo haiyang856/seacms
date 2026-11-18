@@ -1,6 +1,7 @@
 <?php 
 require_once(dirname(__FILE__)."/config.php");
 CheckPurview();
+$ver = isset($ver) ? $ver : '';
 if(empty($ac))
 {
 	$ac = '';

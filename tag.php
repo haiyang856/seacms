@@ -78,7 +78,7 @@ function echoTagPage()
 
 function parseSearchPart($templatePath)
 {
-	global $mainClassObj;
+	global $mainClassObj,$currentTypeId;
 	$content=loadFile(sea_ROOT.$templatePath);
 	$content=$mainClassObj->parseTopAndFoot($content);
 	$content=$mainClassObj->parseSelf($content);
@@ -92,6 +92,7 @@ function parseSearchPart($templatePath)
 
 function checkSearchTimes($searchtime)
 {
+	global $cfg_search_time;
 	if(GetCookie("ssea2_tag")=="ok")
 	{
 		ShowMsg('搜索限制为'.$searchtime.'秒一次','-1','0',$cfg_search_time);

@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 @set_time_limit(0);
 // PHP 8: libxml_disable_entity_loader 已废弃,外部实体默认禁用
 ob_implicit_flush();
@@ -26,6 +26,8 @@ if(empty($action))
 {
 	$action = '';
 }
+$rid = isset($rid) ? $rid : '';
+$url = isset($url) ? $url : '';
 if(!empty($ac))
 {
 	$action = $ac;	
@@ -704,7 +706,8 @@ function top()
 <link rel="stylesheet" type="text/css" href="img/res.css"/>
 <link href="img/admin.css" rel="stylesheet" type="text/css" />
 <script src="js/common.js"></script>
-<script src="js/main.js"></script>
+<script src="js/main.js?v=20261118"></script>
+<script src="js/e-admin.js"></script>
 <style type="text/css">
 	input{height:16px;}
 	.tb2 td{padding:2px 5px 2px 5px;height:25px}

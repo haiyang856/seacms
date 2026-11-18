@@ -32,27 +32,27 @@ if(empty($action)){
 if($action==="HideVideo"){
 	
 	$filters = array(
-           "hideoff_url" => FILTER_SANITIZE_STRING,	
-           "hidebody_url" => FILTER_SANITIZE_STRING,
+           "hideoff_url" => FILTER_UNSAFE_RAW,	
+           "hidebody_url" => FILTER_UNSAFE_RAW,
            "hideinfo_url"=>FILTER_UNSAFE_RAW ,
            
-            "hideoff_name" => FILTER_SANITIZE_STRING,	
-           "hidebody_name" => FILTER_SANITIZE_STRING,
+            "hideoff_name" => FILTER_UNSAFE_RAW,	
+           "hidebody_name" => FILTER_UNSAFE_RAW,
            "hideinfo_name"=>FILTER_UNSAFE_RAW ,
            
-            "hideoff_type" => FILTER_SANITIZE_STRING,	
-           "hidebody_type" => FILTER_SANITIZE_STRING,
+            "hideoff_type" => FILTER_UNSAFE_RAW,	
+           "hidebody_type" => FILTER_UNSAFE_RAW,
            "hideinfo_type"=>FILTER_UNSAFE_RAW ,
 
    );
    
 	$POST=filter_input_array(INPUT_POST, $filters);
 	
-	$PLUS["HideVideo"]=array(off=>trim($POST["hideoff_url"]),data=>preg_split('/[\r\n]+/s',trim($POST["hidebody_url"])),info=> trim($POST["hideinfo_url"]));
+	$PLUS["HideVideo"]=array(off=>strip_tags(trim($POST["hideoff_url"])),data=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_url"]))),info=> trim($POST["hideinfo_url"]));
 	
-	$PLUS["HideName"]=array(off=>trim($POST["hideoff_name"]),data=>preg_split('/[\r\n]+/s',trim($POST["hidebody_name"])),info=> trim($POST["hideinfo_name"]));
+	$PLUS["HideName"]=array(off=>strip_tags(trim($POST["hideoff_name"])),data=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_name"]))),info=> trim($POST["hideinfo_name"]));
 		
-	$PLUS["HideType"]=array(off=>trim($POST["hideoff_type"]),data=>preg_split('/[\r\n]+/s',trim($POST["hidebody_type"])),info=> trim($POST["hideinfo_type"]));
+	$PLUS["HideType"]=array(off=>strip_tags(trim($POST["hideoff_type"])),data=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_type"]))),info=> trim($POST["hideinfo_type"]));
 		
 
      if(Main_db::save()){
@@ -65,8 +65,8 @@ if($action==="HideVideo"){
 
 }elseif($action==="JmpVideo"){ 
 	
-   $off=trim(filter_input(INPUT_POST, "jmpoff",FILTER_SANITIZE_STRING));
-   $jmpbody=trim(filter_input(INPUT_POST, "jmpbody",FILTER_SANITIZE_STRING)); $body=preg_split('/[\r\n]+/s',$jmpbody);
+   $off=trim(strip_tags((string)filter_input(INPUT_POST, "jmpoff",FILTER_UNSAFE_RAW)));
+   $jmpbody=trim(strip_tags((string)filter_input(INPUT_POST, "jmpbody",FILTER_UNSAFE_RAW))); $body=preg_split('/[\r\n]+/s',$jmpbody);
    $array=array(); foreach($body as $key){$val=explode("=>",$key); if($val[0]!=""&&$val[1]!=""){$array[trim($val[0])]=trim($val[1]);}}
    $PLUS["JmpVideo"]=array(off=>$off,data=>$array);
 
@@ -94,7 +94,7 @@ if($action==="HideVideo"){
   
   
 }else{
-	$php_self=filter_input(INPUT_SERVER, 'QUERY_STRING',FILTER_SANITIZE_STRING);
+	$php_self=htmlspecialchars((string)filter_input(INPUT_SERVER, 'QUERY_STRING',FILTER_UNSAFE_RAW), ENT_QUOTES, 'UTF-8');
 	
 	 include(sea_ADMIN.'/templets/admin_plus.htm'); 
 }
@@ -102,7 +102,7 @@ if($action==="HideVideo"){
 class Main_db
 {
      //变量转文本
-     public static function word($name) {global $$name; $key=var_export($$name,true);return "$$name=$key;\r\n";}
+     public static function word($name) {global ${$name}; $key=var_export(${$name},true);return "$$name=$key;\r\n";}
      //保存配置
      public static function save($file="../data/config.plus.inc.php")
      {     

@@ -7,6 +7,12 @@ if(empty($action))
 }
 
 $id = empty($id) ? 0 : intval($id);
+$whereStr = '';
+if(!isset($page)) $page=1;
+if(!isset($TotalPage)) $TotalPage=0;
+if(!isset($TotalResult)) $TotalResult=0;
+if(!isset($numPerPage)) $numPerPage=20;
+if(!isset($keyword)) $keyword='';
 
 if($action=="editcomsave")
 {

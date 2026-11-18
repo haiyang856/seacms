@@ -8,7 +8,7 @@ require_once(sea_ADMIN."/coplugins/Snoopy.class.php");
 header("Cache-Control:private");
 
 $pkey = $cfg_cookie_encode; 
-$ukey=$_GET['password'];
+$ukey=$_GET['password'] ?? '';
 if($ukey != $pkey){die('PassWord ERR!');}
 $password=$ukey;
 global $password;

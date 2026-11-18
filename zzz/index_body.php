@@ -7,29 +7,35 @@ $mysqlver=$dsql->GetOne("select VERSION()");
 // ========== 仪表盘数据采集 ==========
 // 内容统计（与 admin_info.htm 原始查询一致）
 $vodTotal = $dsql->GetOne("select count(*) as dd from sea_data");
+$vodTotal=is_array($vodTotal)?$vodTotal:array();
 $newsTotal = $dsql->GetOne("select count(*) as dd from sea_news");
+$newsTotal=is_array($newsTotal)?$newsTotal:array();
 $userTotal = $dsql->GetOne("select count(*) as dd from sea_member");
+$userTotal=is_array($userTotal)?$userTotal:array();
 $todayUser = $dsql->GetOne("select count(*) as dd from sea_member where TO_DAYS(from_unixtime(regtime)) = TO_DAYS(NOW())");
+$todayUser=is_array($todayUser)?$todayUser:array();
 $gbookWait = $dsql->GetOne("select count(*) as dd from sea_guestbook where ischeck=0");
 $errWait = $dsql->GetOne("select count(*) as dd from sea_erradd where ischeck=0");
 $vplWait = $dsql->GetOne("select count(*) as dd from sea_comment where ischeck=0 and m_type != 1");
 $nplWait = $dsql->GetOne("select count(*) as dd from sea_comment where ischeck=0 and m_type = 1");
-$totalWait = $gbookWait['dd'] + $errWait['dd'] + $vplWait['dd'] + $nplWait['dd'];
+$gbookWait=is_array($gbookWait)?$gbookWait:array(); $errWait=is_array($errWait)?$errWait:array(); $vplWait=is_array($vplWait)?$vplWait:array(); $nplWait=is_array($nplWait)?$nplWait:array(); $totalWait = $gbookWait['dd'] + $errWait['dd'] + $vplWait['dd'] + $nplWait['dd'];
 
 // 远程图片数（与 admin_info.htm 一致）
 require_once(sea_DATA."/config.ftp.php");
 $remotePic = $dsql->GetOne("select count(*) as dd from sea_data where instr(v_pic,'#err')=0".($app_ftp=='0'?"":" and instr(v_pic,'$app_ftpurl')=0")." and instr(v_pic,'http')!=0");
 $remotePicNews = $dsql->GetOne("select count(*) as dd from sea_news where instr(n_pic,'#err')=0".($app_ftp=='0'?"":" and instr(n_pic,'$app_ftpurl')=0")." and instr(n_pic,'http')!=0");
-$remotePicTotal = $remotePic['dd'] + $remotePicNews['dd'];
+$remotePic=is_array($remotePic)?$remotePic:array(); $remotePicNews=is_array($remotePicNews)?$remotePicNews:array(); $remotePicTotal = $remotePic['dd'] + $remotePicNews['dd'];
 
 // 分类数量
 $vodTypeTotal = $dsql->GetOne("select count(*) as dd from sea_type where tptype=0");
 $newsTypeTotal = $dsql->GetOne("select count(*) as dd from sea_type where tptype=1");
-$allTypeTotal = $vodTypeTotal['dd'] + $newsTypeTotal['dd'];
+$vodTypeTotal=is_array($vodTypeTotal)?$vodTypeTotal:array(); $newsTypeTotal=is_array($newsTypeTotal)?$newsTypeTotal:array(); $allTypeTotal = $vodTypeTotal['dd'] + $newsTypeTotal['dd'];
 
 // 今日新增
 $todayVod = $dsql->GetOne("select count(*) as dd from sea_data where TO_DAYS(from_unixtime(v_addtime)) = TO_DAYS(NOW()) AND v_recycled != 1");
+$todayVod=is_array($todayVod)?$todayVod:array();
 $todayNews = $dsql->GetOne("select count(*) as dd from sea_news where TO_DAYS(from_unixtime(n_addtime)) = TO_DAYS(NOW()) AND n_recycled != 1");
+$todayNews=is_array($todayNews)?$todayNews:array();
 
 // 服务器时间
 $serverTime = date('Y-m-d H:i:s');
@@ -38,8 +44,11 @@ $serverDay = date('n月j日 ') . $weekArr[date('w')];
 
 // 安全检测
 $safeMode = @ini_get("safe_mode") ? 'ON' : 'OFF';
-$registerGlobals = @ini_get("register_globals") ? 'ON' : 'OFF';
-$magicQuotes = @ini_get("magic_quotes_gpc") ? 'ON' : 'OFF';
+// OPcache 字节码缓存状态（register_globals 自 PHP 5.4 移除，改为检测 PHP 8 的 OPcache）
+$opcacheStatus = function_exists('opcache_get_status') ? @opcache_get_status(false) : false;
+$opcacheEnabled = is_array($opcacheStatus) ? 'ON' : 'OFF';
+// JIT 即时编译状态（magic_quotes_gpc 自 PHP 5.4 移除，改为检测 PHP 8 的 JIT，依赖 OPcache）
+$jitEnabled = (is_array($opcacheStatus) && !empty($opcacheStatus['jit']['enabled'])) ? 'ON' : 'OFF';
 $allowUrlFopen = @ini_get("allow_url_fopen") ? '支持' : '不支持';
 $maxExecTime = @ini_get("max_execution_time");
 if($maxExecTime === false || $maxExecTime === '' || $maxExecTime === null){

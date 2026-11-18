@@ -64,7 +64,7 @@ foreach($_SERVER as $_k=>$_v)
 	}
 }
 
-foreach($_SESSION as $_k=>$_v)
+foreach($_SESSION ?? [] as $_k=>$_v)
 {
 	if( strlen($_k)>0 && m_eregi('^(cfg_|GLOBALS|_GET|_POST|_COOKIE|_REQUEST|_SERVER|_FILES|_SESSION)',$_k))
 	{
@@ -260,7 +260,7 @@ include sea_DATA.'/cron.cache.php';
 include sea_INC.'/cron.func.php';
 if($cronnextrun && $cronnextrun <= $timestamp) {
 	if($cron = $dsql->GetOne("SELECT * FROM sea_crons WHERE available>'0' AND nextrun<=$timestamp ORDER BY nextrun")) {
-		$lockfile = sea_DATA.'/runcron_'.$cron['cronid'].'.lock';
+		$cron=is_array($cron)?$cron:array(); $lockfile = sea_DATA.'/runcron_'.$cron['cronid'].'.lock';
 		$cron['filename'] = str_replace(array('..', '/', '\\'), '', $cron['filename']);
 		$filename=$cron['filename'];
 		if(strpos($filename,'$')!==false){$filenameArr=explode("$",$filename);$filename=$filenameArr[0];}

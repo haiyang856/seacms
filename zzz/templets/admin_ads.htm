@@ -20,8 +20,7 @@ if($action=="viewads"){
 <tr><td class="td_border" style="text-align:center">
 <table  style="border:#BBDDFF solid 2px;"><tr><td>
 <?php
-	$row = $dsql->GetOne("Select * From `sea_myad` where aid='$id'");
-	echo ("<script>");
+	$row = $dsql->GetOne("Select * From `sea_myad` where aid='$id'");$row=is_array($row)?$row:array(); 	echo ("<script>");
 	echo str_replace("+sitePath+","+'".$cfg_cmspath."'+",$row['adsbody']);
 	echo ("</script>");
 ?>

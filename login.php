@@ -14,8 +14,8 @@ if($cfg_user==0)
 }
 $front='front';
 $hashstr=md5($cfg_dbpwd.$cfg_dbname.$cfg_dbuser.$front); //构造session安全码
-$svali = $_SESSION['sea_ckstr'];
-if($dopost=='login')
+$svali = $_SESSION['sea_ckstr'] ?? '';
+if(isset($dopost) && $dopost=='login')
 {
 	if($cfg_feedback_ck=='1')
 	{
@@ -47,14 +47,14 @@ if($member_to==""){$member_to='member.php';}
 
 $pwd = substr(md5($pwd),5,20);
 $row1=$dsql->GetOne("select * from sea_member where state=1 and username='$userid'");
-if($row1['username']==$userid AND $row1['password']==$pwd)
+if(is_array($row1) AND $row1['username']==$userid AND $row1['password']==$pwd)
 		{
 					//验证是否激活邮箱
 					require_once('data/admin/smtp.php');
 					if($smtpreg=='on'){
 						$sql="SELECT acode FROM sea_member where username= '$userid'";
 						$row = $dsql->GetOne($sql);
-						if($row['acode']!='y'){
+						$row=is_array($row)?$row:array(); if($row['acode']!='y'){
 							showMsg("您的账户尚未激活，请激活后登陆！","index.php",0,10000);
 							exit;
 						}

@@ -136,7 +136,7 @@ function makeDay()
 	$pagesize=10;
 	if(!$pCount){
 	$rowc=$dsql->GetOne("SELECT count(*) as dd FROM `sea_data` WHERE `v_wrong`=0 and v_recycled=0 ".$wheresql);
-	$totalnum = $rowc['dd'];
+	$rowc=is_array($rowc)?$rowc:array(); $totalnum = $rowc['dd'];
 	if($totalnum==0) exit("当天没有视频<br>");
 	$TotalPage = ceil($totalnum/$pagesize);
 	}else{
@@ -197,7 +197,7 @@ function makeNewsDay()
 	$pagesize=10;
 	if(!$pCount){
 	$rowc=$dsql->GetOne("SELECT count(*) as dd FROM `sea_news` WHERE n_recycled=0 ".$wheresql);
-	$totalnum = $rowc['dd'];
+	$rowc=is_array($rowc)?$rowc:array(); $totalnum = $rowc['dd'];
 	if($totalnum==0) exit("当天没有文章<br>");
 	$TotalPage = ceil($totalnum/$pagesize);
 	}else{
@@ -773,7 +773,7 @@ function makeContentByChannel($channel,$isIncludeSub,$makeNoncreate=0)
 	$typeZnName=getTypeNameOnCache(intval($channel));
 	$currentPage = empty($page) ? 1 : intval($page);
 	$rowc = $dsql->GetOne("Select count(*) as dd From `sea_data` $sqlStr");
-	$totalnum = $rowc['dd'];
+	$rowc=is_array($rowc)?$rowc:array(); $totalnum = $rowc['dd'];
 	if (isTypeHide($channel) || $totalnum==0){
 		if (empty($action2)){
 			echo "该分类<font color='red'>".$typeZnName."</font>无视频或被隐藏（一二级栏目模板名称一样时，一级栏目不生成）<br>";
@@ -827,7 +827,7 @@ function makeArticleByChannel($channel,$isIncludeSub)
 	$typeZnName=getNewsTypeNameOnCache(intval($channel));
 	$currentPage = empty($page) ? 1 : intval($page);
 	$rowc = $dsql->GetOne("Select count(*) as dd From `sea_news` $sqlStr");
-	$totalnum = $rowc['dd'];
+	$rowc=is_array($rowc)?$rowc:array(); $totalnum = $rowc['dd'];
 	if (isNewsTypeHide($channel) || $totalnum==0){
 		if (empty($action2)){
 			echo "该分类<font color='red'>".$typeZnName."</font>无内容或已生成完毕<br>";
@@ -1285,7 +1285,7 @@ function makeTopicIndex($page=1)
 	$row = $dsql->GetOne("select template from sea_topic");
 	$templatePath="/templets/".$GLOBALS['cfg_df_style']."/".$GLOBALS['cfg_df_html']."/topicindex.html";
 	$rowc=$dsql->GetOne("select count(*) as dd from sea_topic");
-	$page_size = getPageSizeOnCache($templatePath,"topicindex",$row['template']);
+	$row=is_array($row)?$row:array(); $page_size = getPageSizeOnCache($templatePath,"topicindex",$row['template']);
 	if (empty($page_size)) $page_size=12;
 	if(is_array($rowc))
 	{

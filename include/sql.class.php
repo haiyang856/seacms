@@ -312,7 +312,7 @@ class DB_MySQL
 	// mysqli_ASSOC、mysqli_NUM、mysqli_BOTH
 	function GetArray($id="me" )
 	{
-		if($this->result[$id]==0)
+		if(!isset($this->result[$id]) || !is_object($this->result[$id]))
 		{
 			return false;
 		}
@@ -324,7 +324,7 @@ class DB_MySQL
 	
 	function GetAssoc($id="me")
 	{
-		if($this->result[$id]==0)
+		if(!isset($this->result[$id]) || !is_object($this->result[$id]))
 		{
 			return false;
 		}
@@ -336,7 +336,7 @@ class DB_MySQL
 
 	function GetObject($id="me")
 	{
-		if($this->result[$id]==0)
+		if(!isset($this->result[$id]) || !is_object($this->result[$id]))
 		{
 			return false;
 		}
@@ -406,7 +406,7 @@ class DB_MySQL
 	//获得查询的总记录数
 	function GetTotalRow($id="me")
 	{
-		if($this->result[$id]==0)
+		if(!isset($this->result[$id]) || !is_object($this->result[$id]))
 		{
 			return -1;
 		}

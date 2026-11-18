@@ -1,7 +1,10 @@
-﻿<?php 
+<?php 
 require_once(dirname(__FILE__)."/config.php");
 require_once(sea_DATA."/config.user.inc.php");
 CheckPurview();
+$uname = isset($uname) ? $uname : '';
+$vname = isset($vname) ? $vname : '';
+$copy = isset($copy) ? $copy : '';
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -27,7 +30,7 @@ form{float:left;}
 function get_gname($gid){
 	global $dsql;
 	$gname= $dsql->GetOne("SELECT gname FROM sea_member_group where gid=".$gid);
-	return $gname['gname'];
+	$gname=is_array($gname)?$gname:array(); return $gname['gname'];
 }
 
 
@@ -42,7 +45,7 @@ function get_gname($gid){
 
 	$sqlyesu="SELECT SUM(paypoints) AS hyzpayallu FROM sea_hyzbuy where 1=1" .$w;
 	$rowyesu = $dsql->GetOne($sqlyesu);
-    if($rowyesu['hyzpayallu']>0){
+    $rowyesu=is_array($rowyesu)?$rowyesu:array(); if($rowyesu['hyzpayallu']>0){
         $vpayallu = $rowyesu['hyzpayallu'];
     }else{
         $vpayallu = 0;
@@ -50,7 +53,7 @@ function get_gname($gid){
 	
 	$sqlyes="SELECT SUM(paypoints) AS hyzpayall FROM sea_hyzbuy";
 	$rowyes = $dsql->GetOne($sqlyes);
-    if($rowyes['hyzpayall']>0){
+    $rowyes=is_array($rowyes)?$rowyes:array(); if($rowyes['hyzpayall']>0){
         $vpayall = $rowyes['hyzpayall'];
     }else{
         $vpayall = 0;

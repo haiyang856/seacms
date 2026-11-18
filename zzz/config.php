@@ -54,6 +54,7 @@ if($cuserLogin->getUserID()==-1 OR $_SESSION['hashstr'] !== $hashstr)
 	header("location:login.php?gotopage=".urlencode($EkNowurl));
 	exit();
 }
+$action = isset($action) ? $action : '';
 
 
 function makeTopicSelect($selectName,$strSelect,$topicId)
@@ -112,7 +113,7 @@ function makeTypeOptionSelected_Multiple($topId, $separateStr, $span, $compareVa
 	$tlist=getTypeListsOnCache($tptype);
 	if ($topId!=0){$span.=$separateStr;}else{$span="";}
 	if($compareValue==""){
-$ids_arr="";}else{
+$ids_arr=array();}else{
 $ids_arr = preg_split('[,]',$compareValue);}
 	foreach($tlist as $row)
 	{
@@ -147,7 +148,7 @@ function makeTypeOptionSelected_Jq($topId, $separateStr, $span, $compareValue, $
 	$tlist=getjqTypeListsOnCache($tptype);
 	if ($topId!=0){$span.=$separateStr;}else{$span="";}
 	if($compareValue==""){
-$ids_arr="";}else{
+$ids_arr=array();}else{
 $ids_arr = preg_split('[,]',$compareValue);}  
 	foreach($tlist as $row)
 	{
@@ -181,7 +182,7 @@ function makeTypeOptionSelected_Jq2($topId, $separateStr, $span, $compareValue, 
 	$tlist=getjqTypeListsOnCache($tptype);
 	if ($topId!=0){$span.=$separateStr;}else{$span="";}
 	if($compareValue==""){
-$ids_arr="";}else{
+$ids_arr=array();}else{
 $ids_arr = preg_split('[,]',$compareValue);}  
 	foreach($tlist as $row)
 	{

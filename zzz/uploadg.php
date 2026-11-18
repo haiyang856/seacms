@@ -50,6 +50,8 @@ class uploader {
         var $hasThumb = 0; //是否生成缩略图
         var $imageWidth= '300';
         var $thumbWidth = '100';
+        var $_markup='', $_markdown='', $_marktype='', $_wwidth='', $_wheight='', $_waterpos='', $_watertext='', $_fontsize='', $_fontcolor='', $_marktrans='', $_diaphaneity='', $_markimg='';
+        var $_upFile='', $_fileName='', $_fileSize='', $_fileExt='', $_destination='', $_fileUrl='', $_height='', $_isimage=0, $_mime='', $_saveName='', $_savePath='', $_width='';
         
         function __construct($markup,$markdown,$marktype,$wwidth,$wheight,$waterpos,$watertext,$fontsize,$fontcolor,$marktrans,$diaphaneity,$markimg){
         	$this->_markup = 0;

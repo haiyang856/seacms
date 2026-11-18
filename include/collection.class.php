@@ -31,7 +31,7 @@ global $rid,$rid1, $dsql;
 	$filterConfig = [];
     $replaceConfig = [];
     if ($configRow) {
-        $filterConfig = json_decode($configRow['filter_config'], true) ?? [];
+        $configRow=is_array($configRow)?$configRow:array(); $filterConfig = json_decode($configRow['filter_config'], true) ?? [];
         $replaceConfig = json_decode($configRow['replace_config'], true) ?? [];
     }
 **************/

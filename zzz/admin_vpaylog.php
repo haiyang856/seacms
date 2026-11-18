@@ -1,7 +1,10 @@
-﻿<?php 
+<?php 
 require_once(dirname(__FILE__)."/config.php");
 require_once(sea_DATA."/config.user.inc.php");
 CheckPurview();
+$uname = isset($uname) ? $uname : '';
+$vname = isset($vname) ? $vname : '';
+$copy = isset($copy) ? $copy : '';
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -27,25 +30,25 @@ form{float:left;}
 function get_uname($uid){
 	global $dsql;
 	$uname= $dsql->GetOne("SELECT username FROM sea_member where id=".$uid);
-	return $uname['username'];
+	$uname=is_array($uname)?$uname:array(); return $uname['username'];
 }
 
 function get_vname($vid){
 	global $dsql;
 	$vname= $dsql->GetOne("SELECT v_name FROM sea_data where v_id=".$vid);
-	return $vname['v_name'];
+	$vname=is_array($vname)?$vname:array(); return $vname['v_name'];
 }
 
 function get_uid($uname){
 	global $dsql;
 	$uid= $dsql->GetOne("SELECT id FROM sea_member where username='$uname'");
-	return $uid['id'];
+	$uid=is_array($uid)?$uid:array(); return $uid['id'];
 }
 
 function get_vid($vname){
 	global $dsql;
 	$vid= $dsql->GetOne("SELECT v_id FROM sea_data where v_name='$vname'");
-	return $vid['v_id'];
+	$vid=is_array($vid)?$vid:array(); return $vid['v_id'];
 }
 //$uid='2'; $vid='100'; echo get_uname($uid); echo get_vname($vid);
 
@@ -60,7 +63,7 @@ function get_vid($vname){
 
 	$sqlyesu="SELECT SUM(vpaypoints) AS vpayallu FROM sea_buy where 1=1" .$w;
 	$rowyesu = $dsql->GetOne($sqlyesu);
-    if($rowyesu['vpayallu']>0){
+    $rowyesu=is_array($rowyesu)?$rowyesu:array(); if($rowyesu['vpayallu']>0){
         $vpayallu = $rowyesu['vpayallu'];
     }else{
         $vpayallu = 0;
@@ -68,7 +71,7 @@ function get_vid($vname){
 	
 	$sqlyes="SELECT SUM(vpaypoints) AS vpayall FROM sea_buy";
 	$rowyes = $dsql->GetOne($sqlyes);
-    if($rowyes['vpayall']>0){
+    $rowyes=is_array($rowyes)?$rowyes:array(); if($rowyes['vpayall']>0){
         $vpayall = $rowyes['vpayall'];
     }else{
         $vpayall = 0;

@@ -48,6 +48,7 @@ class AppFtp{
 		 $this->ftpStatusDes = "连接ftp失败";
 	   }
 	}
+	function __construct($ftpUrl="", $ftpUser="", $ftpPass="",  $ftpPort="",  $ftpDir="") { $this->AppFtp($ftpUrl, $ftpUser, $ftpPass, $ftpPort, $ftpDir); }
 	
 	function cd($dir) {
 	   return ftp_chdir($this->ftpR, $dir);

@@ -1,7 +1,9 @@
 <?php
  $yzm =  array (
+  'danmuon' => 'off',
   'ads' => 
   array (
+    'state' => 'off',
     'set' => 
     array (
       'group' => '1',
@@ -20,6 +22,7 @@
     ),
     'pause' => 
     array (
+      'state' => 'off',
       'pic' => '',
       'link' => '',
     ),

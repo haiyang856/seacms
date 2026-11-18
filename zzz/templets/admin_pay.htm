@@ -18,23 +18,20 @@ form{float:left;}
 <script type="text/JavaScript">if(parent.$('admincpnav')) parent.$('admincpnav').innerHTML='后台首页&nbsp;&raquo;&nbsp;用户&nbsp;&raquo;&nbsp;充值卡管理';</script>
 <?php
 	$sqlt="SELECT SUM( climit ) AS cckt FROM sea_cck";
-	$rowt = $dsql->GetOne($sqlt);
-    if($rowt['cckt']>0){
+	$rowt = $dsql->GetOne($sqlt);$rowt=is_array($rowt)?$rowt:array();     if($rowt['cckt']>0){
         $cckt = $rowt['cckt'];
     }else{
         $cckt = 0;
     }
 	$sqlyes="SELECT SUM( climit ) AS cckyes FROM sea_cck where status=1";
-	$rowyes = $dsql->GetOne($sqlyes);
-    if($rowyes['cckyes']>0){
+	$rowyes = $dsql->GetOne($sqlyes);$rowyes=is_array($rowyes)?$rowyes:array();     if($rowyes['cckyes']>0){
         $cckyes = $rowyes['cckyes'];
     }else{
         $cckyes = 0;
     }
 	
 	$sqlno="SELECT SUM( climit ) AS cckno FROM sea_cck  where status=0";
-	$rowno = $dsql->GetOne($sqlno);
-    if($rowno['cckno']>0){
+	$rowno = $dsql->GetOne($sqlno);$rowno=is_array($rowno)?$rowno:array();     if($rowno['cckno']>0){
         $cckno = $rowno['cckno'];
     }else{
         $cckno = 0;

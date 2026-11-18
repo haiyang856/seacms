@@ -48,7 +48,7 @@ function automakeDay()
 	$pagesize=100;
 	if(!$pCount){
 	$rowc=$dsql->GetOne("SELECT count(*) as dd FROM `sea_data` WHERE `v_wrong`=0 ".$wheresql);
-	$totalnum = $rowc['dd'];
+	$rowc=is_array($rowc)?$rowc:array(); $totalnum = $rowc['dd'];
 	if($totalnum==0) return false;
 	$TotalPage = ceil($totalnum/$pagesize);
 	}else{
@@ -95,7 +95,7 @@ function automakeNewsDay()
 	$pagesize=100;
 	if(!$pCount){
 	$rowc=$dsql->GetOne("SELECT count(*) as dd FROM `sea_news` WHERE `n_recycled`=0 ".$wheresql);
-	$totalnum = $rowc['dd'];
+	$rowc=is_array($rowc)?$rowc:array(); $totalnum = $rowc['dd'];
 	if($totalnum==0) return false;
 	$TotalPage = ceil($totalnum/$pagesize);
 	}else{
@@ -169,7 +169,7 @@ function automakeTopicIndex()
 	$row = $dsql->GetOne("select template from sea_topic");
 	$templatePath="/templets/".$GLOBALS['cfg_df_style']."/".$GLOBALS['cfg_df_html']."/topicindex.html";
 	$rowc=$dsql->GetOne("select count(*) as dd from sea_topic");
-	$page_size = getPageSizeOnCache($templatePath,"topicindex",$row['template']);
+	$row=is_array($row)?$row:array(); $page_size = getPageSizeOnCache($templatePath,"topicindex",$row['template']);
 	if (empty($page_size)) $page_size=12;
 	if(is_array($rowc))
 	{

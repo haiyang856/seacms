@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // 获取原配置
     $sql = "SELECT replace_config FROM sea_zyk WHERE zid = $rid";
     $row = $dsql->GetOne($sql);
-    $config = $row && !empty($row['replace_config']) ? json_decode($row['replace_config'], true) : array();
+    $row=is_array($row)?$row:array(); $config = $row && !empty($row['replace_config']) ? json_decode($row['replace_config'], true) : array();
     
     // 更新配置
     $config[$type] = $rulePairs;
@@ -42,7 +42,7 @@ $rid = intval($_GET['rid']);
 $sql = "SELECT replace_config FROM sea_zyk WHERE zid = $rid";
 $row = $dsql->GetOne($sql);
 $currentRules = '';
-if($row && !empty($row['replace_config'])){
+$row=is_array($row)?$row:array(); if($row && !empty($row['replace_config'])){
     $config = json_decode($row['replace_config'], true);
     if(isset($config[$type])){
         foreach($config[$type] as $old => $new){

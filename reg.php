@@ -13,7 +13,7 @@ if($cfg_user==0)
 	exit();
 }
 
-$svali = $_SESSION['sea_ckstr'];
+$svali = $_SESSION['sea_ckstr'] ?? '';
 $action = isset($action) ? trim($action) : '';
 if($action=='reg')
 {
@@ -51,13 +51,13 @@ $email = RemoveXSS(stripslashes($email));
 $email = addslashes(cn_substr($email,200));
 
 $row1=$dsql->GetOne("select username  from sea_member where username='$username'");
-if($row1['username']==$username)
+$row1=is_array($row1)?$row1:array(); if(isset($row1['username']) && $row1['username']==$username)
 {
 		ShowMsg('用户已存在','-1');
 		exit();
 }
 $row2=$dsql->GetOne("select email  from sea_member where email='$email'");
-if($row2['email']==$email)
+$row2=is_array($row2)?$row2:array(); if(isset($row2['email']) && $row2['email']==$email)
 {
 		ShowMsg('邮箱已存在','-1');
 		exit();
@@ -116,7 +116,7 @@ $smtprbody = '<strong>Email 地址验证 账户激活</strong><br><br>尊敬的�
 		else
 		{
 			$row=$dsql->GetOne("select id from sea_member where username='$username'");
-			$uid=$row['id'];
+			$row=is_array($row)?$row:array(); $uid=$row['id'];
 			$_SESSION['sea_user_id'] = $uid;
 			$_SESSION['sea_user_name'] = $username;
 			$lifeTime = 2592000;

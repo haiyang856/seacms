@@ -34,7 +34,7 @@ if($action=="set")
 </tr>
 <tr bgcolor="#FFF" style="background-color:#FFF;">
 <td width="80%" align="left" height="30" class="td_border">
-<?php  $v1=file_get_contents("../data/admin/s.txt"); ?>
+<?php  $v1=@file_get_contents("../data/admin/s.txt"); if($v1===false)$v1='0'; ?>
 &nbsp;&nbsp;<input name="v" type="text" id="v" value=<?php  echo $v1 ?> style="width:50px;text-transform:uppercase;"> *为0时关闭该功能
 </td>
 </tr>

@@ -62,8 +62,9 @@ if($cfg_vipoff_12==0 OR $cfg_vipoff_12=="" OR empty($cfg_vipoff_12)){$cfg_vipoff
 </script>
 <?php
 $action = isset($action) ? trim($action) : 'cc';
+$mod = isset($mod) ? trim($mod) : '';
 $page = isset($page) ? intval($page) : 1;
-$uid=$_SESSION['sea_user_id'];
+$uid=$_SESSION['sea_user_id'] ?? '';
 $uid = intval($uid);
 $year=date('Y');
 //邮件激活
@@ -148,7 +149,7 @@ if($mod=='repsw2'){
 	if(empty($repswname)){{showMsg("请输入账户名称！","-1",0,3000);exit();}}
 	
 	$row=$dsql->GetOne("select * from sea_member where username='$repswname'");
-	$repswemail=$row['email'];
+	$row=is_array($row)?$row:array(); $repswemail=$row['email'];
 	$repswstate=$row['state'];
 	if(empty($repswemail) OR $repswemail==""){{showMsg("输入的账户名称不存在！","-1",0,10000);exit();}}
 	if($repswstate !=1){{showMsg("您的账户已被管理员禁用，禁止找回密码！","-1",0,10000);exit();}}
@@ -213,7 +214,7 @@ if($mod=='repsw3'){
 	if(empty($repswcode) OR $repswcode=="" OR $repswcode=="y"){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
 	
 	$row=$dsql->GetOne("select * from sea_member where username='$repswname'");
-	$repswcode2=$row['repswcode'];
+	$row=is_array($row)?$row:array(); $repswcode2=$row['repswcode'];
 
 	if($repswcode != $repswcode2){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
 	echo <<<EOT
@@ -303,7 +304,7 @@ if($mod=='repsw4'){
 	if(empty($repswcode) OR $repswcode=="" OR $repswcode=="y"){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
 
 	$row=$dsql->GetOne("select * from sea_member where username='$repswname'");
-	$repswcode2=$row['repswcode'];
+	$row=is_array($row)?$row:array(); $repswcode2=$row['repswcode'];
 
 	if($repswcode != $repswcode2){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
 	
@@ -337,7 +338,7 @@ if($action=='chgpwdsubmit')
 //旧密码验证
 	$sqlt="SELECT * FROM sea_member where id=$uid";
 	$spwd = $dsql->GetOne($sqlt);
-	if(substr(md5($oldpwd),5,20) != $spwd['password']){ShowMsg('旧密码错误','-1');	exit();	}
+	$spwd=is_array($spwd)?$spwd:array(); if(substr(md5($oldpwd),5,20) != $spwd['password']){ShowMsg('旧密码错误','-1');	exit();	}
 
 //处理头像上传
 function ImageResize2($srcFile,$toW,$toH,$toFile="")
@@ -430,7 +431,9 @@ function ImageResize2($srcFile,$toW,$toH,$toFile="")
 	imagedestroy($im);
 	return true;
 }
-	if($_FILES['image']['name'] !="" AND $cfg_upic=='1'){
+	$oldpic = $_POST['oldpic'] ?? '';
+	$path2 = '';
+	if(isset($_FILES['image']['name']) && $_FILES['image']['name'] !="" AND $cfg_upic=='1'){
 		
         $file_name = $_FILES['image']['name'];
         $file_size = $_FILES['image']['size'];
@@ -459,6 +462,7 @@ function ImageResize2($srcFile,$toW,$toH,$toFile="")
 	}
 	
 	if($path2 ==""){$path2=$oldpic;}
+	$nickname = isset($nickname) ? $nickname : '';
 	$nickname = RemoveXSS(stripslashes($nickname));
 	$nickname = addslashes(cn_substr($nickname,60));
 	if(!empty($newpwd)||!empty($email)||!empty($nickname))
@@ -565,10 +569,10 @@ elseif($action=='cc')
 {
 	$ccuid=intval($_SESSION['sea_user_id']);
 	$cc2=$dsql->GetOne("select * from sea_member where id=$ccuid");
-	$ccgid=$cc2['gid'];
+	$cc2=is_array($cc2)?$cc2:array(); $ccgid=$cc2['gid'];
 	$_SESSION['sea_user_group'] = $ccgid;
 	$cc1=$dsql->GetOne("select * from sea_member_group where gid=$ccgid");
-	$ccgroup=$cc1['gname'];
+	$cc1=is_array($cc1)?$cc1:array(); $ccgroup=$cc1['gname'];
 	$ccgroupupgrade=$cc1['g_upgrade'];
 	
 	$ccjifen=$cc2['points'];
@@ -584,7 +588,7 @@ elseif($action=='cc')
 	if($ccgid==2){$ccvipendtime='无限期';}else{$ccvipendtime=date('Y-m-d H:i:s',$ccvipendtime);}
 	$cclog=$cc2['logincount'];
 	$ccnickname=$cc2['nickname'];
-	$msgbody=nl2br($cc2['msgbody']);
+	$msgbody=nl2br((string)($cc2['msgbody'] ?? ''));
 	$msgstate=$cc2['msgstate'];
 	
 	if($cfg_spoints==0){
@@ -594,7 +598,7 @@ elseif($action=='cc')
 		if(empty($u) OR !is_numeric($u)){exit;}
 		$row = $dsql->GetOne("Select stime from sea_member where id='$u'");
 		$nowtime=time();
-		$lasttime=$row['stime'];
+		$row=is_array($row)?$row:array(); $lasttime=$row['stime'];
 		if($nowtime-$lasttime > 86400 )
 		{$stxt= '<button onClick="self.location=\'s.php\'" class="btn btn-warning" type="button"><strong>我要签到</strong> <span class="badge">+'.$cfg_pointsname.'</span>  </button>';}
 		else
@@ -713,7 +717,7 @@ EOT;
 												<h3 class="text-muted">修改个人信息</h3>
 EOT;
 						$row1=$dsql->GetOne("select * from sea_member where id='$uid'");
-							$oldpwd=$row1['password'];
+							$row1=is_array($row1)?$row1:array(); $oldpwd=$row1['password'];
 							$oldemail=$row1['email'];
 							$oldpic=$row1['pic'];
 							$oldnickname=$row1['nickname'];
@@ -759,7 +763,7 @@ elseif($action=='delmsg')
 }
 elseif($action=='favorite')
 {
-	$page = $_GET["page"];
+	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_favorite where uid=".$uid);
 	$rcount=$row['dd'];
@@ -896,7 +900,7 @@ EOT;
 }
 elseif($action=='buy')
 {
-	$page = $_GET["page"];
+	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_buy where uid=".$uid);
 	$rcount=$row['dd'];
@@ -1042,7 +1046,7 @@ elseif($action=='buy2')
 {
 	$uname=$_SESSION['sea_user_name'];
 	$gid=$_SESSION['sea_user_group'];
-	$page = $_GET["page"];
+	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_hyzbuy where uname='$uname'");
 	$rcount=$row['dd'];
@@ -1170,7 +1174,7 @@ elseif($action=='buy3')
 {
 	$uname=$_SESSION['sea_user_name'];
 	$gid=$_SESSION['sea_user_group'];
-	$page = $_GET["page"];
+	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_cck where status=1 and uname='$uname'");
 	$rcount=$row['dd'];
@@ -1294,7 +1298,7 @@ elseif($action=='gb')
 {
 	$uname=$_SESSION['sea_user_name'];
 	$gid=$_SESSION['sea_user_group'];
-	$page = $_GET["page"];
+	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_guestbook where uname='$uname'");
 	$rcount=$row['dd'];
@@ -1400,7 +1404,7 @@ elseif($action=='VNc')
 {
 	$uname=$_SESSION['sea_user_name'];
 	$gid=$_SESSION['sea_user_group'];
-	$page = $_GET["page"];
+	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_comment where username='$uname'");
 	$rcount=$row['dd'];
@@ -1515,7 +1519,7 @@ elseif($action=='Rc')
 {
 	$uname=$_SESSION['sea_user_name'];
 	$gid=$_SESSION['sea_user_group'];
-	$page = $_GET["page"];
+	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$dsql->setQuery("SELECT id from sea_comment  WHERE username='$uname'");
 	$dsql->Execute('cidlist');
@@ -1688,7 +1692,7 @@ elseif($action=='savereply')
 	if(!empty($cfg_comment_times))
 	{
 		$row = $dsql->GetOne("SELECT dtime FROM `sea_comment` WHERE `ip` = '$ip' ORDER BY `id` desc ");
-		if($dtime - $row['dtime'] < $cfg_comment_times)
+		$row=is_array($row)?$row:array(); if($dtime - $row['dtime'] < $cfg_comment_times)
 		{
 			ShowMsg('评论太快，请休息一下再来评论！','member.php?action=Rc',0,3000);
 			exit();
@@ -1742,7 +1746,7 @@ elseif($action=='err')
 {
 	$uname=$_SESSION['sea_user_name'];
 	$gid=$_SESSION['sea_user_group'];
-	$page = $_GET["page"];
+	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_erradd where author='$uname'");
 	$rcount=$row['dd'];

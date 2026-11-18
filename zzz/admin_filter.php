@@ -14,7 +14,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     // 获取原配置
     $sql = "SELECT filter_config FROM sea_zyk WHERE zid = $rid";
     $row = $dsql->GetOne($sql);
-    $config = $row && !empty($row['filter_config']) ? json_decode($row['filter_config'], true) : array();
+    $row=is_array($row)?$row:array(); $config = $row && !empty($row['filter_config']) ? json_decode($row['filter_config'], true) : array();
     
     // 更新配置
     $config[$type] = explode("\n", $values);
@@ -29,13 +29,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 // 显示配置表单
 $type = isset($_GET['type']) ? $_GET['type'] : 'name';
-$rid = intval($_GET['rid']);
+$rid = intval($_GET['rid'] ?? 0);
 
 // 读取现有配置
 $sql = "SELECT filter_config FROM sea_zyk WHERE zid = $rid";
 $row = $dsql->GetOne($sql);
 $currentValues = '';
-if($row && !empty($row['filter_config'])){
+$row=is_array($row)?$row:array(); if($row && !empty($row['filter_config'])){
     $config = json_decode($row['filter_config'], true);
     if(isset($config[$type])){
         $currentValues = implode("\n", $config[$type]);

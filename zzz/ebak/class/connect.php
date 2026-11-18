@@ -1,5 +1,5 @@
 <?php 
-error_reporting(0);
+error_reporting(E_ALL);
 
 // PHP 8 环境:加载 mysqli 实现的 mysql_* 兼容层
 require_once(dirname(__FILE__) . '/mysql8_compat.php');

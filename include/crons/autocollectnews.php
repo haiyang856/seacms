@@ -29,7 +29,7 @@ function autogetlistsbyid($id)
 	
 	//print_r($row);die;
 	
-	$listconfig=$row['listconfig'];
+	$row=is_array($row)?$row:array(); $listconfig=$row['listconfig'];
 	$coding=$row['coding'];
 	$sock=$row['sock'];
 	$playfrom=$row['playfrom'];
@@ -140,7 +140,7 @@ function autogetconbyid($id)
 	
 	//print_r($row);die;
 	
-	$listconfig=$row['listconfig'];
+	$row=is_array($row)?$row:array(); $listconfig=$row['listconfig'];
 	$itemconfig=$row['itemconfig'];
 	$coding=$row['coding'];
 	$sock=$row['sock'];

@@ -21,8 +21,8 @@ if($GLOBALS['cfg_newsparamset']==0||$GLOBALS['cfg_runmode2']==2){
 	$id = isset($id) && is_numeric($id) ? $id : 0;
 	$page = isset($page) && is_numeric($page) ? $page : 1;
 }else{
-	$id=$$GLOBALS['cfg_newsparamid'];
-	$page = $$GLOBALS['cfg_newsparamid'];
+	$id=${$GLOBALS['cfg_newsparamid']};
+	$page = ${$GLOBALS['cfg_newsparamid']};
 	$id = isset($id) && is_numeric($id) ? $id : 0;
 	$page = isset($page) && is_numeric($page) ? $page : 1;
 }
@@ -162,6 +162,7 @@ function echoContent($vId)
 function parseContentPart($templatePath,$currentTypeId,$vtag)
 {
 	global $mainClassObj;
+	$topid = isset($topid) ? $topid : 0;
 	$content=loadFile(sea_ROOT.$templatePath);
 	$content=$mainClassObj->parseTopAndFoot($content);
 	$content = str_replace("{seacms:currenttypeid}",$currentTypeId,$content);

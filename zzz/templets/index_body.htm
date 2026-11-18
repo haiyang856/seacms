@@ -231,7 +231,7 @@ a{text-decoration:none;color:inherit}
           }
       }else{
           $output = shell_exec('free -k 2>/dev/null');
-          if($output !== false){
+          if(is_string($output) && $output !== ''){
               $lines = explode("\n", $output);
               foreach($lines as $line){
                   if(preg_match('/^Mem:\s+(\d+)\s+(\d+)/', $line, $matches)){
@@ -412,8 +412,8 @@ a{text-decoration:none;color:inherit}
     </div>
     <div class="panel-body">
       <div class="info-grid">
-        <div class="info-row"><span class="info-label">Register_Globals</span><span class="info-value"><?php echo $registerGlobals; ?></span></div>
-        <div class="info-row"><span class="info-label">Magic_Quotes_Gpc</span><span class="info-value"><?php echo $magicQuotes; ?></span></div>
+        <div class="info-row"><span class="info-label">opcache（建议开启）</span><span class="info-value"><?php echo $opcacheEnabled; ?></span></div>
+        <div class="info-row"><span class="info-label">jit（建议开启）</span><span class="info-value"><?php echo $jitEnabled; ?></span></div>
         <div class="info-row"><span class="info-label">allow_url_fopen</span><span class="info-value"><?php echo $allowUrlFopen; ?></span></div>
         <div class="info-row"><span class="info-label">max_execution_time</span><span class="info-value"><?php echo $maxExecTime; ?>s</span></div>
         <div class="info-row"><span class="info-label">memory_limit</span><span class="info-value"><?php echo $memoryLimit; ?></span></div>

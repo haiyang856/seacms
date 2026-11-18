@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 die('<p style="font-size:18px;">暂不开放在线升级功能！</p>');
 
 require(dirname(__FILE__).'/config.php');

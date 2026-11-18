@@ -1,7 +1,7 @@
 <?php
 require_once("include/common.php");
-$name=$_REQUEST['name'];
-$url=$_REQUEST['url'];
+$name=$_REQUEST['name'] ?? '';
+$url=$_REQUEST['url'] ?? '';
 $name = FilterSearch(stripslashes($name));
 $Shortcut = "[InternetShortcut]
 

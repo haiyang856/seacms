@@ -2,6 +2,7 @@
 require_once(dirname(__FILE__)."/config.php");
 require_once(sea_DATA."/mark/inc_photowatermark_config.php");
 require_once(sea_DATA."/config.ftp.php");
+$is = isset($_REQUEST['is']) ? $_REQUEST['is'] : '';
 $photo_markimg = sea_ROOT."/data/mark/".$photo_markimg;
 $up = new uploader($photo_markup,$photo_markdown,$photo_marktype,$photo_wwidth,$photo_wheight,$photo_waterpos,$photo_watertext,$photo_fontsize,$photo_fontcolor,$photo_marktrans,$photo_diaphaneity,$photo_markimg);
 //修改默认配置
@@ -50,6 +51,8 @@ class uploader {
         var $hasThumb = 0; //是否生成缩略图
         var $imageWidth= '300';
         var $thumbWidth = '100';
+        var $_markup='', $_markdown='', $_marktype='', $_wwidth='', $_wheight='', $_waterpos='', $_watertext='', $_fontsize='', $_fontcolor='', $_marktrans='', $_diaphaneity='', $_markimg='';
+        var $_upFile='', $_fileName='', $_fileSize='', $_fileExt='', $_destination='', $_fileUrl='', $_height='', $_isimage=0, $_mime='', $_saveName='', $_savePath='', $_width='';
         
         function __construct($markup,$markdown,$marktype,$wwidth,$wheight,$waterpos,$watertext,$fontsize,$fontcolor,$marktrans,$diaphaneity,$markimg){
         	$this->_markup = $markup;
@@ -87,7 +90,7 @@ class uploader {
         function check($upfile) {
 				global $is;
                 //是否为上传文件
-                if(!is_uploaded_file($_FILES[$upfile]['tmp_name'])) {
+                if(!isset($_FILES[$upfile]['tmp_name']) || !is_uploaded_file($_FILES[$upfile]['tmp_name'])) {
                         exit('非法上传,你觉得这有意思么?');
                 }
                 //上传是否出错

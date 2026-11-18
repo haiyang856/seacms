@@ -33,16 +33,14 @@ var showNx=function (id) {
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tb_style">
 <?php
 if($action=='viewcomment'){
-$row=$dsql->GetOne("select msg from sea_comment where id='$id'");
-?>
+$row=$dsql->GetOne("select msg from sea_comment where id='$id'");$row=is_array($row)?$row:array(); ?>
 
 <tr><td class="td_border">
 <?php echo showFace($row['msg']);?>
 </td></tr>
 <?php
 }elseif($action=='viewreporterror'){
-$row=$dsql->GetOne("select errtxt from sea_erradd where id='$id'");
-?>
+$row=$dsql->GetOne("select errtxt from sea_erradd where id='$id'");$row=is_array($row)?$row:array(); ?>
 <tr class="thead"><th colspan="2">报错详情查看</th></tr>
 <tr><td class="td_border">
 <?php echo $row['errtxt'];?>
@@ -50,8 +48,7 @@ $row=$dsql->GetOne("select errtxt from sea_erradd where id='$id'");
 <tr><td class="td_border"><input type="button" value="返    回" onClick="self.location.href='<?php echo $Pirurl;?>'" class="rb1" /></td></tr>
 <?php 
 }elseif($action=='editcomment'){
-$row=$dsql->GetOne("select * from sea_comment where id='$id'");
-?>
+$row=$dsql->GetOne("select * from sea_comment where id='$id'");$row=is_array($row)?$row:array(); ?>
 <form name="newslistform" method="post" action="?action=editcomsave">
 	<tr class="thead"><th colspan="2">编辑评论</th></tr>
 	<tr>

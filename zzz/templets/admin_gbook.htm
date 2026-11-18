@@ -34,6 +34,7 @@ var showLYx=function (id) {
 <?php
 if($action=='viewgbook'){
 $row=$dsql->GetOne("select msg from sea_guestbook where id='$id'");
+$row=is_array($row)?$row:array();
 ?>
 
 <tr><td class="td_border">
@@ -42,6 +43,7 @@ $row=$dsql->GetOne("select msg from sea_guestbook where id='$id'");
 <?php 
 }elseif($action=='editgbook'){
 $row=$dsql->GetOne("select * from sea_guestbook where id='$id'");
+$row=is_array($row)?$row:array();
 ?>
 <form name="newslistform" method="post" action="?action=editgbooksave">
 	<tr class="thead"><th colspan="2">编辑留言</th></tr>

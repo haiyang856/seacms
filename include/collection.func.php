@@ -143,7 +143,7 @@ function getTestItemRule($tid,$previewurl,$previewpic='')
 	if($tid==0) return false;
 	global $dsql;
 	$row = $dsql->GetOne("Select coding,sock,playfrom,autocls,classid,itemconfig,listconfig,getherday from `sea_co_type` where tid='$tid'");
-	$itemconfig=$row['itemconfig'];
+	$row=is_array($row)?$row:array(); $itemconfig=$row['itemconfig'];
 	$listconfig=$row['listconfig'];
 	$labelRule1 = buildregx("{seacms:listrule(.*?)}(.*?){/seacms:listrule}","is");
 	preg_match_all($labelRule1,$listconfig,$ar1);
@@ -330,7 +330,7 @@ function getNewsTestItemRule($tid,$previewurl,$previewpic='')
 	if($tid==0) return false;
 	global $dsql;
 	$row = $dsql->GetOne("Select coding,sock,playfrom,autocls,classid,itemconfig,getherday from `sea_co_type` where tid='$tid'");
-	$itemconfig=$row['itemconfig'];
+	$row=is_array($row)?$row:array(); $itemconfig=$row['itemconfig'];
 	$coding=$row['coding'];
 	$sock=$row['sock'];
 	$playfrom=$row['playfrom'];

@@ -9,14 +9,14 @@ if($cfg_gbookstart=='0'){
 echo '对不起，评论暂时关闭';
 exit();
 }
-$itype=$type;
+$itype=isset($type) ? $type : 0;
 $itype=is_numeric($itype)?$itype:0;
 if(!isset($action))
 {
 	$action = '';
 }
 $ischeck = $cfg_feedbackcheck=='Y' ? 0 : 1;
-$id = $_REQUEST['id'];
+$id = $_REQUEST['id'] ?? '';
 $id = (isset($id) && is_numeric($id)) ? $id : 0;
 $page=empty($page) ? 1 : intval($page);
 if($page==0) $page=1;

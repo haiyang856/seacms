@@ -21,7 +21,7 @@ if($action=="add")
 	if(empty($torder)) 
 		{
 		$trow = $dsql->GetOne("select max(torder)+1 as dd from sea_type");
-		$torder = $trow['dd'];
+		$trow=is_array($trow)?$trow:array(); $torder = $trow['dd'];
 		}
 	if (!is_numeric($torder)) $torder=1;
 	$in_query = "insert into `sea_type`(upid,torder,tname,tenname,templist,templist_1,keyword,description,tptype) Values('$upid','$torder','$tname','$tenname','$templist','$templist_1','$keyword','$description',1)";
@@ -123,7 +123,7 @@ elseif($action=="edit")
 	if(empty($torder)) 
 		{
 		$trow = $dsql->GetOne("select max(torder)+1 as dd from sea_type");
-		$torder = $trow['dd'];
+		$trow=is_array($trow)?$trow:array(); $torder = $trow['dd'];
 		}
 	if (!is_numeric($torder)) $torder=1;
 	$dsql->ExecuteNoneQuery("update sea_type set tname='$tname',tenname='$tenname',templist='$templist',templist_1='$templist_1',keyword='$keyword',description='$description',torder='$torder' where tid=".$id);
@@ -216,7 +216,7 @@ function isExistSub($bigType,$operFlag)
 			$row = $dsql->GetOne("select count(*) as dd from sea_data where tid=".$bigType);
 		break;
 	}
-	if($row['dd']>0)
+	$row=is_array($row)?$row:array(); if($row['dd']>0)
 	{
 		return true;
 	}else{

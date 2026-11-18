@@ -5,6 +5,7 @@ if(empty($action))
 {
 	$action = '';
 }
+$id = isset($id) ? intval($id) : 0;
 
 if($action=="add")
 {
@@ -19,7 +20,7 @@ if($action=="add")
 		exit();
 	}
 	$row = $dsql->GetOne("Select count(*) as dd from `sea_admin` where name like '$username' ");
-	if($row['dd']>0)
+	$row=is_array($row)?$row:array(); if($row['dd']>0)
 	{
 		ShowMsg('用户名已存在！','-1');
 		exit();

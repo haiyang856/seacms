@@ -10,6 +10,7 @@ $id = empty($id) ? 0 : intval($id);
 if($action=="edit")
 {
 	$row = $dsql->GetOne("Select * From `sea_mytag` where aid='$id'");
+	$row=is_array($row)?$row:array();
 	include(sea_ADMIN.'/templets/admin_selflabel.htm');
 	exit;
 }

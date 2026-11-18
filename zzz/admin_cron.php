@@ -5,25 +5,29 @@ if(empty($action))
 {
 	$action = '';
 }
+$showtablerow = array();
 
 if($action=="update")
 {
+	$delete = isset($delete) ? $delete : array();
+	$namenew = isset($namenew) && is_array($namenew) ? $namenew : array();
+	$availablenew = isset($availablenew) && is_array($availablenew) ? $availablenew : array();
 	if($ids = implodeids($delete)) {
 		$dsql->ExecuteNoneQuery("DELETE FROM sea_crons WHERE cronid IN ($ids) AND type='user'");
 	}
 	if(is_array($namenew)) {
 		foreach($namenew as $id => $name) {
-			$dsql->ExecuteNoneQuery("UPDATE sea_crons SET name='$name',available='".(!isset($availablenew[$id])?'0':$availablenew[$id])."' ".($availablenew[$id] ? '' : ', nextrun=\'0\'')." WHERE cronid='$id'");
+			$dsql->ExecuteNoneQuery("UPDATE sea_crons SET name='$name',available='".(empty($availablenew[$id])?'0':$availablenew[$id])."' ".(empty($availablenew[$id]) ? ', nextrun=\'0\'' : '')." WHERE cronid='$id'");
 		}
 	}
 
 	$sql="SELECT cronid, filename FROM sea_crons";
 	$dsql->SetQuery($sql);
 	$dsql->Execute('crons_list');
-	$filename=$row->filename;
-	if(strpos($filename,'$')!==false){$filenameArr=explode("$",$filename);$filename=$filenameArr[0];}
-	if(strpos($filename,'#')!==false){$filenameArr=explode("#",$filename);$filename=$filenameArr[0];}
 	while($cron = $dsql->GetObject('crons_list')) {
+		$filename=(string)$cron->filename;
+		if(strpos($filename,'$')!==false){$filenameArr=explode("$",$filename);$filename=$filenameArr[0];}
+		if(strpos($filename,'#')!==false){$filenameArr=explode("#",$filename);$filename=$filenameArr[0];}
 		if(!file_exists(sea_INC.'/crons/'.$filename)) {
 			$dsql->ExecuteNoneQuery("UPDATE sea_crons SET available='0', nextrun='0' WHERE cronid='".$cron->cronid."'");
 		}
@@ -109,6 +113,7 @@ elseif($action=="editsave")
 	}
 	require_once sea_INC.'/cron.func.php';
 	$cron = $dsql->GetOne("SELECT * FROM sea_crons WHERE cronid='$id'");
+	$cron=is_array($cron)?$cron:array();
 	cronnextrun($cron,false);
 	updatecronscache();
 	ShowMsg("计划任务更新成功","admin_cron.php");

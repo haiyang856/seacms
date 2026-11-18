@@ -13,7 +13,7 @@ if($GLOBALS['cfg_runmode']==2||$GLOBALS['cfg_paramset']==0){
 	$id=intval($paras);
 	$id = (isset($id) && is_numeric($id) ? $id : 0);
 }else{
-	$id=$$GLOBALS['cfg_paramid'];
+	$id=${$GLOBALS['cfg_paramid']};
 	$id=intval($id);
 }
 $id=intval($id);

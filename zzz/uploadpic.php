@@ -14,7 +14,7 @@ $config['img_size']=5120; //上传img大小上限 单位：KB
 
 $config['message']="上传成功"; //上传成功后显示的消息，若为空则不显示
 
-$config['name']=mktime(); //上传后的文件命名规则 这里以unix时间戳来命名
+$config['name']=time(); //上传后的文件命名规则 这里以unix时间戳来命名
 
 $config['flash_dir']="../uploads/editor"; //上传flash文件地址 采用绝对地址 方便upload.php文件放在站内的任何位置 后面不加"/"
 $config['img_dir']="../uploads/editor"; //上传img文件地址 采用绝对地址 采用绝对地址 方便upload.php文件放在站内的任何位置 后面不加"/"
@@ -58,6 +58,7 @@ if(is_uploaded_file($_FILES['upload']['tmp_name']))
   
    if(move_uploaded_file($_FILES['upload']['tmp_name'],$file_host))
    {
+    $file_abso = "/uploads/editor/".$config['name'].".".$filetype;
     mkhtml($fn,$config['site_url'].$file_abso,$config['message']);
    }
    else

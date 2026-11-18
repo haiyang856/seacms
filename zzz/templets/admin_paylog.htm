@@ -18,8 +18,7 @@ form{float:left;}
 <script type="text/JavaScript">if(parent.$('admincpnav')) parent.$('admincpnav').innerHTML='后台首页&nbsp;&raquo;&nbsp;用户&nbsp;&raquo;&nbsp;充值记录';</script>
 <?php
 	$sqlyes="SELECT SUM( climit ) AS cckyes FROM sea_cck where status=1";
-	$rowyes = $dsql->GetOne($sqlyes);
-    if($rowyes['cckyes']>0){
+	$rowyes = $dsql->GetOne($sqlyes);$rowyes=is_array($rowyes)?$rowyes:array();     if($rowyes['cckyes']>0){
         $cckyes = $rowyes['cckyes'];
     }else{
         $cckyes = 0;
@@ -27,8 +26,7 @@ form{float:left;}
 	
 	if($ckey !=""){
 		$sqlyesu="SELECT SUM( climit ) AS cckyes FROM sea_cck where status=1 and uname='$ckey'";
-		$rowyesu = $dsql->GetOne($sqlyesu);
-		if($rowyesu['cckyes']>0){
+		$rowyesu = $dsql->GetOne($sqlyesu);$rowyesu=is_array($rowyesu)?$rowyesu:array(); 		if($rowyesu['cckyes']>0){
 			$cckyesu = $rowyesu['cckyes'];
 		}else{
 			$cckyesu = 0;

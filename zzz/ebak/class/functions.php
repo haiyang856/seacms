@@ -467,7 +467,7 @@ function Ebak_DoEbak($add){
 	for($i=0;$i<$count;$i++)
 	{
 		$b_table.=$tablename[$i].",";
-		$d_table.="\$tb[".$tablename[$i]."]=0;\r\n";
+		$d_table.="\$tb['".$tablename[$i]."']=0;\r\n";
     }
 	//去掉最后一个,
 	$b_table=substr($b_table,0,strlen($b_table)-1);
