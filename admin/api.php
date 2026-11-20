@@ -109,16 +109,16 @@
   <?php 
     $sqlStr="select * from `sea_zyk` where ztype !=3 order by zid ASC";
     $dsql->SetQuery($sqlStr);
-    $dsql->Execute('flink_list'); 
+    $dsql->Execute('flink_list');
+    $copyBase = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].'/'.basename(dirname(__FILE__)).'/admin_reslib2.php';
   ?>
   <table width="98%" align="left" cellpadding="0" cellspacing="0" border="0" bgcolor="#fff" style="margin-top:10px; margin-left:10px;" id="list" class="list">
     <tr style="background:#f8f8f8;height:30px;">
       <th width="20">ID</th>
       <th class="bi">资源库名称</th>
-      <th width="99">当天采集</th>
-      <th width="99">本周采集</th>
-      <th width="99">全部采集</th>
+      <th width="160">采集</th>
       <th width="99">分类绑定</th>
+      <th width="99">自动任务</th>
       <th width="180" style="min-width:200px;">过滤/替换配置</th>
     </tr>
     <?php
@@ -134,10 +134,15 @@
           <strong>【<?php echo $row->zname; ?>】</strong><?php echo $row->zinfo; ?>
         </a>
       </td> 
-      <td><a href="admin_reslib.php?ac=day&rid=<?php echo $row->zid; ?>&url=<?php echo $row->zapi; ?>">采集当天</a></td>
-      <td><a href="admin_reslib.php?ac=week&rid=<?php echo $row->zid; ?>&url=<?php echo $row->zapi; ?>">采集本周</a></td>
-      <td><a href="admin_reslib.php?ac=all&rid=<?php echo $row->zid; ?>&url=<?php echo $row->zapi; ?>">采集所有</a></td>
+      <td>
+        <a href="admin_reslib.php?ac=day&rid=<?php echo $row->zid; ?>&url=<?php echo $row->zapi; ?>">当天</a>
+        &nbsp;|&nbsp;
+        <a href="admin_reslib.php?ac=week&rid=<?php echo $row->zid; ?>&url=<?php echo $row->zapi; ?>">本周</a>
+        &nbsp;|&nbsp;
+        <a href="admin_reslib.php?ac=all&rid=<?php echo $row->zid; ?>&url=<?php echo $row->zapi; ?>">所有</a>
+      </td>
       <td><a href="admin_reslib.php?ac=list&rid=<?php echo $row->zid; ?>&url=<?php echo $row->zapi; ?>">分类绑定</a></td>
+      <td><a href="javascript:;" class="copy-addr" data-url="<?php echo htmlspecialchars($copyBase.'?ac=day&rid='.$row->zid.'&url='.$row->zapi.'&password='.urlencode($cfg_cookie_encode), ENT_QUOTES); ?>">复制地址</a></td>
       <td>
         <div class="config-container">
           <div class="config-dropdown">
@@ -165,5 +170,38 @@
     }
     echo '</table>'.$union;
     ?> 
+  <div id="copyTip" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 16px;border-radius:4px;font-size:13px;z-index:9999;">自动任务网址复制成功</div>
+  <script type="text/javascript">
+    function copyText(text, done){
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text, done); });
+      } else {
+        fallbackCopy(text, done);
+      }
+    }
+    function fallbackCopy(text, done){
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); }
+      catch(e) { alert('复制失败，请手动复制：\n' + text); }
+      document.body.removeChild(ta);
+    }
+    document.getElementById('list').addEventListener('click', function(e){
+      var el = e.target;
+      while (el && el !== this && !(el.className && (' ' + el.className + ' ').indexOf(' copy-addr ') > -1)) { el = el.parentNode; }
+      if (!el || el === this) return;
+      e.preventDefault();
+      copyText(el.getAttribute('data-url'), function(){
+        var tip = document.getElementById('copyTip');
+        tip.style.display = 'block';
+        clearTimeout(window._copyTipTimer);
+        window._copyTipTimer = setTimeout(function(){ tip.style.display = 'none'; }, 2000);
+      });
+    });
+  </script>
 </body>
 </html>

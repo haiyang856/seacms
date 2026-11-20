@@ -86,7 +86,20 @@ echo "<option value=\"$i\">$i</option>";
               日内内容页
             </form>
             <br />
-            &nbsp;注意：网站在静态模式下，如果<a href="admin_config.php" target="main"><font color="blue">网站配置</font></a>中选择了<font color="red">"生成播放页"</font>，那么生成内容页的同时、将会生成播放页 </td>
+            自动任务（点击复制网址）：
+            <?php
+            $mkScheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $mkBase = $mkScheme.'://'.$_SERVER['HTTP_HOST'].rtrim(dirname($_SERVER['SCRIPT_NAME']),'/').'/admin_makehtml2.php';
+            $mkPass = urlencode($cfg_cookie_encode);
+            $mkTasks = array(
+              '生成首页' => $mkBase.'?action=index&by=video&password='.$mkPass,
+              '生成列表页' => $mkBase.'?action=allchannel&password='.$mkPass,
+              '生成当天更新内容页' => $mkBase.'?action=daysview&password='.$mkPass,
+            );
+            foreach($mkTasks as $mkName => $mkUrl){
+              echo '<a href="javascript:;" class="copy-task" data-url="'.htmlspecialchars($mkUrl,ENT_QUOTES).'" style="margin-right:12px;color:#47a4db;">'.$mkName.'</a>';
+            }
+            ?> </td>
         </tr>
         <tr id="tr_makenews_all" style="display:none;">
           <td><input type="button" value="生成新闻首页" class="rb1"  onClick="javascript:window.open('?action=index&by=news','msg');">
@@ -142,7 +155,17 @@ echo "<option value=\"$i\">$i</option>";
               日内内容页
             </form>
             <br />
-            &nbsp;注意：网站在静态模式下，如果<a href="admin_config.php" target="main"><font color="blue">网站配置</font></a>中选择了<font color="red">"生成播放页"</font>，那么生成内容页的同时、将会生成播放页 </td>
+            自动任务（点击复制网址）：
+            <?php
+            $mkNewsTasks = array(
+              '生成新闻首页' => $mkBase.'?action=index&by=news&password='.$mkPass,
+              '生成新闻列表页' => $mkBase.'?action=allpart&password='.$mkPass,
+              '生成当天更新新闻内容页' => $mkBase.'?action=newsdaysview&password='.$mkPass,
+            );
+            foreach($mkNewsTasks as $mkName => $mkUrl){
+              echo '<a href="javascript:;" class="copy-task" data-url="'.htmlspecialchars($mkUrl,ENT_QUOTES).'" style="margin-right:12px;color:#47a4db;">'.$mkName.'</a>';
+            }
+            ?> </td>
         </tr>
         <tr id="tr_make_self" style="display:none;">
           <td><script type="text/javascript">
@@ -172,6 +195,40 @@ $dh = dir($templetdird);
     </div>
   </div>
 </div>
+
+<div id="copyTaskTip" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 16px;border-radius:4px;font-size:13px;z-index:9999;">自动任务网址复制成功</div>
+<script type="text/javascript">
+  function copyTaskText(text, done){
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function(){ copyTaskFallback(text, done); });
+    } else {
+      copyTaskFallback(text, done);
+    }
+  }
+  function copyTaskFallback(text, done){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); }
+    catch(e) { alert('复制失败，请手动复制：\n' + text); }
+    document.body.removeChild(ta);
+  }
+  document.addEventListener('click', function(e){
+    var el = e.target;
+    while (el && el !== document.body && !(el.className && (' ' + el.className + ' ').indexOf(' copy-task ') > -1)) { el = el.parentNode; }
+    if (!el || el === document.body) return;
+    e.preventDefault();
+    copyTaskText(el.getAttribute('data-url'), function(){
+      var tip = document.getElementById('copyTaskTip');
+      tip.style.display = 'block';
+      clearTimeout(window._copyTaskTipTimer);
+      window._copyTaskTipTimer = setTimeout(function(){ tip.style.display = 'none'; }, 2000);
+    });
+  });
+</script>
 
 <iframe style="Z-INDEX: 1; VISIBILITY: inherit; WIDTH: 100%; HEIGHT: 400px;" name="msg"  frameBorder=0 scrolling=yes></iframe>
 </body>
