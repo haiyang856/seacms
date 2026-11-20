@@ -53,7 +53,7 @@ $row=$dsql->GetOne("select * from sea_comment where id='$id'");$row=is_array($ro
 	<tr class="thead"><th colspan="2">编辑评论</th></tr>
 	<tr>
 	  <td width="11%" height="30" class="td_border" align="left">&nbsp;评论人：</td>
-	  <td height="30" class="td_border" align="left"><input name="username" type="text" id="username" size="20" value="<?php echo empty($row['username'])?'匿名用户':$row['username'];?>" /></td>
+	  <td height="30" class="td_border" align="left"><input name="username" type="text" id="username" size="20" value="<?php echo empty($row['username'])?'匿名用户':htmlspecialchars($row['username'],ENT_QUOTES);?>" /></td>
 	</tr>
 	<tr>
 	  <td width="11%" height="30" class="td_border" align="left">&nbsp;评论时间：</td>
@@ -65,7 +65,7 @@ $row=$dsql->GetOne("select * from sea_comment where id='$id'");$row=is_array($ro
 	</tr>
 	<tr>
 	  <td width="11%" height="30" class="td_border" align="left">&nbsp;评论内容：</td>
-	  <td height="30" class="td_border" align="left"><textarea name="msg" cols="60" rows="5" ><?php echo jstrim($row['msg'],500); ?></textarea>&nbsp;更改的评论内容HTML代码不会被屏蔽，可用HTML语法编辑。</td>
+	  <td height="30" class="td_border" align="left"><textarea name="msg" cols="60" rows="5" ><?php echo htmlspecialchars(jstrim($row['msg'],500),ENT_QUOTES); ?></textarea>&nbsp;更改的评论内容HTML代码不会被屏蔽，可用HTML语法编辑。</td>
 	</tr>
 	<tr>
 	  <td width="11%" height="30" class="td_border" align="left">&nbsp;管理员回复：</td>
@@ -157,11 +157,11 @@ if($limitstart<0) $limitstart=0;
 $sqlStr="select c.id,c.v_id,c.username,c.ip,c.ischeck,c.dtime,c.msg,d.n_title,d.tid from `sea_comment` c left join sea_news d on d.n_id=c.v_id where 0=0 ". $whereStr ."and m_type=1 order by c.dtime desc limit $limitstart,$numPerPage";
 ?>
 <form name="newslistform" method="post">
-<tr class="thead"><th colspan="15">评论管理 <input name="keyword" type="text" id="keyword" size="20" value="" > <input type="submit" name="selectBtn" value="查 询" class="btn" onclick="location.href='?keyword='+escape($('keyword').value);" /></th></tr>
+<tr class="thead"><th colspan="15">评论管理 <input name="keyword" type="text" id="keyword" size="20" value="" > <input type="submit" name="selectBtn" value="查 询" class="btn" onclick="location.href='?keyword='+encodeURIComponent($('keyword').value);" /></th></tr>
 <?php
 if($TotalResult==0){
 if(!empty($keyword))
-echo "<tr align='center'><td>关键字  <font color=red>\"".$keyword."\"</font>   没有记录</td></tr>";
+echo "<tr align='center'><td>关键字  <font color=red>\"".htmlspecialchars($keyword,ENT_QUOTES)."\"</font>   没有记录</td></tr>";
 else 
 echo "<tr align='center'><td colspan=\"15\">   没有记录</td></tr>";
 }else{
@@ -190,7 +190,7 @@ $v_name=$row->n_title;
 <td class="td_border"><?php if(empty($v_name)) echo "该数据已删除"; else echo "<a href='".getArticleLink($row->tid,$v_id,"")."' target='_blank' >{$v_name}({$v_id})</a>";?></td>
 <td class="td_border"><?php echo $row->ip;?></td>
 <td class="td_border"><?php echo isCurrentDay($row->dtime);?></td>
-<td class="td_border"><?php echo empty($row->username)?'匿名用户':$row->username;?></td>
+<td class="td_border"><?php echo empty($row->username)?'匿名用户':htmlspecialchars($row->username,ENT_QUOTES);?></td>
 <td class="td_border"><a href="?action=editcomment&id=<?php echo $row->id;?>" >编辑</a> <a onClick="if(confirm('确定要删除吗')){return true;}else{return false;}" href="?action=delcomment&id=<?php echo $row->id;?>" >删除</a></td>
 </tr>
 <?php }?>	

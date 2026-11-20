@@ -37,10 +37,16 @@ $todayVod=is_array($todayVod)?$todayVod:array();
 $todayNews = $dsql->GetOne("select count(*) as dd from sea_news where TO_DAYS(from_unixtime(n_addtime)) = TO_DAYS(NOW()) AND n_recycled != 1");
 $todayNews=is_array($todayNews)?$todayNews:array();
 
-// 服务器时间
-$serverTime = date('Y-m-d H:i:s');
-$weekArr = array('周日','周一','周二','周三','周四','周五','周六');
-$serverDay = date('n月j日 ') . $weekArr[date('w')];
+// Gzip 压缩是否实际开启（zlib.output_compression 或已注册 ob_gzhandler）
+$gzipOn = false;
+if (@ini_get('zlib.output_compression') && strtolower(@ini_get('zlib.output_compression')) !== 'off') {
+	$gzipOn = true;
+} else {
+	foreach (ob_list_handlers() as $h) {
+		if (stripos($h, 'ob_gzhandler') !== false) { $gzipOn = true; break; }
+	}
+}
+$gzipEnabled = $gzipOn ? 'ON' : 'OFF';
 
 // 安全检测
 $safeMode = @ini_get("safe_mode") ? 'ON' : 'OFF';
@@ -49,7 +55,7 @@ $opcacheStatus = function_exists('opcache_get_status') ? @opcache_get_status(fal
 $opcacheEnabled = is_array($opcacheStatus) ? 'ON' : 'OFF';
 // JIT 即时编译状态（magic_quotes_gpc 自 PHP 5.4 移除，改为检测 PHP 8 的 JIT，依赖 OPcache）
 $jitEnabled = (is_array($opcacheStatus) && !empty($opcacheStatus['jit']['enabled'])) ? 'ON' : 'OFF';
-$allowUrlFopen = @ini_get("allow_url_fopen") ? '支持' : '不支持';
+$allowUrlFopen = filter_var(@ini_get("allow_url_fopen"), FILTER_VALIDATE_BOOLEAN) ? 'ON' : 'OFF';
 $maxExecTime = @ini_get("max_execution_time");
 if($maxExecTime === false || $maxExecTime === '' || $maxExecTime === null){
 	$maxExecTime = 30;

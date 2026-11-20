@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $newConfig = addslashes(json_encode($config));
     $dsql->ExecuteNoneQuery("UPDATE sea_zyk SET replace_config = '$newConfig' WHERE zid = $rid");
     
-    ShowMsg("配置保存成功！", "admin_replace.php?type=$type&rid=$rid");
+    ShowMsg("配置保存成功！", "api.php");
     exit;
 }
 
@@ -76,7 +76,7 @@ $typeTitles = array(
     <!-- 每行一条替换规则，例如：\n大陆=中国\n香港=中国香港 -->
     <div style="margin-top:15px;">
         <input type="submit" value="保存配置" class="btn">
-        <input type="button" value="返回" class="btn" onclick="history.go(-1)">
+        <input type="button" value="返回" class="btn" onclick="location.href='api.php'">
     </div>
 </form>
 </body>

@@ -32,9 +32,13 @@ foreach($_GET as $k=>$v)
 	$schwhere.= "&$k=".urlencode($$k);
 }
 $schwhere = ltrim($schwhere,'&');
-$page = (isset($page) && is_numeric($page)) ? $page : 1;
-if(!isset($searchtype) || $searchtype != 5){$searchtype=$cfg_search_type;}
-$tid = (isset($tid) && is_numeric($tid)) ? $tid : 0;
+$page = (isset($page) && is_numeric($page)) ? max(1, intval($page)) : 1;
+if(!isset($searchtype) || $searchtype != 5){
+	$searchtype = intval($cfg_search_type);
+} else {
+	$searchtype = 5;
+}
+$tid = (isset($tid) && is_numeric($tid)) ? max(0, intval($tid)) : 0;
 $uptypeid=GetTopid($tid);
 if($uptypeid== 0){$uptypeid=$tid;}
 if(!isset($searchword)) $searchword = '';
@@ -50,6 +54,8 @@ $area = RemoveXSS(stripslashes($area ?? ''));
 $area = addslashes(cn_substr($area,10));
 
 $year = RemoveXSS(stripslashes($year ?? ''));
+// 严格 4 位数字年份, 空值保留
+if($year !== '' && !preg_match('/^\d{4}$/', $year)) $year = '';
 $year = addslashes(cn_substr($year,4));
 
 $yuyan = RemoveXSS(stripslashes($yuyan ?? ''));
@@ -68,6 +74,9 @@ $money = RemoveXSS(stripslashes($money ?? ''));
 $money = addslashes(cn_substr($money,2));
 
 $order = RemoveXSS(stripslashes($order ?? ''));
+// 排序字段白名单, 不在列表中的值强制回退为空(默认排序)
+$_allowed_orders = array('hit','hitasc','id','idasc','time','timeasc','commend','commendasc','score','scoreasc');
+if(!in_array($order, $_allowed_orders, true)) $order = '';
 $order = addslashes(cn_substr($order,16));
 
 if($cfg_notallowsstr !='' && $searchtype!=5)

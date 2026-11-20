@@ -9,6 +9,7 @@ $id = empty($id) ? 0 : intval($id);
 
 if($action=="add")
 {
+	admin_csrf_check();
 	if(empty($webname))
 	{
 		ShowMsg("网站名称没有填写，请返回检查","-1");
@@ -19,12 +20,28 @@ if($action=="add")
 		ShowMsg("网站地址没有填写，请返回检查","-1");
 		exit();
 	}
-	if(empty($sortrank)) 
+	if(!preg_match('/^https?:\/\//',$url))
+	{
+		ShowMsg("网站地址必须以 http:// 或 https:// 开头，请返回检查","-1");
+		exit();
+	}
+	if(empty($sortrank))
 		{
 		$trow = $dsql->GetOne("select max(sortrank)+1 as dd from sea_flink");
 		$trow=is_array($trow)?$trow:array(); $sortrank = $trow['dd'];
 		}
 	if (!is_numeric($sortrank)) $sortrank=1;
+	if($v_type=="font") $logo="";
+	if(!preg_match('/^[A-Za-z0-9_.\/\-]*$/',$logo))
+	{
+		ShowMsg("LOGO地址含有非法字符，请返回检查","-1");
+		exit();
+	}
+	$webname = addslashes(htmlspecialchars(stripslashes($webname),ENT_QUOTES));
+	$msg = addslashes(htmlspecialchars(stripslashes($msg),ENT_QUOTES));
+	$url = addslashes($url);
+	$logo = addslashes($logo);
+	$sortrank = intval($sortrank);
 	$dtime = time();
 	$query = "Insert Into `sea_flink`(sortrank,url,webname,logo,msg,email,dtime,ischeck) Values('$sortrank','$url','$webname','$logo','$msg','$email','$dtime','$ischeck'); ";
 	$rs = $dsql->ExecuteNoneQuery($query);
@@ -41,6 +58,13 @@ if($action=="add")
 }
 elseif($action=="save")
 {
+	admin_csrf_check();
+	$row=$dsql->GetOne("select id from `sea_flink` where id='$id'");
+	if(!is_array($row))
+	{
+		ShowMsg("需要修改的链接不存在！","-1");
+		exit();
+	}
 	if(empty($webname))
 	{
 		ShowMsg("网站名称没有填写，请返回检查","-1");
@@ -51,13 +75,28 @@ elseif($action=="save")
 		ShowMsg("网站地址没有填写，请返回检查","-1");
 		exit();
 	}
-	if(empty($sortrank)) 
+	if(!preg_match('/^https?:\/\//',$url))
+	{
+		ShowMsg("网站地址必须以 http:// 或 https:// 开头，请返回检查","-1");
+		exit();
+	}
+	if(empty($sortrank))
 		{
 		$trow = $dsql->GetOne("select max(sortrank)+1 as dd from sea_flink");
 		$trow=is_array($trow)?$trow:array(); $sortrank = $trow['dd'];
 		}
 	if(!is_numeric($sortrank)) $sortrank=1;
 	if($v_type=="font") $logo="";
+	if(!preg_match('/^[A-Za-z0-9_.\/\-]*$/',$logo))
+	{
+		ShowMsg("LOGO地址含有非法字符，请返回检查","-1");
+		exit();
+	}
+	$webname = addslashes(htmlspecialchars(stripslashes($webname),ENT_QUOTES));
+	$msg = addslashes(htmlspecialchars(stripslashes($msg),ENT_QUOTES));
+	$url = addslashes($url);
+	$logo = addslashes($logo);
+	$sortrank = intval($sortrank);
 	$query = "Update `sea_flink` set sortrank='$sortrank',url='$url',webname='$webname',logo='$logo',msg='$msg',ischeck='$ischeck',email='$email' where id='$id' ";
 	$dsql->ExecuteNoneQuery($query);
 	ShowMsg("成功更改一个链接！","admin_link.php");
@@ -66,18 +105,18 @@ elseif($action=="save")
 elseif($action=="last")
 {
 	$row=$dsql->GetOne("select sortrank from `sea_flink` where id='$id'");
-	$row=is_array($row)?$row:array(); $cur=$row['sortrank'];
-	$row=$dsql->GetOne("select count(*) as dd from `sea_flink` where sortrank<'$cur'");
-	$row=is_array($row)?$row:array(); $cou=$row['dd'];
-	if($cou>0)
+	if(!is_array($row))
 	{
-		$row=$dsql->GetOne("select sortrank from `sea_flink` where sortrank<'$cur' order by sortrank desc");
-		$row=is_array($row)?$row:array(); $flag=$row['sortrank'];
-		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank='$flag' where id='$id'");
+		ShowMsg("需要操作的链接不存在！","-1");
+		exit();
 	}
-	else
+	$cur=$row['sortrank'];
+	//与相邻链接交换排序值，避免产生重复排序
+	$nb=$dsql->GetOne("select id,sortrank from `sea_flink` where sortrank<'$cur' order by sortrank desc limit 1");
+	if(is_array($nb))
 	{
-		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank=sortrank-1 where id='$id'");
+		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank='".$nb['sortrank']."' where id='$id'");
+		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank='$cur' where id='".$nb['id']."'");
 	}
 	header("Location:admin_link.php?id=$id");
 	exit;
@@ -85,30 +124,37 @@ elseif($action=="last")
 elseif($action=="next")
 {
 	$row=$dsql->GetOne("select sortrank from `sea_flink` where id='$id'");
-	$row=is_array($row)?$row:array(); $cur=$row['sortrank'];
-	$row=$dsql->GetOne("select count(*) as dd from `sea_flink` where sortrank>'$cur'");
-	$row=is_array($row)?$row:array(); $cou=$row['dd'];
-	if($cou>0)
+	if(!is_array($row))
 	{
-		$row=$dsql->GetOne("select sortrank from `sea_flink` where sortrank>'$cur' order by sortrank desc");
-		$row=is_array($row)?$row:array(); $flag=$row['sortrank'];
-		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank='$flag' where id='$id'");
+		ShowMsg("需要操作的链接不存在！","-1");
+		exit();
 	}
-	else
+	$cur=$row['sortrank'];
+	$nb=$dsql->GetOne("select id,sortrank from `sea_flink` where sortrank>'$cur' order by sortrank asc limit 1");
+	if(is_array($nb))
 	{
-		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank=sortrank+1 where id='$id'");
+		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank='".$nb['sortrank']."' where id='$id'");
+		$dsql->ExecuteNoneQuery("update `sea_flink` set sortrank='$cur' where id='".$nb['id']."'");
 	}
 	header("Location:admin_link.php?id=$id");
 	exit;
 }
 elseif($action=="del")
 {
+	$row=$dsql->GetOne("select id from `sea_flink` where id='$id'");
+	if(!is_array($row))
+	{
+		ShowMsg("需要删除的链接不存在！","-1");
+		exit();
+	}
 	$dsql->ExecuteNoneQuery("delete from `sea_flink` where id='$id'");
 	header("Location:admin_link.php?id=$id");
 	exit;
 }
 elseif($action=="delall")
 {
+	admin_csrf_check();
+	$e_id = (isset($e_id) && is_array($e_id)) ? array_filter(array_map('intval',$e_id)) : array();
 	if(empty($e_id))
 	{
 		ShowMsg("请选择需要删除的链接","-1");
@@ -121,33 +167,49 @@ elseif($action=="delall")
 }
 elseif($action=="editall")
 {
+	admin_csrf_check();
+	$e_id = (isset($e_id) && is_array($e_id)) ? array_filter(array_map('intval',$e_id)) : array();
 	if(empty($e_id))
 	{
 		ShowMsg("请选择需要修改的链接","-1");
 		exit();
 	}
-	foreach($e_id as $id)
+	//先全量校验，全部通过后再统一更新，避免部分成功部分失败
+	$updates = array();
+	foreach($e_id as $eid)
 	{
-		$webname=$_POST["webname$id"];
-		$url=$_POST["url$id"];
-		$sortrank=$_POST["sortrank$id"];
-	if(empty($webname))
-	{
-		ShowMsg("网站名称没有填写，请返回检查","-1");
-		exit();
-	}
-	if(empty($url))
-	{
-		ShowMsg("网站地址没有填写，请返回检查","-1");
-		exit();
-	}
-	if(empty($sortrank)) 
+		$webname = isset($_POST["webname$eid"]) ? $_POST["webname$eid"] : '';
+		$url = isset($_POST["url$eid"]) ? $_POST["url$eid"] : '';
+		$sortrank = isset($_POST["sortrank$eid"]) ? $_POST["sortrank$eid"] : '';
+		if(empty($webname))
 		{
-		$trow = $dsql->GetOne("select max(sortrank)+1 as dd from sea_flink");
-		$trow=is_array($trow)?$trow:array(); $sortrank = $trow['dd'];
+			ShowMsg("网站名称没有填写，请返回检查","-1");
+			exit();
 		}
-	if (!is_numeric($sortrank)) $sortrank=1;
-	$dsql->ExecuteNoneQuery("update sea_flink set webname='$webname',url='$url',sortrank='$sortrank' where id=".$id);
+		if(empty($url))
+		{
+			ShowMsg("网站地址没有填写，请返回检查","-1");
+			exit();
+		}
+		if(!preg_match('/^https?:\/\//',$url))
+		{
+			ShowMsg("网站地址必须以 http:// 或 https:// 开头，请返回检查","-1");
+			exit();
+		}
+		if(empty($sortrank))
+		{
+			$trow = $dsql->GetOne("select max(sortrank)+1 as dd from sea_flink");
+			$trow=is_array($trow)?$trow:array(); $sortrank = $trow['dd'];
+		}
+		if(!is_numeric($sortrank)) $sortrank=1;
+		$webname = addslashes(htmlspecialchars(stripslashes($webname),ENT_QUOTES));
+		$url = addslashes($url);
+		$sortrank = intval($sortrank);
+		$updates[] = "update sea_flink set webname='$webname',url='$url',sortrank='$sortrank' where id=$eid";
+	}
+	foreach($updates as $query)
+	{
+		$dsql->ExecuteNoneQuery($query);
 	}
 	header("Location:admin_link.php");
 	exit;

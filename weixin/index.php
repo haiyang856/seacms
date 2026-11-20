@@ -33,7 +33,7 @@ function sinaShortenUrl($long_url) {
 
 ////////////////////////////////
 
-if(isopen=="n"){die('ERROR');}
+if(isopen=="n"){die('微信接口已关闭，请联系管理员开启！');}
 define("TOKEN", "weixin");	 
 $wechatObj = new wechatCallbackapiTest();
 $wechatObj->valid();

@@ -2,7 +2,7 @@ var playerw='100%';//电脑端播放器宽度
 var playerh='100%';//电脑端播放器高度
 var mplayerw='100%';//手机端播放器宽度
 var mplayerh='100%';//手机端播放器高度
-var adsPage="https://www.jumu.cc/api/loading.html";
+var adsPage="https://www.seacms.net/api/loading.html";
 var adsTime=3;
 var jxAname="云播";
 var jxBname="";
@@ -22,7 +22,7 @@ var jxFapi="";
 var jxGapi="";
 var jxHapi="";
 var jxIapi="";
-var forcejx="no";
+var forcejx="dp";
 var unforcejx="swf#iframe#url#xigua#ffhd#jjvod#yunpan";
 var unforcejxARR = unforcejx.split('#');
 

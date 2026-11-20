@@ -766,7 +766,7 @@ elseif($action=='favorite')
 	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_favorite where uid=".$uid);
-	$rcount=$row['dd'];
+	$rcount=is_array($row) ? $row['dd'] : 0;
 	$page_count = ceil($rcount/$pcount);
 	if(empty($_GET['page'])||$_GET['page']<0){
 	$page=1;
@@ -831,7 +831,7 @@ EOT;
 							while($row=$dsql->getArray('favlist'))
 							{
 								$rs=$dsql->getOne("select v_hit,v_state,v_pic,v_name,v_enname,v_note,v_addtime,tid from sea_data where v_id=".$row['vid']);
-								if(!$rs) {continue;}
+								if(!is_array($rs)) {continue;}
 								$hit=$rs['v_hit'];
 								$pic=$rs['v_pic'];
 								$name=$rs['v_name'];
@@ -903,7 +903,7 @@ elseif($action=='buy')
 	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_buy where uid=".$uid);
-	$rcount=$row['dd'];
+	$rcount=is_array($row) ? $row['dd'] : 0;
 	$page_count = ceil($rcount/$pcount);
 	if(empty($_GET['page'])||$_GET['page']<0){
 	$page=1;
@@ -973,7 +973,7 @@ EOT;
 	while($row=$dsql->getArray('buylist'))
 {
 	$rs=$dsql->getOne("select v_hit,v_state,v_pic,v_name,v_enname,v_note,v_addtime,tid from sea_data where v_id=".$row['vid']);
-	if(!$rs) {echo "<tr><td align=\"left\"><input type=\"checkbox\"></td><td colspan=\"5\">该视频不存在或已经删除</td></tr>";continue;}
+	if(!is_array($rs)) {echo "<tr><td align=\"left\"><input type=\"checkbox\"></td><td colspan=\"5\">该视频不存在或已经删除</td></tr>";continue;}
 	$hit=$rs['v_hit'];
 	$pic=$rs['v_pic'];
 	$name=$rs['v_name'];
@@ -1049,7 +1049,7 @@ elseif($action=='buy2')
 	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_hyzbuy where uname='$uname'");
-	$rcount=$row['dd'];
+	$rcount=is_array($row) ? $row['dd'] : 0;
 	$page_count = ceil($rcount/$pcount);
 	if(empty($_GET['page'])||$_GET['page']<0){
 	$page=1;
@@ -1118,7 +1118,7 @@ EOT;
 	while($row=$dsql->getArray('buylist'))
 {
 	$rs=$dsql->getOne("select gname from sea_member_group where gid=".$row['gid']);
-	$gname=$rs['gname'];
+	$gname=is_array($rs) ? $rs['gname'] : '';
 	echo <<<EOT
                     <tr>
                         <td>
@@ -1177,7 +1177,7 @@ elseif($action=='buy3')
 	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_cck where status=1 and uname='$uname'");
-	$rcount=$row['dd'];
+	$rcount=is_array($row) ? $row['dd'] : 0;
 	$page_count = ceil($rcount/$pcount);
 	if(empty($_GET['page'])||$_GET['page']<0){
 	$page=1;
@@ -1301,7 +1301,7 @@ elseif($action=='gb')
 	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_guestbook where uname='$uname'");
-	$rcount=$row['dd'];
+	$rcount=is_array($row) ? $row['dd'] : 0;
 	$page_count = ceil($rcount/$pcount);
 	if(empty($_GET['page'])||$_GET['page']<0){
 	$page=1;
@@ -1407,7 +1407,7 @@ elseif($action=='VNc')
 	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_comment where username='$uname'");
-	$rcount=$row['dd'];
+	$rcount=is_array($row) ? $row['dd'] : 0;
 	$page_count = ceil($rcount/$pcount);
 	if(empty($_GET['page'])||$_GET['page']<0){
 	$page=1;
@@ -1467,15 +1467,20 @@ elseif($action=='VNc')
 EOT;
 	while($row=$dsql->getArray('clist'))
 {
+	$clink=''; $cname=''; $ctype='';
 	if($row['m_type']==0){
 		$rs=$dsql->getOne("select tid,v_id,v_addtime,v_enname,v_name from sea_data where v_id=".$row['v_id']);
-		$clink=getContentLink($rs['tid'],$rs['v_id'],"",date('Y-n',$rs['v_addtime']),$rs['v_enname']);
-		$cname=$rs['v_name'];
+		if(is_array($rs)){
+			$clink=getContentLink($rs['tid'],$rs['v_id'],"",date('Y-n',$rs['v_addtime']),$rs['v_enname']);
+			$cname=$rs['v_name'];
+		}
 		$ctype='[视频]';
 	}elseif($row['m_type']==1){
 		$rs=$dsql->getOne("select tid,n_id,n_title from sea_news where n_id=".$row['v_id']);
-		$clink=getArticleLink($rs['tid'],$rs['n_id'],'');
-		$cname=$rs['n_title'];
+		if(is_array($rs)){
+			$clink=getArticleLink($rs['tid'],$rs['n_id'],'');
+			$cname=$rs['n_title'];
+		}
 		$ctype='[新闻]';
 	}
 	
@@ -1527,10 +1532,18 @@ elseif($action=='Rc')
 	while($row=$dsql->getArray('cidlist')){$row_all_id_arr[]=$row['id'];}
 	$row_all_id_str  = implode(',',$row_all_id_arr);
 	//echo($row_all_id_str);die; //所有主评论id
-	$row=$dsql->getOne("select count(id) as dd from sea_comment where reply in($row_all_id_str)");
-	$rcount=$row['dd'];
-	//echo($rcount); die;//所有回复评论数量
-	$page_count = ceil($rcount/$pcount);
+	if(empty($row_all_id_str))
+	{
+		$rcount = 0;
+		$page_count = 0;
+		$row_all_id_str = '0';
+	}
+	else
+	{
+		$row=$dsql->getOne("select count(id) as dd from sea_comment where reply in($row_all_id_str)");
+		$rcount=is_array($row) ? $row['dd'] : 0;
+		$page_count = ceil($rcount/$pcount);
+	}
 	if(empty($_GET['page'])||$_GET['page']<0){
 	$page=1;
 	}else {
@@ -1616,15 +1629,20 @@ var showR=function (rid,rvid,rmtype) {
 	<?php
 	while($row=$dsql->getArray('clist'))
 {
+	$clink=''; $cname=''; $ctype='';
 	if($row['m_type']==0){
 		$rs=$dsql->getOne("select tid,v_id,v_addtime,v_enname,v_name from sea_data where v_id=".$row['v_id']);
-		$clink=getContentLink($rs['tid'],$rs['v_id'],"",MyDate('',$rs['v_addtime']),$rs['v_enname']);
-		$cname=$rs['v_name'];
+		if(is_array($rs)){
+			$clink=getContentLink($rs['tid'],$rs['v_id'],"",MyDate('',$rs['v_addtime']),$rs['v_enname']);
+			$cname=$rs['v_name'];
+		}
 		$ctype='[视频]';
 	}elseif($row['m_type']==1){
 		$rs=$dsql->getOne("select tid,n_id,n_title from sea_news where n_id=".$row['v_id']);
-		$clink=getArticleLink($rs['tid'],$rs['n_id'],'');
-		$cname=$rs['n_title'];
+		if(is_array($rs)){
+			$clink=getArticleLink($rs['tid'],$rs['n_id'],'');
+			$cname=$rs['n_title'];
+		}
 		$ctype='[新闻]';
 	}
 	$rs_c=$dsql->getOne("select id,msg from sea_comment where id=".$row['reply']);
@@ -1632,7 +1650,7 @@ var showR=function (rid,rvid,rmtype) {
 	echo '<div class="panel panel-info"><div class="panel-heading" style="padding-top:7px;height:30px;font-size: 12px;">';
 	echo '<span style="float:right;">'.MyDate('',$row['dtime']).'</span><span style="float:left;"><a target="_blank" style="color: #31708f;" href="'.$clink.'">'.$ctype.cn_substrR($cname,30).'</a></span>';
 	echo '</div><div class="panel-body pspan"> ';
-    echo $rs_c['msg'];
+    echo is_array($rs_c) ? $rs_c['msg'] : '';
 	if($cfg_gbookstart=='0'){$r_txt='';}else{$r_txt=' <i onClick="showR('.$row['id'].','.$row['v_id'].','.$row['m_type'].')"; class="icon iconfont icon-comment" title="回复这条评论" style="color:#4e86a7;font-size:14px;">回复ta</i>';}
 	echo '</div><div class="panel-footer"><font style="color:#428bca;">@'.$row['username']."</font>:".$row['msg'].$r_txt.' </div></div>';
 	}
@@ -1749,7 +1767,7 @@ elseif($action=='err')
 	$page = $_GET["page"] ?? 1;
 	$pcount = 20;
 	$row=$dsql->getOne("select count(id) as dd from sea_erradd where author='$uname'");
-	$rcount=$row['dd'];
+	$rcount=is_array($row) ? $row['dd'] : 0;
 	$page_count = ceil($rcount/$pcount);
 	if(empty($_GET['page'])||$_GET['page']<0){
 	$page=1;
@@ -1810,6 +1828,7 @@ EOT;
 	while($row=$dsql->getArray('clist'))
 {
 	$rs=$dsql->getOne("select * from sea_data where v_id=".$row['vid']);
+	if(!is_array($rs)) {continue;}
 	echo '<div class="panel panel-info"><div class="panel-heading" style="padding-top:7px;height:30px;font-size: 12px;">';
 	echo '<span style="float:right;">'.MyDate('',$row['sendtime']).' <a title="删除" href=javascript:if(confirm("确定要删除吗?"))location="?action=del_err&id='.$row['id'].'"><i class="icon iconfont icon-delete" style="color:#688faf;font-size:12px;">删除</i></a></span><span style="float:left;"><a target="_blank" style="color: #31708f;" href="'.getContentLink($rs['tid'],$rs['v_id'],"",date('Y-n',$rs['v_addtime']),$rs['v_enname']).'">'.cn_substrR($rs['v_name'],30).'</a></span>';
 	echo '</div><div class="panel-body pspan">';

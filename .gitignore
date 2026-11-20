@@ -26,3 +26,10 @@ tmp/
 .DS_Store
 Thumbs.db
 .php-cs-fixer.cache
+
+# 开发/工具产物
+.workbuddy/
+.trae-html-share-packages/
+
+# 后台入口生成的路径文件
+data/admin_*.php

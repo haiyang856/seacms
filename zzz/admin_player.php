@@ -51,6 +51,7 @@ if($action=="edit")
 }
 elseif($action=="save")
 {
+	$e_id = (isset($e_id) && is_array($e_id)) ? array_values(array_filter(array_map('intval',$e_id))) : array();
 	if(empty($e_id))
 	{
 		ShowMsg("请选择要修改的项目","-1");
@@ -59,27 +60,34 @@ elseif($action=="save")
 	$xml = simplexml_load_file($playerKindsfile);
 	if(!$xml){$xml = simplexml_load_string(file_get_contents($playerKindsfile));}
 	$i = 0;
-	$a = 0;
+	$found = 0;
 	foreach($xml as $player){
 		$i++;
 		if(in_array($i,$e_id)){
-			$player['sort']=stripslashes(${'sort'.$e_id[$a]});
-			$player['postfix']=stripslashes(${'postfix'.$e_id[$a]});
-			$player['flag']=gb2utf8(stripslashes(${'flag'.$e_id[$a]}));
-			$player->intro=gb2utf8(stripslashes(${'info'.$e_id[$a]}));
-			$a++;
-			$xml->asXML($playerKindsfile);
+			if(!isset(${'sort'.$i}) || !isset(${'postfix'.$i}) || !isset(${'flag'.$i}) || !isset(${'info'.$i}))
+			{
+				ShowMsg("提交数据不完整，请返回重试！","-1");
+				exit();
+			}
+			$postfix = stripslashes(${'postfix'.$i});
+			if(!preg_match('/^[0-9a-zA-Z_\-]+$/',$postfix))
+			{
+				ShowMsg("后缀含有非法字符，请返回检查！","-1");
+				exit();
+			}
+			$player['sort']=intval(${'sort'.$i});
+			$player['postfix']=$postfix;
+			$player['flag']=gb2utf8(stripslashes(${'flag'.$i}));
+			$player->intro=gb2utf8(stripslashes(${'info'.$i}));
+			$found++;
 			}
 	}
-	
-	/*  Modify Database */
-	
-	$sql = "select * from `sea_playdata` ";
-	
-	
-	
-	
-	
+	if($found==0)
+	{
+		ShowMsg("所选播放来源不存在！","-1");
+		exit();
+	}
+	$xml->asXML($playerKindsfile);
 	ShowMsg("成功保存设置!","admin_player.php?action=boardsource");
 	exit;
 }
@@ -90,9 +98,11 @@ elseif($action=="boardsource")
 }
 elseif($action=="modifysourceban")
 {
+	$id = intval($id);
 	$xml = simplexml_load_file($playerKindsfile);
 	if(!$xml){$xml = simplexml_load_string(file_get_contents($playerKindsfile));}
 	$i=0;
+	$found=false;
 	foreach($xml as $player){
 		$i++;
 		if($i==$id){
@@ -100,90 +110,65 @@ elseif($action=="modifysourceban")
 			$player['open']=1;
 			else
 			$player['open']=0;
-			$xml->asXML($playerKindsfile);
+			$found=true;
 			}
-		}	
+		}
+	if(!$found)
+	{
+		ShowMsg("需要操作的播放来源不存在！","-1");
+		exit();
+	}
+	$xml->asXML($playerKindsfile);
 	header('Location: admin_player.php?action=boardsource');
 	exit();
 }
 elseif($action=="modifysource")
 {
-	
+	$id = intval($id);
 	$xml = simplexml_load_file($playerKindsfile);
 	if(!$xml){$xml = simplexml_load_string(file_get_contents($playerKindsfile));}
 	$i=0;
+	$found=false;
 	foreach($xml as $player){
 		$i++;
 		if($i==$id){
-			$player['sort']=$sort;
-			$player['postfix']=$postfix;
-			$player->intro=gb2utf8($info);
-			$xml->asXML($playerKindsfile);
+			$postfix = stripslashes($postfix);
+			if(!preg_match('/^[0-9a-zA-Z_\-]+$/',$postfix))
+			{
+				ShowMsg("后缀含有非法字符，请返回检查！","-1");
+				exit();
 			}
-	
+			$player['sort']=intval($sort);
+			$player['postfix']=$postfix;
+			$player->intro=gb2utf8(stripslashes($info));
+			$found=true;
+			}
 	}
+	if(!$found)
+	{
+		ShowMsg("需要修改的播放来源不存在！","-1");
+		exit();
+	}
+	$xml->asXML($playerKindsfile);
 	echo "<script>alert('修改成功！');</script>";
-//	header('Location: admin_player.php?action=boardsource');
 	exit();
 }
 elseif($action=="addnew")
 {
 	//add new
-	$playername=$_POST['playername'];
-	$info=$_POST['info'];
-	$order=$_POST['order'];
-	$trail=$_POST['trail'];
-	if($playername==''||$trail==''||$order=='')
+	$playername=isset($_POST['playername'])?$_POST['playername']:'';
+	$info=isset($_POST['info'])?$_POST['info']:'';
+	$order=isset($_POST['order'])?intval($_POST['order']):0;
+	$trail=isset($_POST['trail'])?stripslashes($_POST['trail']):'';
+	if($playername==''||$trail==''||!isset($_POST['order'])||$_POST['order']=='')
 	{
 		ShowMsg("请输入播放器名字，后缀，排序。","-1");
 		exit();
 	}
-	$playername = gb2utf8($playername);
-	$info = gb2utf8($info);
-	$doc = new DOMDocument();   
-	$doc -> formatOutput = true;
- 
-	$doc->load($playerKindsfile);     
-	
-	$root = $doc->documentElement;
-	$index = $doc->createElement('player');
-	$root->appendChild($index);
-	
-	$open = $doc->createAttribute("open");
-	$openvalue = $doc -> createTextNode('1');
-	$open-> appendChild($openvalue);
-	$index -> appendChild($open);
-
-	$sort = $doc->createAttribute("sort");
-	$sortvalue = $doc->createTextNode($order);
-	$sort->appendChild($sortvalue);
-	$index->appendChild($sort);
-	
-	$postfix = $doc->createAttribute("postfix");
-	$postfixvalue = $doc->createTextNode($trail);
-	$postfix->appendChild($postfixvalue);
-	$index->appendChild($postfix);
-	
-	$flag = $doc->createAttribute("flag");
-	$flagvalue = $doc->createTextNode($playername);
-	$flag->appendChild($flagvalue);
-	$index->appendChild($flag);
-	
-	$des = $doc->createAttribute("des");
-	$desvalue = $doc->createTextNode("");
-	$des->appendChild($desvalue);
-	$index->appendChild($des);
-	
-	$intro = $doc->createElement("intro");
-	$introvalue = $doc->createCDATASection($info);
-	$intro->appendChild($introvalue);
-	$index->appendChild($intro);	
-	
-	$doc -> save($playerKindsfile);
-
-	if(empty($trail)){
-		ShowMsg("请填写文件名","-1");
-		exit;
+	if(!preg_match('/^[0-9a-zA-Z_\-]+$/',$trail))
+	{
+		ShowMsg("后缀含有非法字符，只允许字母、数字、下划线和横线！","-1");
+		exit();
 	}
 	$defaultfolder="../js/player";
 	if(empty($filedir)) $filedir=$defaultfolder;
@@ -195,31 +180,88 @@ elseif($action=="addnew")
 		ShowMsg("已存在该文件请更换名称","-1");
 		exit;
 	}
+	//先创建模板文件，成功后再写入XML，避免产生孤儿条目
+	$content = isset($content)?$content:'';
 	createTextFile($content,$filedir."/".$trail.".html");
+	if(!file_exists($filedir."/".$trail.".html"))
+	{
+		ShowMsg("创建播放器模板文件失败！","-1");
+		exit();
+	}
+	$playername = gb2utf8($playername);
+	$info = gb2utf8($info);
+	$doc = new DOMDocument();
+	$doc->formatOutput = true;
+	$doc->load($playerKindsfile);
+	$root = $doc->documentElement;
+	$index = $doc->createElement('player');
+	$root->appendChild($index);
+
+	$open = $doc->createAttribute("open");
+	$openvalue = $doc->createTextNode('1');
+	$open->appendChild($openvalue);
+	$index->appendChild($open);
+
+	$sort = $doc->createAttribute("sort");
+	$sortvalue = $doc->createTextNode($order);
+	$sort->appendChild($sortvalue);
+	$index->appendChild($sort);
+
+	$postfix = $doc->createAttribute("postfix");
+	$postfixvalue = $doc->createTextNode($trail);
+	$postfix->appendChild($postfixvalue);
+	$index->appendChild($postfix);
+
+	$flag = $doc->createAttribute("flag");
+	$flagvalue = $doc->createTextNode($playername);
+	$flag->appendChild($flagvalue);
+	$index->appendChild($flag);
+
+	$des = $doc->createAttribute("des");
+	$desvalue = $doc->createTextNode("");
+	$des->appendChild($desvalue);
+	$index->appendChild($des);
+
+	$intro = $doc->createElement("intro");
+	$introvalue = $doc->createCDATASection($info);
+	$intro->appendChild($introvalue);
+	$index->appendChild($intro);
+
+	$doc->save($playerKindsfile);
 	ShowMsg("操作成功！","admin_player.php?action=boardsource");
 	exit();
 }
 elseif($action=="delete")
 {
-
+	$id = intval($id);
 	$xml = simplexml_load_file($playerKindsfile);
 	if(!$xml){$xml = simplexml_load_string(file_get_contents($playerKindsfile));}
 	$i=0;
+	$found=false;
+	$postfix='';
 	foreach($xml as $player){
 		$i++;
 		if($i==$id){
+			$postfix=(string)$player['postfix'];
 			unset($xml->player[$i-1]); //索引从0开始。
-			$xml->asXML($playerKindsfile);
+			$found=true;
+			break;
 			}
-	
 	}
-	
-	$filedir='../js/player/'.$playerfile.'.html';
-
-	unlink($filedir);
+	if(!$found)
+	{
+		ShowMsg("需要删除的播放来源不存在！","-1");
+		exit();
+	}
+	$xml->asXML($playerKindsfile);
+	//文件名取自被删条目的postfix属性，白名单校验后才删除，不再信任外部playerfile参数
+	if(preg_match('/^[0-9a-zA-Z_\-]+$/',$postfix))
+	{
+		$filedir='../js/player/'.$postfix.'.html';
+		if(file_exists($filedir)) unlink($filedir);
+	}
 	ShowMsg("操作成功！","admin_player.php?action=boardsource");
 	exit();
-
 }
 else
 {

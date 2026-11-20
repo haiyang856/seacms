@@ -1,4 +1,4 @@
-<?php 
+<?php
 $app_ftp = '0';
 $app_ftphost = 'test.seacms.net';
 $app_ftpuser = 'seacmstest';

@@ -62,7 +62,11 @@ $filter_config = ['name' => '影片名称','area' => '影片地区','lang' => '�
 foreach ($filter_config as $filter_name => $label) {
     if (!empty($filterConfig[$filter_name]) && is_array($filterConfig[$filter_name])) {
         foreach ($filterConfig[$filter_name] as $keyword) {
-            if (strpos($video->$filter_name, $keyword) !== false) {
+            $keyword = trim((string)$keyword);
+            if ($keyword === '') {
+                continue; // 空关键词会匹配所有影片，直接忽略
+            }
+            if (strpos((string)$video->$filter_name, $keyword) !== false) {
                 return "{$label} 包含过滤词【<font color=red>{$keyword}</font>】在禁止采集列表中,跳过采集<br>";
             }
         }
@@ -935,7 +939,12 @@ $filter_config = ['name' => '影片名称','area' => '影片地区','lang' => '�
 foreach ($filter_config as $filter_name => $label) {
     if (!empty($filterConfig[$filter_name]) && is_array($filterConfig[$filter_name])) {
         foreach ($filterConfig[$filter_name] as $keyword) {
-            if (strpos($video['vod_name'], $keyword) !== false) {
+            $keyword = trim((string)$keyword);
+            if ($keyword === '') {
+                continue; // 空关键词会匹配所有影片，直接忽略
+            }
+            $filterValue = isset($video['vod_' . $filter_name]) ? (string)$video['vod_' . $filter_name] : '';
+            if (strpos($filterValue, $keyword) !== false) {
                 return "{$label} 包含过滤词【<font color=red>{$keyword}</font>】在禁止采集列表中,跳过采集<br>";
             }
         }

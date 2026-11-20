@@ -334,7 +334,7 @@ function ShowMsg($msg,$gourl,$onlymsg=0,$limittime=0,$extraJs='')
 		$rmsg .= "document.write(\"<br /><div class='mac_msg_jump'>";
 	    $rmsg .= "<div class='text'>\");\r\n";
 
-		$rmsg .= "document.write(\"<img style='height: 28px;margin-bottom: 15px;'; src='{$cfg_basehost}/pic/i2.png'><br>".str_replace("\"","“",$msg)."\");\r\n";
+		$rmsg .= "document.write(\"<img style='height: 28px;margin-bottom: 15px;' src='/pic/i2.png'><br>".str_replace("\"","“",$msg)."\");\r\n";
 		$rmsg .= "document.write(\"";
 		if($onlymsg==0)
 		{
@@ -2518,8 +2518,15 @@ function getFileCache($cacheName)
 	global $cfg_cachemark;
 	$cacheFile=sea_ROOT.'/data/cache/'.$cfg_cachemark.$cacheName.'.inc';
 	if(file_exists($cacheFile)){
-		@$fp = fopen($cacheFile,'r');
-		@$cacheValue = fread($fp,filesize($cacheFile));
+		$cacheSize = @filesize($cacheFile);
+		if($cacheSize === false || $cacheSize <= 0){
+			return "";
+		}
+		$fp = @fopen($cacheFile,'r');
+		if(!$fp){
+			return "";
+		}
+		$cacheValue = @fread($fp,$cacheSize);
 		@fclose($fp);
 		return $cacheValue;
 	}else{
@@ -2563,8 +2570,12 @@ function loadFile($filePath)
 		echo "模版文件读取失败!";
 		exit();
 	}
+	$fileSize = filesize($filePath);
+	if($fileSize === false || $fileSize <= 0){
+		return '';
+	}
 	$fp = @fopen($filePath,'r');
-	$sourceString = @fread($fp,filesize($filePath));
+	$sourceString = @fread($fp,$fileSize);
 	@fclose($fp);
 	return $sourceString;
 }
@@ -2706,7 +2717,7 @@ function getExtraTypeName($tid,$connector=" ")
 	$tname='';
 	$tlist=getTypeListsOnCache();
         if($tid==""){
-        $ids_arr="";}
+        $ids_arr=array();}
         else{
         $ids_arr = preg_split('[,]',$tid);}
 	$j=0;
@@ -3382,9 +3393,15 @@ function checkIP()
 {
 	global $cfg_banIPS;
 	$iplisttxt=sea_DATA."/admin/iplist.txt";
-	$fp = @fopen($iplisttxt,'r');
-	$iplist = @fread($fp,filesize($iplisttxt));
-	@fclose($fp);
+	$iplist = '';
+	$ipSize = @filesize($iplisttxt);
+	if($ipSize !== false && $ipSize > 0){
+		$fp = @fopen($iplisttxt,'r');
+		if($fp){
+			$iplist = @fread($fp,$ipSize);
+			@fclose($fp);
+		}
+	}
 	$ipArr = explode('|',$iplist);
 	$rip = GetIP();
 	if($cfg_banIPS==0)

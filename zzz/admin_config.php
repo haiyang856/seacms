@@ -19,6 +19,42 @@ $jump_file = sea_ROOT."/js/seajump.js";
 //保存配置的改动
 if($dopost=="save")
 {
+	admin_csrf_check();
+	//合并旧配置：以现有配置为基础，POST仅覆盖提供的键，防止部分提交清空配置
+	$cfgMerged = array();
+	if(file_exists($configfile))
+	{
+		$loadCfg = function($f){ include $f; return get_defined_vars(); };
+		$cfgMerged = $loadCfg($configfile);
+		unset($cfgMerged['f']);
+	}
+	foreach($_POST as $k=>$v)
+	{
+		if(strpos($k,'edit___')!==0) continue;
+		$name = substr($k,7);
+		//配置键名白名单，禁止写入任意PHP变量
+		if(!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/',$name))
+		{
+			ShowMsg("存在非法的配置项名称，已拒绝保存！","-1");
+			exit();
+		}
+		if(is_array($v)) $v = implode(',',$v);
+		$cfgMerged[$name] = stripslashes($v);
+	}
+	foreach($cfgMerged as $k=>$v)
+	{
+		${'edit___'.$k} = $v;
+	}
+	//目录名白名单校验，防止moveFolder路径穿越
+	$dirKeys = array('cfg_channel_name','cfg_content_name','cfg_play_name','cfg_album_name','cfg_filesuffix','cfg_news_name','cfg_newspart_name','cfg_article_name','cfg_channel_name2','cfg_content_name2','cfg_play_name2');
+	foreach($dirKeys as $dk)
+	{
+		if(isset($cfgMerged[$dk]) && !m_ereg("^[0-9a-zA-Z_\-]+$",$cfgMerged[$dk]))
+		{
+			ShowMsg("目录名含有非法字符，只允许字母、数字、下划线和横线！","-1");
+			exit();
+		}
+	}
 	if(!m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_df_style) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_df_html) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_ads_dir) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_upload_dir) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_backup_dir)){
 		ShowMsg("请检查模板与路径设置里的文件夹路径设置是否含有非法字符！","-1");
 		exit;
@@ -73,20 +109,10 @@ if($dopost=="save")
 		createTextFile($content,sea_ROOT."/.htaccess");
 	}
 	$configstr = '';
-	foreach($_POST as $k=>$v)
+	foreach($cfgMerged as $k=>$v)
 	{
-		if(m_ereg("^edit___",$k))
-		{
-			if(is_array($$k))
-				$v = cn_substr(str_replace("'","\'",str_replace("\\","\\\\",stripslashes(implode(',',$$k)))),99999); 
-			else
-				$v = cn_substr(str_replace("'","\'",str_replace("\\","\\\\",stripslashes(${$k}))),99999); 
-		}
-		else
-		{
-			continue;
-		}
-		$k = m_ereg_replace("^edit___","",$k);
+		if(is_array($v)) $v = implode(',',$v);
+		$v = cn_substr(str_replace("'","\'",str_replace("\\","\\\\",$v)),99999);
 		$configstr .="\${$k} = '$v';\r\n";
 	}
 	if(!is_writeable($configfile))
@@ -147,58 +173,86 @@ if($dopost=="save")
 	$fpp = fopen($m_file,'r');
 	$player = fread($fpp,filesize($m_file));
 	fclose($fpp);
-	$player=preg_replace("/alertwinw='(\d+)';/is","alertwinw='".$edit___cfg_alertwinw."';",$player);
-	$player=preg_replace("/alertwinh='(\d+)';/is","alertwinh='".$edit___cfg_alertwinh."';",$player);
-	$player=preg_replace("/alertwin='(\d+)';/is","alertwin='".$edit___cfg_isalertwin."';",$player);
+	$player=preg_replace("/alertwinw='(\d+)';/is","alertwinw='".intval($edit___cfg_alertwinw)."';",$player);
+	$player=preg_replace("/alertwinh='(\d+)';/is","alertwinh='".intval($edit___cfg_alertwinh)."';",$player);
+	$player=preg_replace("/alertwin='(\d+)';/is","alertwin='".intval($edit___cfg_isalertwin)."';",$player);
 	$fpp = fopen($m_file,'w');
 	flock($fpp,3);
 	fwrite($fpp,$player);
 	fclose($fpp);
-	$fp = @fopen($iplisttxt,'w');
-	flock($fp,3);
-	fwrite($fp,$iplist);
-	fclose($fp);
-	$iplist = is_resource($fp)? @fread($fp,filesize($iplisttxt)) : false;
-	if(is_resource($fp)) @fclose($fp);
-	$areaarr = explode('|',$publisharea);
-	$fp = @fopen($publishareatxt,'w');
-	@flock($fp,3);
-	foreach($areaarr as $area)
+	//仅在POST提供对应字段时写入，防止部分提交清空数据文件
+	if(isset($_POST['iplist']))
 	{
-		@fwrite($fp,$area."\r\n");
+		$fp = @fopen($iplisttxt,'w');
+		flock($fp,3);
+		fwrite($fp,$iplist);
+		fclose($fp);
 	}
-	@fclose($fp);
-	$yeararr = explode('|',$publishyear);
-	$fp = @fopen($publishyeartxt,'w');
-	@flock($fp,3);
-	foreach($yeararr as $year)
+	if(isset($_POST['publisharea']))
 	{
-		@fwrite($fp,$year."\r\n");
+		$areaarr = explode('|',$publisharea);
+		$fp = @fopen($publishareatxt,'w');
+		@flock($fp,3);
+		foreach($areaarr as $area)
+		{
+			@fwrite($fp,$area."\r\n");
+		}
+		@fclose($fp);
 	}
-	@fclose($fp);
-	$yuyanarr = explode('|',$publishyuyan);
-	$fp = @fopen($publishyuyantxt,'w');
-	@flock($fp,3);
-	foreach($yuyanarr as $yuyan)
+	if(isset($_POST['publishyear']))
 	{
-		@fwrite($fp,$yuyan."\r\n");
+		$yeararr = explode('|',$publishyear);
+		$fp = @fopen($publishyeartxt,'w');
+		@flock($fp,3);
+		foreach($yeararr as $year)
+		{
+			@fwrite($fp,$year."\r\n");
+		}
+		@fclose($fp);
 	}
-	@fclose($fp);
-	$verarr = explode('|',$ver);
-	$fp = @fopen($vertxt,'w');
-	@flock($fp,3);
-	foreach($verarr as $ver)
+	if(isset($_POST['publishyuyan']))
 	{
-		@fwrite($fp,$ver."\r\n");
+		$yuyanarr = explode('|',$publishyuyan);
+		$fp = @fopen($publishyuyantxt,'w');
+		@flock($fp,3);
+		foreach($yuyanarr as $yuyan)
+		{
+			@fwrite($fp,$yuyan."\r\n");
+		}
+		@fclose($fp);
 	}
-	@fclose($fp);
-	
+	if(isset($_POST['ver']))
+	{
+		$verarr = explode('|',$ver);
+		$fp = @fopen($vertxt,'w');
+		@flock($fp,3);
+		foreach($verarr as $ver)
+		{
+			@fwrite($fp,$ver."\r\n");
+		}
+		@fclose($fp);
+	}
+
 	$fp = fopen($jump_file,'r');
 	$player = fread($fp,filesize($jump_file));
-	fclose($fp);	
-	$player=preg_replace("/mskin='(.*?)';/is","mskin='".$edit___cfg_mskin."';",$player);
-	$player=preg_replace("/host='(.*?)';/is","host='".$edit___cfg_basehost."';",$player);
-	$player=preg_replace("/mhost='(.*?)';/is","mhost='".$edit___cfg_mhost."';",$player);
+	fclose($fp);
+	//JS单引号字符串转义，防止配置值注入脚本
+	$jsEscape = function($s){
+		$s = str_replace("\\","\\\\",$s);
+		$s = str_replace("'","\\'",$s);
+		$s = str_replace("\r","\\r",$s);
+		$s = str_replace("\n","\\n",$s);
+		$s = str_replace("</","<\\/",$s);
+		return $s;
+	};
+	//整行锚定+识别转义引号的完整字符串字面量，避免匹配到mhost内部或残留可执行片段
+	$jsReplace = function($content,$name,$value) use ($jsEscape){
+		$pattern = '/^var\s+'.$name.'\s*=\s*\'(?:[^\'\\\\]|\\\\.)*\'\s*;/m';
+		return preg_replace_callback($pattern,function($m) use ($jsEscape,$name,$value){ return "var ".$name."='".$jsEscape($value)."';"; },$content);
+	};
+	$player=$jsReplace($player,'mskin',$edit___cfg_mskin);
+	$player=$jsReplace($player,'host',$edit___cfg_basehost);
+	$player=$jsReplace($player,'mhost',$edit___cfg_mhost);
 	$fp = fopen($jump_file,'w');
 	flock($fp,3);
 	fwrite($fp,$player);

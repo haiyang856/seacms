@@ -165,19 +165,25 @@ var YZM = {
 			};
 			
  	
-    		var xyplay=$.ajax({
-				url: '/ass.php?url=dp&vid='+zvid+'&vfrom='+zvfrom+'&vpart='+zvpart,
-				dataType: 'jsonp',
-				async:false,
-				jsonp: 'cb'                				
-    		}).responseJSON.s;
-
-	
+	    		// jsonp 的 jqXHR 没有 responseJSON，数据只能在 success 回调中获取
+	    		$.ajax({
+					url: '/ass.php?url=dp&vid='+zvid+'&vfrom='+zvfrom+'&vpart='+zvpart,
+					dataType: 'jsonp',
+					jsonp: 'cb',
+					success: function(res) {
+						if (res && res.s && typeof res.s === 'object' && parseInt(res.s['try']) > 0) {
+							YZM.video.limit(res.s);
+						}
+					}
+	    		});
+		},
+		// 服务端返回试看时间后才启用试看限制
+		'limit': function(xyplay) {
 	var vtry_time=xyplay['try'];
 	var vjifen=xyplay['jifen'];
 	var vjifenname=xyplay['jifenname'];
 	var vhouz=xyplay['houz'];
-	var viparr2=xyplay.vipp;
+	var viparr2=xyplay.vipp||{};
 	var viparr=Object.values(viparr2);
 	var isauth=xyplay['isauth'];
 	var t = parseInt(vtry_time);

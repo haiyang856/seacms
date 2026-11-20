@@ -4,15 +4,29 @@ require_once(dirname(__FILE__)."/config.php");
 CheckPurview();
 if($action=="set")
 {
-	$weburl= $_POST['weburl'];
-	$token = $_POST['token'];
-	$open=fopen("../data/admin/ping.php","w" );
+	admin_csrf_check();
+	$pingfile = "../data/admin/ping.php";
+	//先读取旧配置，部分提交时保留未提供的键，避免清空配置
+	$old = array('weburl'=>'','token'=>'');
+	if(file_exists($pingfile))
+	{
+		$readPing = function($f){ include $f; return array('weburl'=>isset($weburl)?$weburl:'','token'=>isset($token)?$token:''); };
+		$old = $readPing($pingfile);
+	}
+	$weburl = isset($_POST['weburl']) ? stripslashes($_POST['weburl']) : $old['weburl'];
+	$token = isset($_POST['token']) ? stripslashes($_POST['token']) : $old['token'];
+	if(!preg_match('/^[A-Za-z0-9_.\-:\/?&=%]+$/',$weburl) || !preg_match('/^[A-Za-z0-9]+$/',$token))
+	{
+		ShowMsg("网站域名或准入密钥含有非法字符，请返回检查！","-1");
+		exit();
+	}
+	$open=fopen($pingfile,"w" );
 	$str='<?php  ';
 	$str.='$weburl = "';
-	$str.="$weburl";
+	$str.=addslashes($weburl);
 	$str.='"; ';
 	$str.='$token = "';
-	$str.="$token";
+	$str.=addslashes($token);
 	$str.='"; ';
 	$str.=" ?>";
 	fwrite($open,$str);
@@ -50,7 +64,8 @@ elseif($action=="resetn"){
 <div class="r_main">
   <div class="r_content">
     <div class="r_content_1">
-<form action="admin_ping.php?action=set" method="post">	
+<form action="admin_ping.php?action=set" method="post">
+<?php echo admin_csrf_field();?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tb_style">
 <tbody><tr class="thead">
 <td colspan="5" class="td_title">百度主动推送设置</td>
@@ -58,15 +73,15 @@ elseif($action=="resetn"){
 <tr>
 <td width="80%" align="left" height="30" class="td_border">
 <?php  require_once("../data/admin/ping.php"); ?>
-网站域名：<input  name="weburl" value="<?php  echo $weburl;?>">&nbsp;&nbsp;&nbsp;&nbsp;
-准入密钥：<input name="token" value="<?php  echo $token;?>">&nbsp;&nbsp;&nbsp;&nbsp;
+网站域名：<input  name="weburl" value="<?php  echo htmlspecialchars($weburl,ENT_QUOTES);?>">&nbsp;&nbsp;&nbsp;&nbsp;
+准入密钥：<input name="token" value="<?php  echo htmlspecialchars($token,ENT_QUOTES);?>">&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="submit" value="确 认" class="btn" >
 </td>
 </tr>
 <tr>
 <td width="90%" align="left" height="30" class="td_border">
-<a href="?action=v_all"><input type=button value="批量推送新视频" οnclick="window.location.href('?action=v_all')"></a> &nbsp;&nbsp;
-<a href="?action=n_all"><input type=button value="批量推送新文章" οnclick="window.location.href('?action=n_all')"></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="?action=v_all"><input type=button value="批量推送新视频" onclick="window.location.href('?action=v_all')"></a> &nbsp;&nbsp;
+<a href="?action=n_all"><input type=button value="批量推送新文章" onclick="window.location.href('?action=n_all')"></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="javascript:if(confirm('确定重置所有视频为未推送吗?该操作不可恢复！'))location='?action=reset'"><input type=button value="重置所有视频为未推送"/></a> &nbsp;&nbsp;
 <a href="javascript:if(confirm('确定重置所有新闻为未推送吗?该操作不可恢复！'))location='?action=resetn'"><input type=button value="重置所有新闻为未推送" /></a> 
 </td>

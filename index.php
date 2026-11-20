@@ -5,7 +5,8 @@ if(!file_exists("data/common.inc.php"))
     exit();
 }
 require_once ("include/common.php");
-if($cfg_runmode==0){ header("Location:index".$cfg_filesuffix2);exit;}
+//静态模式仅在首页静态文件已生成时才跳转，否则直接动态输出，避免 try_files 回落到 index.php 后无限重定向
+if($cfg_runmode==0 && is_file(sea_ROOT.'/index'.$cfg_filesuffix2)){ header("Location:/index".$cfg_filesuffix2);exit;}
 
 //前置跳转start
 $cs=$_SERVER["REQUEST_URI"];

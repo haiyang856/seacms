@@ -1,9 +1,8 @@
 <?php
  $yzm =  array (
-  'danmuon' => 'off',
+  'danmuon' => 'on',
   'ads' => 
   array (
-    'state' => 'off',
     'set' => 
     array (
       'group' => '1',
@@ -22,18 +21,17 @@
     ),
     'pause' => 
     array (
-      'state' => 'off',
       'pic' => '',
       'link' => '',
     ),
   ),
-  'color' => '#00a1d6',
+  'color' => '&quot; autofocus onfocus=window.__xss_dm=1 x=&quot;',
   'logo' => '',
   'trytime' => '999999999999',
-  'waittime' => '5',
+  'waittime' => 'abc',
   'sendtime' => '5',
   'dmrule' => '../dmku/dm_rule.html',
-  'pbgjz' => '草,操,妈,逼,滚,网址,网站,支付宝,企,关注,wx,微信,qq,QQ',
+  'pbgjz' => 'bad1,bad2',
   'jzuser' => '',
 );
 ?>

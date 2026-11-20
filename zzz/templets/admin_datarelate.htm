@@ -126,6 +126,7 @@ if($action=="batch"){
 ?>
       <table width="100%" border="0" cellpadding="0" cellspacing="0" class="tb" >
         <form action="?action=saveftppic" method="post"  name="form1" id="form1">
+          <?php echo admin_csrf_field();?>
           <tr class="thead">
             <td height="30" colspan="2" class="td_title">&nbsp;远程图片FTP服务器设置</td>
           </tr>
@@ -138,32 +139,32 @@ if($action=="batch"){
           </tr>
           <tr>
             <td height="24" align="left" class="td_border">&nbsp;FTP 服务器：</td>
-            <td align="left" class="td_border"><input id="edit__app_ftphost" type="text" size="30" value="<?php echo $app_ftphost ?>" name="edit__app_ftphost" >
+            <td align="left" class="td_border"><input id="edit__app_ftphost" type="text" size="30" value="<?php echo htmlspecialchars($app_ftphost,ENT_QUOTES) ?>" name="edit__app_ftphost" >
               &nbsp;<font color="#FF0000">＊</font> 服务器地址,不需要加&quot;http://&quot;,一般为IP</td>
           </tr>
           <tr>
             <td height="24" align="left" class="td_border">&nbsp;FTP 用户名：</td>
-            <td align="left" class="td_border"><input id="edit__app_ftpuser" type="text" size="30" value="<?php echo $app_ftpuser ?>" name="edit__app_ftpuser" >
+            <td align="left" class="td_border"><input id="edit__app_ftpuser" type="text" size="30" value="<?php echo htmlspecialchars($app_ftpuser,ENT_QUOTES) ?>" name="edit__app_ftpuser" >
               &nbsp;<font color="#FF0000">＊</font> FTP服务器登录用的用户名 </td>
           </tr>
           <tr>
             <td height="24" align="left" class="td_border">&nbsp;FTP 密码：</td>
-            <td align="left" class="td_border"><input id="edit__app_ftppass" type="text" size="30" value="<?php echo $app_ftppass ?>" name="edit__app_ftppass" >
+            <td align="left" class="td_border"><input id="edit__app_ftppass" type="text" size="30" value="<?php echo htmlspecialchars($app_ftppass,ENT_QUOTES) ?>" name="edit__app_ftppass" >
               &nbsp;<font color="#FF0000">＊</font> FTP服务器登录用的密码 </td>
           </tr>
           <tr>
             <td height="24" align="left" class="td_border">&nbsp;FTP 端口：</td>
-            <td align="left" class="td_border"><input id="edit__app_ftpport" type="text" size="10" value="<?php echo $app_ftpport ?>" name="edit__app_ftpport" >
+            <td align="left" class="td_border"><input id="edit__app_ftpport" type="text" size="10" value="<?php echo htmlspecialchars($app_ftpport,ENT_QUOTES) ?>" name="edit__app_ftpport" >
               ＊ 服务器端口, 一般为 21 </td>
           </tr>
           <tr>
             <td height="24" align="left" class="td_border">&nbsp;远程图片保存文件夹： </td>
-            <td align="left" class="td_border"><input id="edit__app_ftpdir" type="text" size="30" value="<?php echo $app_ftpdir ?>" name="edit__app_ftpdir" >
+            <td align="left" class="td_border"><input id="edit__app_ftpdir" type="text" size="30" value="<?php echo htmlspecialchars($app_ftpdir,ENT_QUOTES) ?>" name="edit__app_ftpdir" >
               &nbsp;<font color="#FF0000">＊</font> (请确保已经建立)相对于FTP服务器根目录, 如/www/ ,根目录为/</td>
           </tr>
           <tr>
             <td height="24" align="left" class="td_border">&nbsp;远程图片访问地址：</td>
-            <td align="left" class="td_border"><input id="edit__app_ftpurl" type="text" size="30" value="<?php echo $app_ftpurl ?>" name="edit__app_ftpurl" >
+            <td align="left" class="td_border"><input id="edit__app_ftpurl" type="text" size="30" value="<?php echo htmlspecialchars($app_ftpurl,ENT_QUOTES) ?>" name="edit__app_ftpurl" >
               &nbsp;<font color="#FF0000">＊</font> (末尾不要带/)</td>
           </tr>
           <tr>

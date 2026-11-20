@@ -16,14 +16,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $row = $dsql->GetOne($sql);
     $row=is_array($row)?$row:array(); $config = $row && !empty($row['filter_config']) ? json_decode($row['filter_config'], true) : array();
     
-    // 更新配置
-    $config[$type] = explode("\n", $values);
+    // 更新配置（去掉空行和首尾空白，避免空关键词误过滤全部影片）
+    $lines = array();
+    foreach (explode("\n", $values) as $line) {
+        $line = trim($line);
+        if ($line !== '') {
+            $lines[] = $line;
+        }
+    }
+    $config[$type] = $lines;
     
     // 保存到数据库
     $newConfig = addslashes(json_encode($config));
     $dsql->ExecuteNoneQuery("UPDATE sea_zyk SET filter_config = '$newConfig' WHERE zid = $rid");
     
-    ShowMsg("配置保存成功！", "admin_filter.php?type=$type&rid=$rid");
+    ShowMsg("配置保存成功！", "api.php");
     exit;
 }
 
@@ -68,7 +75,7 @@ $typeTitles = array(
     
     <div style="margin-top:15px;">
         <input type="submit" value="保存配置" class="btn">
-        <input type="button" value="返回" class="btn" onclick="history.go(-1)">
+        <input type="button" value="返回" class="btn" onclick="location.href='api.php'">
     </div>
 </form>
 </body>

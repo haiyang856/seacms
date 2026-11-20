@@ -7,7 +7,7 @@ $PLUS=array (
     array (
       0 => '',
     ),
-    'info' => '<center><font style="font-size:16px; color:#ccc;"><br><br>提示：该影片已下架！</font></center>',
+    'info' => '',
   ),
   'JmpVideo' => 
   array (
@@ -28,7 +28,7 @@ $PLUS=array (
     array (
       0 => '',
     ),
-    'info' => '<center><font style="font-size:16px; color:#ccc;"><br><br>提示：该影片已下架！</font></center>',
+    'info' => '',
   ),
   'HideType' => 
   array (
@@ -37,6 +37,6 @@ $PLUS=array (
     array (
       0 => '',
     ),
-    'info' => '<center><font style="font-size:16px; color:#ccc;"><br><br>提示：当前视频必须使用手机播放！</font></center>',
+    'info' => '',
   ),
 );

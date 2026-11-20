@@ -1,4 +1,4 @@
-<?php 
+<?php
 $photo_markup = '0';
 $photo_markdown = '0';
 $photo_marktype = '1';

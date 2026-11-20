@@ -408,21 +408,39 @@ elseif($action=="ftppic")
 }
 elseif($action=="saveftppic")
 {
+	admin_csrf_check();
 	$configfile = sea_DATA."/config.ftp.php";
+	//合并旧配置：以现有配置为基础，POST仅覆盖提供的键，防止部分提交清空配置
+	$cfgMerged = array();
+	if(file_exists($configfile))
+	{
+		$loadFtp = function($f){ include $f; return get_defined_vars(); };
+		$cfgMerged = $loadFtp($configfile);
+		unset($cfgMerged['f']);
+	}
 	foreach($_POST as $k=>$v)
 	{
-		if(m_ereg("^edit__",$k))
+		if(strpos($k,'edit__')!==0) continue;
+		$name = substr($k,6);
+		//配置键名白名单，禁止写入任意PHP变量
+		if(!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/',$name))
 		{
-			if(is_array($$k))
-			$v = cn_substrR(implode(',',$$k),500);
-			else
-			$v = cn_substrR(${$k},500);
+			ShowMsg("存在非法的配置项名称，已拒绝保存！","-1");
+			exit();
 		}
-		else
-		{
-			continue;
-		}
-		$k = m_ereg_replace("^edit__","",$k);
+		if(is_array($v)) $v = implode(',',$v);
+		$cfgMerged[$name] = stripslashes($v);
+	}
+	if(isset($cfgMerged['app_ftpport']) && !is_numeric($cfgMerged['app_ftpport']))
+	{
+		ShowMsg("FTP端口必须为数字，请返回检查！","-1");
+		exit();
+	}
+	$configstr = '';
+	foreach($cfgMerged as $k=>$v)
+	{
+		if(is_array($v)) $v = implode(',',$v);
+		$v = cn_substr(addslashes($v),500);
 		$configstr .="\${$k} = '$v';\r\n";
 	}
 	if(!is_writeable($configfile))

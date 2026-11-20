@@ -3513,8 +3513,9 @@ class MainClass_Template {
 		}
 	}
 	function parseStrIf($strIf) {
+		// FIX: 安全替换 = → ==, 避免误伤 <=、>=、!=、<> 中的 =
 		if ((strpos ( $strIf, '==' ) === false) && (strpos ( $strIf, '=' ) > 0)) {
-			$strIf = str_replace ( '=', '==', $strIf );
+			$strIf = preg_replace ( '/(?<![=!<>])=(?!=)/', '==', $strIf );
 		}
 		// 剥离模板标签符号,统一在所有路径上执行
 		$strIf = str_replace ( array ( '{', '}', ':', '[', ']' ), '', $strIf );
@@ -3525,13 +3526,23 @@ class MainClass_Template {
 		return $this->quoteBareIdents ( $strIfArr [0] ) . "==" . $this->quoteBareIdents ( isset ( $strIfArr [1] ) ? $strIfArr [1] : '' );
 	}
 	/**
-	 * PHP 8 兼容:模板 {if:} 条件中的裸标识符在 PHP 7 中被当作同名字符串处理,
-	 * PHP 8 起未定义常量为致命错误。此处为裸词自动加引号,复刻 PHP 7 语义。
+	 * PHP 8+ 兼容:模板 {if:} 条件中的裸标识符在 PHP 7 中被当作同名字符串处理,
+	 * PHP 8 起未定义常量为致命错误。
+	 *
+	 * 白名单拆为两组以解决"枚举值等于函数名"的歧义:
+	 * - 纯 PHP 关键字 (true/false/null/.../isset/array):无条件原样保留
+	 * - 函数名白名单 (time/date/trim/count/...):**仅当后跟括号**(真函数调用)
+	 *   时原样保留;**裸出现**(不跟括号)时视为字符串枚举值,自动加引号
+	 *   (如 {if:{searchpage:ordername}==time} → 'time'=='time')。
+	 * 其他裸标识符自动加引号,完整复刻 PHP 7 语义。
 	 */
 	function quoteBareIdents($expr) {
 		$expr = ( string ) $expr;
 		if ( $expr === '' ) return 'NULL';
-		$keywords = array ( 'true', 'false', 'null', 'and', 'or', 'xor', 'not', 'empty', 'isset', 'array', 'in_array', 'count', 'intval', 'floatval', 'strval', 'defined', 'date', 'time', 'trim' );
+		// 纯 PHP 关键字/语言内建, 无条件原样保留
+		$keywords = array ( 'true', 'false', 'null', 'and', 'or', 'xor', 'not', 'empty', 'isset', 'array' );
+		// 允许调用的函数名白名单 -- 仅后跟括号时保留, 裸出现视为字符串枚举值
+		$callables = array ( 'time', 'date', 'trim', 'count', 'in_array', 'intval', 'floatval', 'strval', 'defined', 'substr', 'strlen', 'strtolower', 'strtoupper', 'abs', 'cn_substr', 'ceil', 'floor' );
 		$out = '';
 		$i = 0;
 		$n = strlen ( $expr );
@@ -3554,15 +3565,29 @@ class MainClass_Template {
 				}
 				continue;
 			}
-			if ( preg_match ( '/[A-Za-z_]/', $c ) && ! preg_match ( '/(?:\$|->|::)$/', $out ) ) {
-				if ( preg_match ( '/^[A-Za-z_][A-Za-z0-9_]*/', substr ( $expr, $i ), $m ) ) {
+			if ( preg_match ( '/^[A-Za-z_][A-Za-z0-9_\x80-\xFF]*/', substr ( $expr, $i ), $m ) ) {
+				$word = $m [0];
+				$after = substr ( $expr, $i + strlen ( $word ) );
+				$lc = strtolower ( $word );
+				$isParen = preg_match ( '/^\s*\(/', $after );
+				if ( in_array ( $lc, $keywords, true ) ) {
+					$out .= $word;
+				} elseif ( in_array ( $lc, $callables, true ) ) {
+					// 函数名白名单:后跟括号 → 真调用;否则 → 字符串枚举值,加引号
+					$out .= $isParen ? $word : "'" . $word . "'";
+				} elseif ( $isParen ) {
+					// 未知裸词后跟括号 → 原样保留, 交给 PHP 报错
+					$out .= $word;
+				} else {
+					$out .= "'" . $word . "'";
+				}
+				$i += strlen ( $word );
+				continue;
+			}
+			if ( ord ( $c ) >= 128 ) {
+				if ( preg_match ( '/^[\x80-\xFF]+/', substr ( $expr, $i ), $m ) ) {
 					$word = $m [0];
-					$after = substr ( $expr, $i + strlen ( $word ) );
-					if ( in_array ( strtolower ( $word ), $keywords, true ) || preg_match ( '/^\s*\(/', $after ) ) {
-						$out .= $word;
-					} else {
-						$out .= "'" . $word . "'";
-					}
+					$out .= "'" . $word . "'";
 					$i += strlen ( $word );
 					continue;
 				}
@@ -3571,6 +3596,19 @@ class MainClass_Template {
 			$i++;
 		}
 		return $out;
+	}
+	/**
+	 * 模板 eval() 安全网: try/catch 捕获 parseIf/parseSubIf 中未定义常量/函数错误,
+	 * 防止 PHP 8+ 致命错误中断页面输出。失败时 error_log 记录,返回 false 降级。
+	 */
+	function safeEval($expr) {
+		try {
+			eval('$_sefResult = (' . $expr . ');');
+			return (bool)($_sefResult ?? false);
+		} catch (Throwable $e) {
+			error_log("[SeaCMS main2.parseIf] eval() 失败: " . $e->getMessage() . " | expr=" . $expr);
+			return false;
+		}
 	}
 	function parseIf($content) {
 		if (strpos ( $content, '{if:' ) === false) {
@@ -3603,7 +3641,7 @@ class MainClass_Template {
 						$elsearray = explode ( $labelRule3, $strThen );
 						$strThen1 = $elsearray [0];
 						$strElse1 = $elsearray [1];
-						@eval ( "if(" . $strIf . "){\$ifFlag=true;}else{\$ifFlag=false;}" );
+						$ifFlag = $this->safeEval ( $strIf );
 						//echo "if(" . $strIf . "){\$ifFlag=true;}else{\$ifFlag=false;}" ;
 						if ($ifFlag) {
 							$content = str_replace ( $iar [0] [$m], $strThen1, $content );
@@ -3611,7 +3649,7 @@ class MainClass_Template {
 							$content = str_replace ( $iar [0] [$m], $strElse1, $content );
 						}
 					} else {
-						@eval ( "if(" . $strIf . ") { \$ifFlag=true;} else{ \$ifFlag=false;}" );
+						$ifFlag = $this->safeEval ( $strIf );
 						if ($ifFlag)
 							$content = str_replace ( $iar [0] [$m], $strThen, $content );
 						else
@@ -3622,29 +3660,29 @@ class MainClass_Template {
 					$elseIfArrayLen = count ( $elseIfArray );
 					$elseIfSubArray = explode ( $labelRule3, $elseIfArray [$elseIfArrayLen - 1] );
 					$resultStr = $elseIfSubArray [1];
-					$elseIfArraystr0 = addslashes ( $elseIfArray [0] );
-					@eval ( "if($strIf){\$resultStr=\"$elseIfArraystr0\";}" );
+					// FIX: 短路 $matched 标志，确保多分支真正互斥
+					$matched = false;
+					$then0 = $elseIfArray [0];
+					try { eval ( "if($strIf){ \$resultStr = " . var_export($then0, true) . "; \$matched = true; }" ); } catch (Throwable $e) { error_log("[SeaCMS main2] elseIf eval 失败: ".$e->getMessage()); }
 					for($elseIfLen = 1; $elseIfLen < $elseIfArrayLen; $elseIfLen ++) {
 						$strElseIf = getSubStrByFromAndEnd ( $elseIfArray [$elseIfLen], ":", "}", "" );
 						$strElseIf = $this->parseStrIf ( $strElseIf );
-						$strElseIfThen = addslashes ( getSubStrByFromAndEnd ( $elseIfArray [$elseIfLen], "}", "", "start" ) );
-						@eval ( "if(" . $strElseIf . "){\$resultStr=\"$strElseIfThen\";}" );
-						@eval ( "if(" . $strElseIf . "){\$elseIfFlag=true;}else{\$elseIfFlag=false;}" );
-						if ($elseIfFlag) {
-							break;
-						}
+						$strElseIfThen = getSubStrByFromAndEnd ( $elseIfArray [$elseIfLen], "}", "", "start" );
+						$_posElse = strpos ( $strElseIfThen, "{else" );
+						if ($_posElse !== false) $strElseIfThen = substr ( $strElseIfThen, 0, $_posElse );
+						try { eval ( "if(!\$matched && (" . $strElseIf . ")){ \$resultStr = " . var_export($strElseIfThen, true) . "; \$matched = true; }" ); } catch (Throwable $e) { error_log("[SeaCMS main2] elseif eval 失败: " . $e->getMessage()); }
 					}
 					$strElseIf0 = getSubStrByFromAndEnd ( $elseIfSubArray [0], ":", "}", "" );
-					$strElseIfThen0 = addslashes ( getSubStrByFromAndEnd ( $elseIfSubArray [0], "}", "", "start" ) );
+					$strElseIfThen0 = getSubStrByFromAndEnd ( $elseIfSubArray [0], "}", "", "start" );
 					if (strpos ( $strElseIf0, '==' ) === false && strpos ( $strElseIf0, '=' ) > 0)
-						$strElseIf0 = str_replace ( '=', '==', $strElseIf0 );
+						$strElseIf0 = preg_replace ( '/(?<![=!<>])=(?!=)/', '==', $strElseIf0 );
 					if (strpos ( $strElseIf0, '{' ) > 0)$strElseIf0 = str_replace ( '{', '', $strElseIf0 );
 					if (strpos ( $strElseIf0, '}' ) > 0)$strElseIf0 = str_replace ( '}', '', $strElseIf0 );
 					if (strpos ( $strElseIf0, ':' ) > 0)$strElseIf0 = str_replace ( ':', '', $strElseIf0 );
 					if (strpos ( $strElseIf0, '[' ) > 0)$strElseIf0 = str_replace ( '[', '', $strElseIf0 );
 					if (strpos ( $strElseIf0, ']' ) > 0)$strElseIf0 = str_replace ( ']', '', $strElseIf0 );
 					$strElseIf0 = $this->quoteBareIdents ( $strElseIf0 );
-					@eval ( "if(" . $strElseIf0 . "){\$resultStr=\"$strElseIfThen0\";\$elseIfFlag=true;}" );
+					try { eval ( "if(!\$matched && (" . $strElseIf0 . ")){ \$resultStr = " . var_export($strElseIfThen0, true) . "; \$matched = true; }" ); } catch (Throwable $e) { error_log("[SeaCMS main2] else eval 失败: " . $e->getMessage()); }
 					$content = str_replace ( $iar [0] [$m], $resultStr, $content );
 				}
 			}
@@ -3682,14 +3720,14 @@ class MainClass_Template {
 						$elsearray = explode ( $labelRule3, $strThen );
 						$strThen1 = $elsearray [0];
 						$strElse1 = $elsearray [1];
-						@eval ( "if(" . $strIf . "){\$ifFlag=true;}else{\$ifFlag=false;}" );
+						$ifFlag = $this->safeEval ( $strIf );
 						if ($ifFlag) {
 							$content = str_replace ( $iar [0] [$m], $strThen1, $content );
 						} else {
 							$content = str_replace ( $iar [0] [$m], $strElse1, $content );
 						}
 					} else {
-						@eval ( "if(" . $strIf . ") { \$ifFlag=true;} else{ \$ifFlag=false;}" );
+						$ifFlag = $this->safeEval ( $strIf );
 						if ($ifFlag)
 							$content = str_replace ( $iar [0] [$m], $strThen, $content );
 						else
@@ -3700,22 +3738,22 @@ class MainClass_Template {
 					$elseIfArrayLen = count ( $elseIfArray );
 					$elseIfSubArray = explode ( $labelRule3, $elseIfArray [$elseIfArrayLen - 1] );
 					$resultStr = $elseIfSubArray [1];
-					$elseIfArraystr0 = addslashes ( $elseIfArray [0] );
-					@eval ( "if($strIf){\$resultStr=\"$elseIfArraystr0\";}" );
+					// FIX: 短路 $matched 标志
+					$matched = false;
+					$then0 = $elseIfArray [0];
+					try { eval ( "if($strIf){ \$resultStr = " . var_export($then0, true) . "; \$matched = true; }" ); } catch (Throwable $e) { error_log("[SeaCMS main2] elseIf eval 失败: ".$e->getMessage()); }
 					for($elseIfLen = 1; $elseIfLen < $elseIfArrayLen; $elseIfLen ++) {
 						$strElseIf = getSubStrByFromAndEnd ( $elseIfArray [$elseIfLen], ":", "}", "" );
-						$strElseIfThen = addslashes ( getSubStrByFromAndEnd ( $elseIfArray [$elseIfLen], "}", "", "start" ) );
+						$strElseIfThen = getSubStrByFromAndEnd ( $elseIfArray [$elseIfLen], "}", "", "start" );
+						$_posElse = strpos ( $strElseIfThen, "{else" );
+						if ($_posElse !== false) $strElseIfThen = substr ( $strElseIfThen, 0, $_posElse );
 						$strElseIf = $this->parseStrIf ( $strElseIf );
-						@eval ( "if(" . $strElseIf . "){\$resultStr=\"$strElseIfThen\";}" );
-						@eval ( "if(" . $strElseIf . "){\$elseIfFlag=true;}else{\$elseIfFlag=false;}" );
-						if ($elseIfFlag) {
-							break;
-						}
+						try { eval ( "if(!\$matched && (" . $strElseIf . ")){ \$resultStr = " . var_export($strElseIfThen, true) . "; \$matched = true; }" ); } catch (Throwable $e) { error_log("[SeaCMS main2] elseif eval 失败: " . $e->getMessage()); }
 					}
 					$strElseIf0 = getSubStrByFromAndEnd ( $elseIfSubArray [0], ":", "}", "" );
-					$strElseIfThen0 = addslashes ( getSubStrByFromAndEnd ( $elseIfSubArray [0], "}", "", "start" ) );
+					$strElseIfThen0 = getSubStrByFromAndEnd ( $elseIfSubArray [0], "}", "", "start" );
 					$strElseIf0 = $this->parseStrIf ( $strElseIf0 );
-					@eval ( "if(" . $strElseIf0 . "){\$resultStr=\"$strElseIfThen0\";\$elseIfFlag=true;}" );
+					try { eval ( "if(!\$matched && (" . $strElseIf0 . ")){ \$resultStr = " . var_export($strElseIfThen0, true) . "; \$matched = true; }" ); } catch (Throwable $e) { error_log("[SeaCMS main2] else eval 失败: " . $e->getMessage()); }
 					$content = str_replace ( $iar [0] [$m], $resultStr, $content );
 				}
 			}

@@ -162,10 +162,10 @@ if($action=="boardsource")
     $id++;
 ?>
 	<tr align="center"  bgcolor="#f5fafe">
-    <td  align="left" ><input type="checkbox" class="checkbox"  name="e_id[]" value="<?php echo $id ?>"  checked /><input type="text" style="width:90px;  id="flag<?php echo $id ?>" name="flag<?php echo $id ?>" value="<?php  echo gbutf8($player['flag']); ?>"  /></td>
-    <td><input type="text" id="sort<?php echo $id ?>" name="sort<?php echo $id ?>" value="<?php echo $player['sort']; ?>" style="width:50px;" maxlength="6" onkeyup="this.value=this.value.replace(/[^\d]/g,'');" onchange="this.onkeyup();"/></td>
-            <td><input type="text" id="postfix<?php echo $id ?>" name="postfix<?php echo $id ?>" value="<?php echo $player['postfix']; ?>" style="width:80px;  onkeyup="this.value=this.value.replace(/[^\d|\w]/g,'');" onchange="this.onkeyup();" readonly="readonly" /></td>
-		<td><textarea id="info<?php echo $id ?>" name="info<?php echo $id ?>" style="height:20px; width:500px;"><?php echo gbutf8($player->intro); ?></textarea></td>
+    <td  align="left" ><input type="checkbox" class="checkbox"  name="e_id[]" value="<?php echo $id ?>"  checked /><input type="text" style="width:90px;  id="flag<?php echo $id ?>" name="flag<?php echo $id ?>" value="<?php  echo htmlspecialchars(gbutf8($player['flag']),ENT_QUOTES); ?>"  /></td>
+    <td><input type="text" id="sort<?php echo $id ?>" name="sort<?php echo $id ?>" value="<?php echo htmlspecialchars((string)$player['sort'],ENT_QUOTES); ?>" style="width:50px;" maxlength="6" onkeyup="this.value=this.value.replace(/[^\d]/g,'');" onchange="this.onkeyup();"/></td>
+            <td><input type="text" id="postfix<?php echo $id ?>" name="postfix<?php echo $id ?>" value="<?php echo htmlspecialchars((string)$player['postfix'],ENT_QUOTES); ?>" style="width:80px;  onkeyup="this.value=this.value.replace(/[^\d|\w]/g,'');" onchange="this.onkeyup();" readonly="readonly" /></td>
+		<td><textarea id="info<?php echo $id ?>" name="info<?php echo $id ?>" style="height:20px; width:500px;"><?php echo htmlspecialchars(gbutf8($player->intro),ENT_QUOTES); ?></textarea></td>
 
 		<td><a href="?action=modifysourceban&id=<?php echo $id; ?>" title="隐藏或显示">
         <?php 
@@ -173,7 +173,7 @@ if($action=="boardsource")
             	echo "隐藏";
             else
             	echo "<font color=\"red\">显示</font>";
-        ?></a>&nbsp;&nbsp;<a href="admin_editplayer.php?action=edit&filedir=../js/player/<?php  echo gbutf8($player['postfix']); ?>.html">修改播放代码</a>&nbsp;&nbsp;<a href="?action=delete&id=<?php echo $id ?>&playerfile=<?php echo gbutf8($player['postfix']); ?>" onclick="return confirm('确定要删除吗')">删除</a>
+        ?></a>&nbsp;&nbsp;<a href="admin_editplayer.php?action=edit&filedir=../js/player/<?php  echo htmlspecialchars(gbutf8($player['postfix']),ENT_QUOTES); ?>.html">修改播放代码</a>&nbsp;&nbsp;<a href="?action=delete&id=<?php echo $id ?>&playerfile=<?php echo htmlspecialchars(gbutf8($player['postfix']),ENT_QUOTES); ?>" onclick="return confirm('确定要删除吗')">删除</a>
 		</td>
 	</tr>
  	<?php

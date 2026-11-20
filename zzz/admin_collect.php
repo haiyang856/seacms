@@ -222,22 +222,29 @@ elseif($action=="filtersedit")
 elseif($action=="filterssave")
 {
 //	print_r($_POST); die();
+	$rColumn=(int)$rColumn; $Flag=(int)$Flag; $id=isset($id)?(int)$id:0;
 	if(empty($id))
 	{
 		if(!$uesMode)
-		$dsql->ExecNoneQuery("insert into sea_co_filters(Name,rColumn,uesMode,sFind,sReplace,Flag) values ('".$name."',$rColumn,0,'".$sFind."','".$sReplace."',$Flag)");
+		$rs = $dsql->ExecNoneQuery("insert into sea_co_filters(Name,rColumn,uesMode,sFind,sReplace,Flag) values ('".$name."',$rColumn,0,'".$sFind."','".$sReplace."',$Flag)");
 		else 
-		$dsql->ExecNoneQuery("insert into sea_co_filters(Name,rColumn,uesMode,sFind,sReplace,Flag,sStart,sEnd) values('".$name."',$rColumn,1,'".$sFind."','".$sReplace."',$Flag,'".$sStart."','".$sEnd."')");
+		$rs = $dsql->ExecNoneQuery("insert into sea_co_filters(Name,rColumn,uesMode,sFind,sReplace,Flag,sStart,sEnd) values('".$name."',$rColumn,1,'".$sFind."','".$sReplace."',$Flag,'".$sStart."','".$sEnd."')");
+		if($rs)
 		ShowMsg('添加成功！', 'admin_collect.php?action=filters');
+		else
+		ShowMsg('添加失败，请检查输入数据或数据库权限！', 'admin_collect.php?action=filters');
 //		exit();
 	}
 	else
 	{
 		if(!$uesMode)
-		$dsql->ExecNoneQuery("update sea_co_filters set Name='".$name."',rColumn=".$rColumn.",uesMode=".$uesMode.",sFind='".$sFind."',sReplace='".$sReplace."',Flag=".$Flag." where ID=".$id );
+		$rs = $dsql->ExecNoneQuery("update sea_co_filters set Name='".$name."',rColumn=".$rColumn.",uesMode=".$uesMode.",sFind='".$sFind."',sReplace='".$sReplace."',Flag=".$Flag." where ID=".$id );
 		else 
-		$dsql->ExecNoneQuery("update sea_co_filters set Name='".$name."',rColumn=".$rColumn.",uesMode=".$uesMode.",sFind='".$sFind."',sReplace='".$sReplace."',Flag=".$Flag.",sStart='".$sStart."',sEnd='".$sEnd."' where ID=".$id );
-		ShowMsg('修改成功！', 'admin_collect.php?action=filters');		
+		$rs = $dsql->ExecNoneQuery("update sea_co_filters set Name='".$name."',rColumn=".$rColumn.",uesMode=".$uesMode.",sFind='".$sFind."',sReplace='".$sReplace."',Flag=".$Flag.",sStart='".$sStart."',sEnd='".$sEnd."' where ID=".$id );
+		if($rs)
+		ShowMsg('修改成功！', 'admin_collect.php?action=filters');
+		else
+		ShowMsg('修改失败，请检查输入数据或数据库权限！', 'admin_collect.php?action=filters');
 //		exit();
 	}
 }

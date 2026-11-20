@@ -56,6 +56,28 @@ if($cuserLogin->getUserID()==-1 OR $_SESSION['hashstr'] !== $hashstr)
 }
 $action = isset($action) ? $action : '';
 
+//CSRF防护：基于session的令牌
+function admin_csrf_token()
+{
+	if(empty($_SESSION['admin_csrf_token']))
+	{
+		$_SESSION['admin_csrf_token'] = md5(uniqid(mt_rand(),true));
+	}
+	return $_SESSION['admin_csrf_token'];
+}
+function admin_csrf_field()
+{
+	return '<input type="hidden" name="csrf_token" value="'.admin_csrf_token().'" />';
+}
+function admin_csrf_check()
+{
+	$token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+	if(empty($_SESSION['admin_csrf_token']) || !is_string($token) || $token !== $_SESSION['admin_csrf_token'])
+	{
+		ShowMsg("请求已过期或非法提交（CSRF校验失败），请返回重试！","-1");
+		exit();
+	}
+}
 
 function makeTopicSelect($selectName,$strSelect,$topicId)
 {

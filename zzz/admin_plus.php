@@ -48,11 +48,11 @@ if($action==="HideVideo"){
    
 	$POST=filter_input_array(INPUT_POST, $filters);
 	
-	$PLUS["HideVideo"]=array(off=>strip_tags(trim($POST["hideoff_url"])),data=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_url"]))),info=> trim($POST["hideinfo_url"]));
+	$PLUS["HideVideo"]=array('off'=>strip_tags(trim($POST["hideoff_url"])),'data'=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_url"]))),'info'=> trim($POST["hideinfo_url"]));
 	
-	$PLUS["HideName"]=array(off=>strip_tags(trim($POST["hideoff_name"])),data=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_name"]))),info=> trim($POST["hideinfo_name"]));
+	$PLUS["HideName"]=array('off'=>strip_tags(trim($POST["hideoff_name"])),'data'=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_name"]))),'info'=> trim($POST["hideinfo_name"]));
 		
-	$PLUS["HideType"]=array(off=>strip_tags(trim($POST["hideoff_type"])),data=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_type"]))),info=> trim($POST["hideinfo_type"]));
+	$PLUS["HideType"]=array('off'=>strip_tags(trim($POST["hideoff_type"])),'data'=>preg_split('/[\r\n]+/s',strip_tags(trim($POST["hidebody_type"]))),'info'=> trim($POST["hideinfo_type"]));
 		
 
      if(Main_db::save()){
@@ -68,7 +68,7 @@ if($action==="HideVideo"){
    $off=trim(strip_tags((string)filter_input(INPUT_POST, "jmpoff",FILTER_UNSAFE_RAW)));
    $jmpbody=trim(strip_tags((string)filter_input(INPUT_POST, "jmpbody",FILTER_UNSAFE_RAW))); $body=preg_split('/[\r\n]+/s',$jmpbody);
    $array=array(); foreach($body as $key){$val=explode("=>",$key); if($val[0]!=""&&$val[1]!=""){$array[trim($val[0])]=trim($val[1]);}}
-   $PLUS["JmpVideo"]=array(off=>$off,data=>$array);
+   $PLUS["JmpVideo"]=array('off'=>$off,'data'=>$array);
 
     if(Main_db::save()){
 		if(function_exists("opcache_reset")){opcache_reset();} 

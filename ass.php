@@ -5,7 +5,7 @@ require_once("include/common.php");
 require_once(sea_INC."/main.class.php");
 
 //参数过滤(FILTER_SANITIZE_STRING 已在 PHP 8 中移除,改用显式校验)
-$cb = preg_match('/^[A-Za-z0-9_]{1,32}$/', $_GET['cb'] ?? '') ? $_GET['cb'] : 'callback';
+$cb = preg_match('/^[A-Za-z0-9_]{1,100}$/', $_GET['cb'] ?? '') ? $_GET['cb'] : 'callback';
 $wd = isset($_GET['wd']) ? trim(strip_tags($_GET['wd'])) : '';
 $url = isset($_GET['url']) ? filter_var($_GET['url'], FILTER_SANITIZE_URL) : '';
 $vid=intval($_GET['vid'] ?? 0);

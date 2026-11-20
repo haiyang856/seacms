@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{seacms:tag}-{seacms:sitename}</title>
+		<meta name="keywords" content="{seacms:tag},{seacms:sitename}" />
+		<meta name="description" content="{seacms:tag},{seacms:sitename}" />
+		{seacms:load include.html}
+	</head>
+	<body>
+		{seacms:top}
+	<div class="wrap">
+	    <div class="container min">
+	        <div class="row">
+			   	<div class="myui-panel myui-panel-bg clearfix">
+					<div class="myui-panel-box clearfix">
+						<div class="myui-panel_hd">
+							<div class="myui-panel__head active bottom-line clearfix">
+								<h3 class="title">
+									 标签<span class="text-red"> {seacms:tag} </span>的相关内容（共 {seacms:tagnum} 条）
+								</h3>
+							</div>
+						</div>
+						<div class="myui-panel_bd col-pd clearfix">
+							<ul class="myui-vodlist__media clearfix" id="tagList">
+ {seacms:taglist size=10 order=time}
+								<li class="active  clearfix">
+									<div class="thumb">
+										<a class="myui-vodlist__thumb img-lg-150 img-xs-100 lazyload" href="[taglist:link]" title="[taglist:name]" data-original="[taglist:pic]">
+											<span class="play hidden-xs"></span>
+											<span class="pic-tag pic-tag-top" style="background-color: #5bb7fe;">[taglist:score]分</span>
+											<span class="pic-text text-right">[taglist:note]</span>
+										</a>
+									</div>
+									<div class="detail">
+								    	<h4 class="title"><a href="[taglist:link]">[taglist:name]</a></h4>
+								    	<p><span class="text-muted">导演：</span>[taglist:director len=20]</p>
+										<p><span class="text-muted">主演：</span>[taglist:actor len=20]</p>
+										<p><span class="text-muted">分类：</span>[taglist:typename]<span class="split-line"></span><span class="text-muted hidden-xs">地区：</span>[taglist:publisharea]<span class="split-line"></span><span class="text-muted hidden-xs">年份：</span>[taglist:publishtime]</p>
+										<p class="hidden-xs"><span class="text-muted">简介：</span>[taglist:des len=60]<a href="[taglist:link]">详情 ></a></p>
+										<p class="margin-0">
+											<a class="btn btn-sm btn-warm" href="[taglist:link]"><i class="fa fa-play"></i> 立即播放</a>
+											<a class="btn btn-sm btn-default hidden-xs" href="[taglist:link]">查看详情 <i class="fa fa-angle-right"></i></a>
+										</p>
+									</div>
+								</li>
+{/seacms:taglist}
+							</ul>
+						</div>
+					</div>
+				</div>
+				<ul class="myui-page text-center clearfix">
+	<li><a class="btn btn-default" href="{taglist:firstlink}">首页</a></li>
+	<li><a class="btn btn-default" href="{taglist:backlink}">上一页</a></li>
+{taglist:pagenumber len=5}
+		<li class="hidden-xs"><a class="btn  btn-{if:{taglist:page}==[pagenumber:page]}warm{end if}" href="[pagenumber:link]">[pagenumber:page]</a></li>
+{/taglist:pagenumber}
+		<li class="visible-xs"><a class="btn btn-warm">{taglist:page}/{taglist:pagecount}</a></li>
+	<li><a class="btn btn-default" href="{taglist:nextlink}">下一页</a></li>
+	<li><a class="btn btn-default" href="{taglist:lastlink}">尾页</a></li>
+</ul>
+	        </div>
+	    </div>
+	</div>
+
+ {seacms:foot}
+</body>
+</html>

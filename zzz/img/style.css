@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿@charset "utf-8";
+﻿﻿@charset "utf-8";
 *{word-wrap:break-word;outline:none}
 html,body{height:100%;font-family:"Microsoft YaHei",微软雅黑,"SimSun",宋体;}
 body,td,th,input,textarea,select,button{font-size: 13px;color:#333333;font-family:"Microsoft YaHei",微软雅黑,"SimSun",宋体;}
@@ -55,9 +55,9 @@ li{ list-style:none;}
 .r_title1{float:left;width:10px; height:32px; }
 .r_title2{float:right; font-size: 13px; height:32px; line-height:32px; }
 .r_title3{float:left;  height:32px;}		
-.r_content{ background:#FFFFFF;  clear:left;  font-size: 13px; width:100%;   height:100%;    }
+.r_content{ background:#FFFFFF;  clear:left;  font-size: 13px; width:100%;   min-height:715px; overflow-y:auto;    }
 .r_content_1{ background:#FFFFFF;width:100%;  BACKGROUND-COLOR: transparent;}
-.L_r_content{ background:#FFFFFF;  clear:left;  font-size: 13px; width:100%;   height:100%;  }
+.L_r_content{ background:#FFFFFF;  clear:left;  font-size: 13px; width:100%;   min-height:715px; overflow-y:auto;  }
 .L_r_content_1{background:#FFFFFF;width:100%;  BACKGROUND-COLOR: transparent;}
 .tabllall{ width:100%; text-align:center; padding:1px; }
 .cn{ height:24px; line-height:20px; font-size: 13px; margin-top:10px;}

@@ -57,6 +57,7 @@ $(function() {
     <div class="content2">
 
   <form method="post" action="?dopost=save">
+<?php echo admin_csrf_field();?>
   <input type="hidden" name="isalertwin_old" value="0"/>
   <!--当前导航-->
 <div class="tab-con">
@@ -84,7 +85,7 @@ $(function() {
               </tr>
               <tr id="static" <?php if($cfg_runmode!=0){ ?>style="display:none"<?php }?>>
                 <td>生成时间间隔:
-                  <input type="text" name="edit___cfg_stoptime" size="15" value="<?php echo $cfg_stoptime;?>">
+                  <input type="text" name="edit___cfg_stoptime" size="15" value="<?php echo htmlspecialchars($cfg_stoptime, ENT_QUOTES);?>">
                   &nbsp;&nbsp;秒&nbsp;&nbsp;
                   目录选择:
                   <select name="edit___cfg_makemode" onchange="selecMakeMode(this.options[this.selectedIndex].value)" id="makemode">
@@ -115,36 +116,36 @@ $(function() {
                   <input type="radio" class="radio" id="paramset1" name="edit___cfg_paramset" onclick="hide('urlparamset');view('paramsetbdy');" value="0" <?php if($cfg_paramset==0) echo 'checked'; ?> >
                   1-0-0.html&nbsp;&nbsp;
                   <input type="radio" class="radio" id="paramset2" name="edit___cfg_paramset" onclick="hide('paramsetbdy');view('urlparamset')" value="1" <?php if($cfg_paramset==1) echo 'checked'; ?> >
-                  <span id="paramsetbdy" <?php if($cfg_paramset==1) { ?>style="display:none"<?php }; ?>><?php echo $cfg_paramid;?>=1&amp;<?php echo $cfg_parampage;?>=2&amp;<?php echo $cfg_paramindex;?>=3</span><span id="urlparamset" <?php if($cfg_paramset==0) { ?>style="display:none"<?php }; ?>>
-                  <input type="text" style="height:12px" size="5" name="edit___cfg_paramid" onchange="onTxtChange(this)" value="<?php echo $cfg_paramid; ?>">
+                  <span id="paramsetbdy" <?php if($cfg_paramset==1) { ?>style="display:none"<?php }; ?>><?php echo htmlspecialchars($cfg_paramid, ENT_QUOTES);?>=1&amp;<?php echo htmlspecialchars($cfg_parampage, ENT_QUOTES);?>=2&amp;<?php echo htmlspecialchars($cfg_paramindex, ENT_QUOTES);?>=3</span><span id="urlparamset" <?php if($cfg_paramset==0) { ?>style="display:none"<?php }; ?>>
+                  <input type="text" style="height:12px" size="5" name="edit___cfg_paramid" onchange="onTxtChange(this)" value="<?php echo htmlspecialchars($cfg_paramid, ENT_QUOTES); ?>">
                   =1&amp;
-                  <input type="text" style="height:12px" size="5" name="edit___cfg_parampage" onchange="onTxtChange(this)" value="<?php echo $cfg_parampage; ?>">
+                  <input type="text" style="height:12px" size="5" name="edit___cfg_parampage" onchange="onTxtChange(this)" value="<?php echo htmlspecialchars($cfg_parampage, ENT_QUOTES); ?>">
                   =2&amp;
-                  <input type="text" style="height:12px" size="5" name="edit___cfg_paramindex" onchange="onTxtChange(this)" value="<?php echo $cfg_paramindex; ?>">
+                  <input type="text" style="height:12px" size="5" name="edit___cfg_paramindex" onchange="onTxtChange(this)" value="<?php echo htmlspecialchars($cfg_paramindex, ENT_QUOTES); ?>">
                   =3</span><font color="red">传参方式仅限高级用户二次开发使用，否则无法播放</font></td>
               </tr>
               <tr id="dynamic"  <?php if($cfg_runmode!=1){ ?>style="display:none"<?php }?>>
                 <td> 栏目页目录名:
-                  <input type="text" name="edit___cfg_channel_name" size="15" value="<?php echo $cfg_channel_name;?>"/>
+                  <input type="text" name="edit___cfg_channel_name" size="15" value="<?php echo htmlspecialchars($cfg_channel_name, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;内容页目录名:
-                  <input type="text" size="15" name="edit___cfg_content_name" value="<?php echo $cfg_content_name;?>"/>
+                  <input type="text" size="15" name="edit___cfg_content_name" value="<?php echo htmlspecialchars($cfg_content_name, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;播放页目录名:
-                  <input type="text" size="15" name="edit___cfg_play_name" value="<?php echo $cfg_play_name;?>"/></td>
+                  <input type="text" size="15" name="edit___cfg_play_name" value="<?php echo htmlspecialchars($cfg_play_name, ENT_QUOTES);?>"/></td>
               </tr>
               <tr id="forgedStatic" <?php if($cfg_runmode!=2){ ?>style="display:none"<?php }?>>
                 <td> 栏目页目录名:
-                  <input type="text" name="edit___cfg_channel_name3" size="15" value="<?php echo $cfg_channel_name3;?>"/>
+                  <input type="text" name="edit___cfg_channel_name3" size="15" value="<?php echo htmlspecialchars($cfg_channel_name3, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;内容页目录名:
-                  <input type="text" size="15" name="edit___cfg_content_name3" value="<?php echo $cfg_content_name3;?>"/>
+                  <input type="text" size="15" name="edit___cfg_content_name3" value="<?php echo htmlspecialchars($cfg_content_name3, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;播放页目录名:
-                  <input type="text" size="15" name="edit___cfg_play_name3" value="<?php echo $cfg_play_name3;?>"/>
+                  <input type="text" size="15" name="edit___cfg_play_name3" value="<?php echo htmlspecialchars($cfg_play_name3, ENT_QUOTES);?>"/>
                   <br/>
                   栏目页文件名:
-                  <input type="text" name="edit___cfg_channelpage_name3" value="<?php echo $cfg_channelpage_name3;?>" size="15">
+                  <input type="text" name="edit___cfg_channelpage_name3" value="<?php echo htmlspecialchars($cfg_channelpage_name3, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;内容页文件名:
-                  <input type="text" name="edit___cfg_contentpage_name3" value="<?php echo $cfg_contentpage_name3;?>" size="15">
+                  <input type="text" name="edit___cfg_contentpage_name3" value="<?php echo htmlspecialchars($cfg_contentpage_name3, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;播放页文件名:
-                  <input type="text" name="edit___cfg_playpage_name3" value="<?php echo $cfg_playpage_name3;?>" size="15">
+                  <input type="text" name="edit___cfg_playpage_name3" value="<?php echo htmlspecialchars($cfg_playpage_name3, ENT_QUOTES);?>" size="15">
                   <br><font color="red">停用伪静态请务必删除根目录下的伪静态配置文件，伪静态出错请检查设置的目录名是否和系统目录冲突，如播放页目录名不能为player</font></td>
               </tr>
               <tr>
@@ -156,33 +157,33 @@ $(function() {
               </tr>
               <tr id="dir1" <?php if($cfg_runmode!=0||($cfg_makemode!='dir1' && $cfg_makemode!='dir3' && $cfg_makemode!='dir5' && $cfg_makemode!='dir7'&& $cfg_makemode!='dir9')){?>style="display:none" <?php } ?>>
                 <td><span style="display:none;"> 栏目页文件名:
-                  <input type="text" size="15" name="edit___cfg_channelpage_name2" value="<?php echo $cfg_channelpage_name2;?>">
+                  <input type="text" size="15" name="edit___cfg_channelpage_name2" value="<?php echo htmlspecialchars($cfg_channelpage_name2, ENT_QUOTES);?>">
                   &nbsp;&nbsp;
                   内容页文件名:
-                  <input type="text" size="15" name="edit___cfg_contentpage_name2" value="<?php echo $cfg_contentpage_name2;?>">
+                  <input type="text" size="15" name="edit___cfg_contentpage_name2" value="<?php echo htmlspecialchars($cfg_contentpage_name2, ENT_QUOTES);?>">
                   &nbsp;&nbsp;</span> 播放页文件名:
-                  <input type="text" size="15" name="edit___cfg_playpage_name2a" onkeyup="this.value=this.value.replace(/[^\d|\w]/g,'');" onchange="this.onkeyup();" value="<?php echo $cfg_playpage_name2a;?>"></td>
+                  <input type="text" size="15" name="edit___cfg_playpage_name2a" onkeyup="this.value=this.value.replace(/[^\d|\w]/g,'');" onchange="this.onkeyup();" value="<?php echo htmlspecialchars($cfg_playpage_name2a, ENT_QUOTES);?>"></td>
               </tr>
               <tr id="dir2" <?php if($cfg_runmode!=0 ||( $cfg_makemode!='dir2' && $cfg_makemode!='dir4' && $cfg_makemode!='dir6' && $cfg_makemode!='dir8')){?>style="display:none" <?php } ?>>
                 <td> 栏目页目录名:
-                  <input type="text" name="edit___cfg_channel_name2" value="<?php echo $cfg_channel_name2;?>" size="15">
+                  <input type="text" name="edit___cfg_channel_name2" value="<?php echo htmlspecialchars($cfg_channel_name2, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;内容页目录名:
-                  <input type="text" name="edit___cfg_content_name2" value="<?php echo $cfg_content_name2;?>" size="15">
+                  <input type="text" name="edit___cfg_content_name2" value="<?php echo htmlspecialchars($cfg_content_name2, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;播放页目录名:
-                  <input type="text" name="edit___cfg_play_name2"  onkeyup="this.value=this.value.replace(/[^\d|\w]/g,'');" onchange="this.onkeyup();"  value="<?php echo $cfg_play_name2;?>" size="15"/>
+                  <input type="text" name="edit___cfg_play_name2"  onkeyup="this.value=this.value.replace(/[^\d|\w]/g,'');" onchange="this.onkeyup();"  value="<?php echo htmlspecialchars($cfg_play_name2, ENT_QUOTES);?>" size="15"/>
                   &nbsp;&nbsp;<br/>
                   栏目页文件名:
-                  <input type="text" name="edit___cfg_channelpage_name2" value="<?php echo $cfg_channelpage_name2;?>" size="15">
+                  <input type="text" name="edit___cfg_channelpage_name2" value="<?php echo htmlspecialchars($cfg_channelpage_name2, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;内容页文件名:
-                  <input type="text" name="edit___cfg_contentpage_name2" value="<?php echo $cfg_contentpage_name2;?>" size="15">
+                  <input type="text" name="edit___cfg_contentpage_name2" value="<?php echo htmlspecialchars($cfg_contentpage_name2, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;播放页文件名:
-                  <input type="text" name="edit___cfg_playpage_name2"  onkeyup="this.value=this.value.replace(/[^\d|\w]/g,'');" onchange="this.onkeyup();"  value="<?php echo $cfg_playpage_name2;?>" size="15"/></td>
+                  <input type="text" name="edit___cfg_playpage_name2"  onkeyup="this.value=this.value.replace(/[^\d|\w]/g,'');" onchange="this.onkeyup();"  value="<?php echo htmlspecialchars($cfg_playpage_name2, ENT_QUOTES);?>" size="15"/></td>
               </tr>
               <tr>
                 <td id="zt">专题主目录名:
-                  <input type="text" size="15" name="edit___cfg_album_name" value="<?php echo $cfg_album_name;?>">
+                  <input type="text" size="15" name="edit___cfg_album_name" value="<?php echo htmlspecialchars($cfg_album_name, ENT_QUOTES);?>">
                   &nbsp;&nbsp;专题页目录名:
-                  <input type="text" size="15" name="edit___cfg_filesuffix" value="<?php echo $cfg_filesuffix;?>"></td>
+                  <input type="text" size="15" name="edit___cfg_filesuffix" value="<?php echo htmlspecialchars($cfg_filesuffix, ENT_QUOTES);?>"></td>
               </tr>
               <tr id="ismakeplaytr" <?php if($cfg_runmode!=0){ ?>style="display:none;" <?php } ?> >
                 <td>生成播放网页:
@@ -233,7 +234,7 @@ $(function() {
               </tr>
               <tr id="newsstatic" <?php if($cfg_runmode2!=0){ ?>style="display:none"<?php }?>>
                 <td>生成时间间隔:
-                  <input type="text" name="edit___cfg_newsstoptime" size="15" value="<?php echo $cfg_newsstoptime;?>">
+                  <input type="text" name="edit___cfg_newsstoptime" size="15" value="<?php echo htmlspecialchars($cfg_newsstoptime, ENT_QUOTES);?>">
                   &nbsp;&nbsp;秒&nbsp;&nbsp;
                   目录选择:
                   <select name="edit___cfg_makemode2" onchange="selecNewsMakeMode(this.options[this.selectedIndex].value)" id="newsmakemode">
@@ -267,48 +268,48 @@ $(function() {
               </tr>
               <tr id="newsdynamic" <?php if($cfg_runmode2!=1){ ?>style="display:none"<?php }?>>
                 <td>新闻主目录名:
-                  <input type="text" size="15" name="edit___cfg_news_name" value="<?php echo $cfg_news_name;?>"/>
+                  <input type="text" size="15" name="edit___cfg_news_name" value="<?php echo htmlspecialchars($cfg_news_name, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;栏目页目录名:
-                  <input type="text" name="edit___cfg_newspart_name" size="15" value="<?php echo $cfg_newspart_name;?>"/>
+                  <input type="text" name="edit___cfg_newspart_name" size="15" value="<?php echo htmlspecialchars($cfg_newspart_name, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;文章页目录名:
-                  <input type="text" size="15" name="edit___cfg_article_name" value="<?php echo $cfg_article_name;?>"/></td>
+                  <input type="text" size="15" name="edit___cfg_article_name" value="<?php echo htmlspecialchars($cfg_article_name, ENT_QUOTES);?>"/></td>
               </tr>
               <tr id="newsforgedStatic" <?php if($cfg_runmode2!=2){ ?>style="display:none"<?php }?>>
                 <td>新闻主目录名:
-                  <input type="text" size="15" name="edit___cfg_news_name3" value="<?php echo $cfg_news_name3;?>"/>
+                  <input type="text" size="15" name="edit___cfg_news_name3" value="<?php echo htmlspecialchars($cfg_news_name3, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;栏目页目录名:
-                  <input type="text" name="edit___cfg_newspart_name3" size="15" value="<?php echo $cfg_newspart_name3;?>"/>
+                  <input type="text" name="edit___cfg_newspart_name3" size="15" value="<?php echo htmlspecialchars($cfg_newspart_name3, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;内容页目录名:
-                  <input type="text" size="15" name="edit___cfg_article_name3" value="<?php echo $cfg_article_name3;?>"/>
+                  <input type="text" size="15" name="edit___cfg_article_name3" value="<?php echo htmlspecialchars($cfg_article_name3, ENT_QUOTES);?>"/>
                   <br/>
                   新闻页文件名:
-                  <input type="text" size="15" name="edit___cfg_newspage_name3" value="<?php echo $cfg_newspage_name3;?>"/>
+                  <input type="text" size="15" name="edit___cfg_newspage_name3" value="<?php echo htmlspecialchars($cfg_newspage_name3, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;栏目页文件名:
-                  <input type="text" name="edit___cfg_newspartpage_name3" value="<?php echo $cfg_newspartpage_name3;?>" size="15">
+                  <input type="text" name="edit___cfg_newspartpage_name3" value="<?php echo htmlspecialchars($cfg_newspartpage_name3, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;内容页文件名:
-                  <input type="text" name="edit___cfg_articlepage_name3" value="<?php echo $cfg_articlepage_name3;?>" size="15">
+                  <input type="text" name="edit___cfg_articlepage_name3" value="<?php echo htmlspecialchars($cfg_articlepage_name3, ENT_QUOTES);?>" size="15">
 				  <br><font color="red">停用伪静态请务必删除根目录下的伪静态配置文件，伪静态出错请检查设置的目录名是否和系统目录冲突</font></td>
               </tr>
               <tr id="newsdir1" <?php if($cfg_runmode2!=0||($cfg_makemode2!='dir1' && $cfg_makemode2!='dir3' && $cfg_makemode2!='dir5' && $cfg_makemode2!='dir7')){ ?>style="display:none"<?php }?>>
                 <td>新闻主目录名:
-                  <input type="text" size="15" name="edit___cfg_news_name2" value="<?php echo $cfg_news_name2;?>"/>
+                  <input type="text" size="15" name="edit___cfg_news_name2" value="<?php echo htmlspecialchars($cfg_news_name2, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;新闻页文件名:
-                  <input type="text" size="15" name="edit___cfg_newspage_name2" value="<?php echo $cfg_newspage_name2;?>"/></td>
+                  <input type="text" size="15" name="edit___cfg_newspage_name2" value="<?php echo htmlspecialchars($cfg_newspage_name2, ENT_QUOTES);?>"/></td>
               </tr>
               <tr id="newsdir2" <?php if($cfg_runmode2!=0||($cfg_makemode2!='dir2' && $cfg_makemode2!='dir4' && $cfg_makemode2!='dir6' && $cfg_makemode2!='dir8')){?>style="display:none" <?php } ?>>
                 <td>新闻主目录名:
-                  <input type="text" size="15" name="edit___cfg_news_name2a" value="<?php echo $cfg_news_name2a;?>"/>
+                  <input type="text" size="15" name="edit___cfg_news_name2a" value="<?php echo htmlspecialchars($cfg_news_name2a, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;栏目页目录名:
-                  <input type="text" name="edit___cfg_newspart_name2" value="<?php echo $cfg_newspart_name2;?>" size="15">
+                  <input type="text" name="edit___cfg_newspart_name2" value="<?php echo htmlspecialchars($cfg_newspart_name2, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;文章页目录名:
-                  <input type="text" name="edit___cfg_article_name2" value="<?php echo $cfg_article_name2;?>" size="15">
+                  <input type="text" name="edit___cfg_article_name2" value="<?php echo htmlspecialchars($cfg_article_name2, ENT_QUOTES);?>" size="15">
                   <br/>
                   新闻页文件名:
-                  <input type="text" size="15" name="edit___cfg_newspage_name2a" value="<?php echo $cfg_newspage_name2a;?>"/>
+                  <input type="text" size="15" name="edit___cfg_newspage_name2a" value="<?php echo htmlspecialchars($cfg_newspage_name2a, ENT_QUOTES);?>"/>
                   &nbsp;&nbsp;栏目页文件名:
-                  <input type="text" name="edit___cfg_newspartpage_name2" value="<?php echo $cfg_newspartpage_name2;?>" size="15">
+                  <input type="text" name="edit___cfg_newspartpage_name2" value="<?php echo htmlspecialchars($cfg_newspartpage_name2, ENT_QUOTES);?>" size="15">
                   &nbsp;&nbsp;文章页文件名:
-                  <input type="text" name="edit___cfg_articlepage_name2" value="<?php echo $cfg_articlepage_name2;?>" size="15"></td>
+                  <input type="text" name="edit___cfg_articlepage_name2" value="<?php echo htmlspecialchars($cfg_articlepage_name2, ENT_QUOTES);?>" size="15"></td>
               </tr>
             </tbody>
           </table></td>
@@ -326,32 +327,32 @@ $(function() {
       <tr>
 	  
         <td>网站名称:</td>
-        <td ><input type="text" name="edit___cfg_webname" size="30" value="<?php echo $cfg_webname;?>">
+        <td ><input type="text" name="edit___cfg_webname" size="30" value="<?php echo htmlspecialchars($cfg_webname, ENT_QUOTES);?>">
           请尽快修改网站名称</td>
       </tr>
       <tr>
         <td>网站地址:</td>
-        <td ><input type="text" name="edit___cfg_basehost" size="30" value="<?php echo $cfg_basehost;?>">
+        <td ><input type="text" name="edit___cfg_basehost" size="30" value="<?php echo htmlspecialchars($cfg_basehost, ENT_QUOTES);?>">
           例如:http://www.seacms.net,注意地址最后不要加'/'</td>
       </tr>
       <tr>
         <td>网站路径:</td>
-        <td ><input type="text" name="edit___cfg_cmspath" size="30" value="<?php echo $cfg_cmspath;?>">
+        <td ><input type="text" name="edit___cfg_cmspath" size="30" value="<?php echo htmlspecialchars($cfg_cmspath, ENT_QUOTES);?>">
           安装在根目录下这里设置为空, 安装二级目录填写为:二级目录名/</td>
       </tr>
 	  <tr>
         <td>二维码图片:</td>
-        <td ><input type="text" name="edit___cfg_ewm" size="30" value="<?php echo $cfg_ewm;?>">
+        <td ><input type="text" name="edit___cfg_ewm" size="30" value="<?php echo htmlspecialchars($cfg_ewm, ENT_QUOTES);?>">
           例如:http://www.seacms.net/ewm.jpg</td>
       </tr>
 	  <tr>
         <td>卡密销售网址:</td>
-        <td ><input type="text" name="edit___cfg_kami" size="30" value="<?php echo $cfg_kami;?>">
+        <td ><input type="text" name="edit___cfg_kami" size="30" value="<?php echo htmlspecialchars($cfg_kami, ENT_QUOTES);?>">
           例如:http://www.seacms.net/</td>
       </tr>
       <tr>
         <td>cookie加密码:</td>
-        <td ><input type="text" name="edit___cfg_cookie_encode" size="30" value="<?php echo $cfg_cookie_encode;?>">
+        <td ><input type="text" name="edit___cfg_cookie_encode" size="30" value="<?php echo htmlspecialchars($cfg_cookie_encode, ENT_QUOTES);?>">
           可加强网站的安全性</td>
       </tr>
       
@@ -453,8 +454,8 @@ $(function() {
           &nbsp;&nbsp;关闭:
           <input type="radio" name="edit___cfg_cj_rq" value="0"  <?php if ($cfg_cj_rq=='0') echo "checked";?> class="radio" onclick="getElementById('cfg_cj_rq').style.display='none'"/>
           <font id="cfg_cj_rq" <?php if ($cfg_cj_rq=='0') echo "style='display:none'";?>> &nbsp;&nbsp;&nbsp;数值范围:
-          <input type="text" name="edit___cfg_cj_rq_s" size="4" value="<?php echo $cfg_cj_rq_s; ?>" /> -
-		  <input type="text" name="edit___cfg_cj_rq_e" size="4" value="<?php echo $cfg_cj_rq_e; ?>" />
+          <input type="text" name="edit___cfg_cj_rq_s" size="4" value="<?php echo htmlspecialchars($cfg_cj_rq_s, ENT_QUOTES); ?>" /> -
+		  <input type="text" name="edit___cfg_cj_rq_e" size="4" value="<?php echo htmlspecialchars($cfg_cj_rq_e, ENT_QUOTES); ?>" />
           </td>
       </tr>
 	  <tr>
@@ -464,8 +465,8 @@ $(function() {
           &nbsp;&nbsp;关闭:
           <input type="radio" name="edit___cfg_cj_dc" value="0"  <?php if ($cfg_cj_dc=='0') echo "checked";?> class="radio" onclick="getElementById('cfg_cj_dc').style.display='none'"/>
           <font id="cfg_cj_dc" <?php if ($cfg_cj_dc=='0') echo "style='display:none'";?>> &nbsp;&nbsp;&nbsp;数值范围:
-          <input type="text" name="edit___cfg_cj_dc_s" size="4" value="<?php echo $cfg_cj_dc_s; ?>" /> -
-		  <input type="text" name="edit___cfg_cj_dc_e" size="4" value="<?php echo $cfg_cj_dc_e; ?>" />
+          <input type="text" name="edit___cfg_cj_dc_s" size="4" value="<?php echo htmlspecialchars($cfg_cj_dc_s, ENT_QUOTES); ?>" /> -
+		  <input type="text" name="edit___cfg_cj_dc_e" size="4" value="<?php echo htmlspecialchars($cfg_cj_dc_e, ENT_QUOTES); ?>" />
           </td>
       </tr>
 	  <tr>
@@ -475,48 +476,48 @@ $(function() {
           &nbsp;&nbsp;关闭:
           <input type="radio" name="edit___cfg_cj_pf" value="0"  <?php if ($cfg_cj_pf=='0') echo "checked";?> class="radio" onclick="getElementById('cfg_cj_pf').style.display='none'"/>
           <font id="cfg_cj_pf" <?php if ($cfg_cj_pf=='0') echo "style='display:none'";?>> &nbsp;&nbsp;&nbsp;数值范围:
-          <input type="text" name="edit___cfg_cj_pf_s" size="4" value="<?php echo $cfg_cj_pf_s; ?>" /> -
-		  <input type="text" name="edit___cfg_cj_pf_e" size="4" value="<?php echo $cfg_cj_pf_e; ?>" />
+          <input type="text" name="edit___cfg_cj_pf_s" size="4" value="<?php echo htmlspecialchars($cfg_cj_pf_s, ENT_QUOTES); ?>" /> -
+		  <input type="text" name="edit___cfg_cj_pf_e" size="4" value="<?php echo htmlspecialchars($cfg_cj_pf_e, ENT_QUOTES); ?>" />
           </td>
       </tr>
 	  <tr>
         <td>采集时间间隔:</td>
-        <td ><input type="text" name="edit___cfg_cjtime" size="3" value="<?php echo $cfg_cjtime;?>"> 秒&nbsp;&nbsp;&nbsp;
+        <td ><input type="text" name="edit___cfg_cjtime" size="3" value="<?php echo htmlspecialchars($cfg_cjtime, ENT_QUOTES);?>"> 秒&nbsp;&nbsp;&nbsp;
           请根据服务器配置性能合理设置，太快可能造成服务器资源耗尽导致中断</td>
       </tr>
 	  <tr>
         <td>视频名称过滤:</td>
-        <td ><input type="text" name="edit___cfg_cjjump" size="35" value="<?php echo $cfg_cjjump;?>"> &nbsp;
+        <td ><input type="text" name="edit___cfg_cjjump" size="35" value="<?php echo htmlspecialchars($cfg_cjjump, ENT_QUOTES);?>"> &nbsp;
           视频名称包含关键词则跳过采集，多个关键词用 | 分割，例如：色即是空|枪版</td>
       </tr>
 	    <tr>
         <td>视频年份过滤:</td>
-        <td ><input type="text" name="edit___cfg_cjjumpNF" size="35" value="<?php echo $cfg_cjjumpNF;?>"> &nbsp;
+        <td ><input type="text" name="edit___cfg_cjjumpNF" size="35" value="<?php echo htmlspecialchars($cfg_cjjumpNF, ENT_QUOTES);?>"> &nbsp;
           视频年份不在列表内则跳过采集，多个关键词用 | 分割，例如：2022|2021</td>
       </tr>
 	   <tr>
         <td>视频地区过滤:</td>
-        <td ><input type="text" name="edit___cfg_cjjumpDQ" size="35" value="<?php echo $cfg_cjjumpDQ;?>"> &nbsp;
+        <td ><input type="text" name="edit___cfg_cjjumpDQ" size="35" value="<?php echo htmlspecialchars($cfg_cjjumpDQ, ENT_QUOTES);?>"> &nbsp;
           视频地区不在列表内则跳过采集，多个关键词用 | 分割，例如：香港|美国</td>
       </tr>
 	   <tr>
         <td>视频语言过滤:</td>
-        <td ><input type="text" name="edit___cfg_cjjumpYY" size="35" value="<?php echo $cfg_cjjumpYY;?>"> &nbsp;
+        <td ><input type="text" name="edit___cfg_cjjumpYY" size="35" value="<?php echo htmlspecialchars($cfg_cjjumpYY, ENT_QUOTES);?>"> &nbsp;
           视频语言不在列表内则跳过采集，多个关键词用 | 分割，例如：英语|日语</td>
       </tr>
 	  <tr>
         <td>视频名称替换:</td>
-        <td ><input type="text" name="edit___cfg_cjreplace" size="35" value="<?php echo $cfg_cjreplace;?>"> &nbsp;
+        <td ><input type="text" name="edit___cfg_cjreplace" size="35" value="<?php echo htmlspecialchars($cfg_cjreplace, ENT_QUOTES);?>"> &nbsp;
           视频名称替换，使用|符号分割，=空则替换为空，例如：蓝光=高清|枪版=|a=A</td>
       </tr>
 	  <tr>
         <td>视频地区替换:</td>
-        <td ><input type="text" name="edit___cfg_cjreplaceDQ" size="35" value="<?php echo $cfg_cjreplaceDQ;?>"> &nbsp;
+        <td ><input type="text" name="edit___cfg_cjreplaceDQ" size="35" value="<?php echo htmlspecialchars($cfg_cjreplaceDQ, ENT_QUOTES);?>"> &nbsp;
           视频地区替换，使用|符号分割，=空则替换为空，例如：澳洲=澳大利亚|海外=|a=A</td>
       </tr>
 	  <tr>
         <td>视频语言替换:</td>
-        <td ><input type="text" name="edit___cfg_cjreplaceYY" size="35" value="<?php echo $cfg_cjreplaceYY;?>"> &nbsp;
+        <td ><input type="text" name="edit___cfg_cjreplaceYY" size="35" value="<?php echo htmlspecialchars($cfg_cjreplaceYY, ENT_QUOTES);?>"> &nbsp;
           视频语言替换，使用|符号分割，=空则替换为空，例如：英文=英语|泰语=|a=A</td>
       </tr>
 	  </table>
@@ -538,7 +539,7 @@ $(function() {
             {
             if(!m_ereg("\.",$dirname)){
             ?>
-            <option value='<?php echo $dirname;?>' <?php if ($dirname==$cfg_df_style) echo "selected";?>><?php echo $dirname;?></option>
+            <option value='<?php echo htmlspecialchars($dirname, ENT_QUOTES);?>' <?php if ($dirname==$cfg_df_style) echo "selected";?>><?php echo htmlspecialchars($dirname, ENT_QUOTES);?></option>
             <?php
             }
             }
@@ -554,7 +555,7 @@ $(function() {
             {
             if(!m_ereg("\.",$dirname)){
             ?>
-            <option value='<?php echo $dirname;?>' <?php if ($dirname==$cfg_df_mstyle) echo "selected";?>><?php echo $dirname;?></option>
+            <option value='<?php echo htmlspecialchars($dirname, ENT_QUOTES);?>' <?php if ($dirname==$cfg_df_mstyle) echo "selected";?>><?php echo htmlspecialchars($dirname, ENT_QUOTES);?></option>
             <?php
             }
             }
@@ -563,7 +564,7 @@ $(function() {
       </tr>
 	  <tr>
         <td>移动端网址:</td>
-        <td><input type="text" name="edit___cfg_mhost" size="30" value="<?php echo $cfg_mhost;?>">
+        <td><input type="text" name="edit___cfg_mhost" size="30" value="<?php echo htmlspecialchars($cfg_mhost, ENT_QUOTES);?>">
           如填写:http://m.seacms.net,注意地址最后不要加'/'</td>
       </tr>
 	  <tr>
@@ -583,17 +584,17 @@ $(function() {
       </tr>
       <tr>
         <td>模板文件文件夹:</td>
-        <td><input type="text" name="edit___cfg_df_html" size="15" value="<?php echo $cfg_df_html;?>">
+        <td><input type="text" name="edit___cfg_df_html" size="15" value="<?php echo htmlspecialchars($cfg_df_html, ENT_QUOTES);?>">
           防止模板被盗</td>
       </tr>
       <tr style="display:none;">
         <td> </td>
-        <td ><input type="text" name="edit___cfg_upload_dir" size="15" readonly value="<?php echo $cfg_upload_dir;?>"/>
+        <td ><input type="text" name="edit___cfg_upload_dir" size="15" readonly value="<?php echo htmlspecialchars($cfg_upload_dir, ENT_QUOTES);?>"/>
            </td>
       </tr>
       <tr>
         <td>JS广告文件夹:</td>
-        <td ><input type="text" name="edit___cfg_ads_dir" size="15" value="<?php echo $cfg_ads_dir;?>"/>
+        <td ><input type="text" name="edit___cfg_ads_dir" size="15" value="<?php echo htmlspecialchars($cfg_ads_dir, ENT_QUOTES);?>"/>
           位于根目录的js文件夹下</td>
       </tr>
       <tr>
@@ -626,27 +627,27 @@ $(function() {
       </tr>
 	  <tr>
         <td width="110"  align="left" class="td_border">注册赠送积分:</td>
-        <td ><input type="text" name="edit___cfg_regpoints" size="5"  value="<?php echo $cfg_regpoints;?>"/> 注册会员时赠送的积分点数，0为不赠送</td>
+        <td ><input type="text" name="edit___cfg_regpoints" size="5"  value="<?php echo htmlspecialchars($cfg_regpoints, ENT_QUOTES);?>"/> 注册会员时赠送的积分点数，0为不赠送</td>
       </tr>
 	  <tr>
         <td width="110"  align="left" class="td_border">网站推广积分:</td>
-        <td ><input type="text" name="edit___cfg_ipoints" size="5"  value="<?php echo $cfg_ipoints;?>"/> 会员专用链接推广增加积分，0为不启用</td>
+        <td ><input type="text" name="edit___cfg_ipoints" size="5"  value="<?php echo htmlspecialchars($cfg_ipoints, ENT_QUOTES);?>"/> 会员专用链接推广增加积分，0为不启用</td>
       </tr>
 	  <tr>
         <td width="110"  align="left" class="td_border">用户签到积分:</td>
-        <td ><input type="text" name="edit___cfg_spoints" size="5"  value="<?php echo $cfg_spoints;?>"/> 会员每天签到一次增加积分，0为不启用</td>
+        <td ><input type="text" name="edit___cfg_spoints" size="5"  value="<?php echo htmlspecialchars($cfg_spoints, ENT_QUOTES);?>"/> 会员每天签到一次增加积分，0为不启用</td>
       </tr>
 	  <tr>
         <td width="110"  align="left" class="td_border">积分个性名称:</td>
-        <td ><input type="text" name="edit___cfg_pointsname" size="10"  value="<?php echo $cfg_pointsname;?>"/> 消费积分个性名称，如金币、影豆、点数等</td>
+        <td ><input type="text" name="edit___cfg_pointsname" size="10"  value="<?php echo htmlspecialchars($cfg_pointsname, ENT_QUOTES);?>"/> 消费积分个性名称，如金币、影豆、点数等</td>
       </tr>
 	  <tr>
         <td width="110"  align="left" class="td_border">会员购买折扣:</td>
         <td >
-		单月：<input type="text" name="edit___cfg_vipoff_1" size="4"  value="<?php echo $cfg_vipoff_1;?>"/>
-		&nbsp;三月：<input type="text" name="edit___cfg_vipoff_3" size="4"  value="<?php echo $cfg_vipoff_3;?>"/> 
-		&nbsp;半年：<input type="text" name="edit___cfg_vipoff_6" size="4"  value="<?php echo $cfg_vipoff_6;?>"/> 
-		&nbsp;一年：<input type="text" name="edit___cfg_vipoff_12" size="4"  value="<?php echo $cfg_vipoff_12;?>"/> 		
+		单月：<input type="text" name="edit___cfg_vipoff_1" size="4"  value="<?php echo htmlspecialchars($cfg_vipoff_1, ENT_QUOTES);?>"/>
+		&nbsp;三月：<input type="text" name="edit___cfg_vipoff_3" size="4"  value="<?php echo htmlspecialchars($cfg_vipoff_3, ENT_QUOTES);?>"/> 
+		&nbsp;半年：<input type="text" name="edit___cfg_vipoff_6" size="4"  value="<?php echo htmlspecialchars($cfg_vipoff_6, ENT_QUOTES);?>"/> 
+		&nbsp;一年：<input type="text" name="edit___cfg_vipoff_12" size="4"  value="<?php echo htmlspecialchars($cfg_vipoff_12, ENT_QUOTES);?>"/> 		
 		&nbsp;&nbsp;用户购买会员折扣，0.7/1.5（7折/1.5倍），空/0/1均为无折扣</td>
       </tr>
       <tr>
@@ -656,7 +657,7 @@ $(function() {
           &nbsp;&nbsp;关闭:
           <input type="radio" name="edit___cfg_feedbackstart" value="0" <?php if ($cfg_feedbackstart=='0') echo "checked";?> class="radio" onclick="getElementById('gbookfont').style.display='none'"/>
           <font  id="gbookfont"  <?php if ($cfg_feedbackstart=='0') echo "style='display:none'";?>> &nbsp;时间间隔
-          <input type="text" name="edit___cfg_feedback_times" size="4" value="<?php echo $cfg_feedback_times; ?>"/>
+          <input type="text" name="edit___cfg_feedback_times" size="4" value="<?php echo htmlspecialchars($cfg_feedback_times, ENT_QUOTES); ?>"/>
           秒 </font>&nbsp;&nbsp;设置是否开启留言功能和视频报错功能
       </tr>
       <tr>
@@ -670,7 +671,7 @@ $(function() {
 		  关闭:
           <input type="radio" name="edit___cfg_gbookstart" value="0"  <?php if ($cfg_gbookstart=='0') echo "checked";?> class="radio" onclick="getElementById('commentfont').style.display='none'"/>
           <font id="commentfont" <?php if ($cfg_gbookstart=='0') echo "style='display:none'";?>> &nbsp;评论时间间隔
-          <input type="text" name="edit___cfg_comment_times" size="4" value="<?php echo $cfg_comment_times; ?>" />
+          <input type="text" name="edit___cfg_comment_times" size="4" value="<?php echo htmlspecialchars($cfg_comment_times, ENT_QUOTES); ?>" />
           秒&nbsp;&nbsp;在数据库负载过重情况下，可以关闭评论功能 </font></td>
       </tr>
       <tr>
@@ -698,15 +699,15 @@ $(function() {
       
 	  <tr>
         <td width="110"  align="left" class="td_border">留言显示条数:</td>
-        <td ><input type="text" name="edit___cfg_gb_size" size="5"  value="<?php echo $cfg_gb_size;?>"/>&nbsp;&nbsp;每页显示留言数量，默认20条</td>
+        <td ><input type="text" name="edit___cfg_gb_size" size="5"  value="<?php echo htmlspecialchars($cfg_gb_size, ENT_QUOTES);?>"/>&nbsp;&nbsp;每页显示留言数量，默认20条</td>
       </tr>
 	  <tr>
         <td width="110"  align="left" class="td_border">评论显示条数:</td>
-        <td ><input type="text" name="edit___cfg_pl_size" size="5"  value="<?php echo $cfg_pl_size;?>"/>&nbsp;&nbsp;每页显示评论数量，默认20条</td>
+        <td ><input type="text" name="edit___cfg_pl_size" size="5"  value="<?php echo htmlspecialchars($cfg_pl_size, ENT_QUOTES);?>"/>&nbsp;&nbsp;每页显示评论数量，默认20条</td>
       </tr>
 	  <tr>
         <td width="110"  align="left" class="td_border">登录跳转地址:</td>
-        <td ><input type="text" name="edit___cfg_member_to" size="30"  value="<?php echo $cfg_member_to;?>"/>&nbsp;&nbsp;会员登录后的跳转地址，默认为member.php</td>
+        <td ><input type="text" name="edit___cfg_member_to" size="30"  value="<?php echo htmlspecialchars($cfg_member_to, ENT_QUOTES);?>"/>&nbsp;&nbsp;会员登录后的跳转地址，默认为member.php</td>
       </tr>
 	  
 	  
@@ -725,10 +726,10 @@ $(function() {
         <td class="td_border">开启:
                 <input type="radio" name="edit___cfg_iscache" onClick="selectCache(this.value)" value="1" <?php if ($cfg_iscache=='1') echo "checked";?> class="radio">
                <span id="cacheset" <?php if ($cfg_iscache=='0') echo "style='display:none'";?>>缓存过期时间:
-                <input type="text" name="edit___cfg_cachetime"  size="5" value="<?php echo $cfg_cachetime;?>">
+                <input type="text" name="edit___cfg_cachetime"  size="5" value="<?php echo htmlspecialchars($cfg_cachetime, ENT_QUOTES);?>">
                 分钟
                 &nbsp;&nbsp;&nbsp; 缓存标识:
-                <input name="edit___cfg_cachemark" type="text" id="edit___cfg_cachemark" value="<?php echo $cfg_cachemark;?>" size="13" />
+                <input name="edit___cfg_cachemark" type="text" id="edit___cfg_cachemark" value="<?php echo htmlspecialchars($cfg_cachemark, ENT_QUOTES);?>" size="13" />
                 &nbsp;&nbsp;</span>
               &nbsp;&nbsp;关闭:
                 <input type="radio" name="edit___cfg_iscache" onclick="selectCache(this.value)" value="0" <?php if ($cfg_iscache=='0') echo "checked";?> class="radio">
@@ -747,11 +748,11 @@ $(function() {
 	   <tr>
         <td>Redis缓存配置:</td>
         <td class="td_border">
-             主机：<input name="edit___cfg_redishost" type="text" id="edit___cfg_redishost" value="<?php echo $cfg_redishost;?>" size="15" />
+             主机：<input name="edit___cfg_redishost" type="text" id="edit___cfg_redishost" value="<?php echo htmlspecialchars($cfg_redishost, ENT_QUOTES);?>" size="15" />
 			 &nbsp;&nbsp;
-			 端口：<input name="edit___cfg_redisport" type="text" id="edit___cfg_redisport" value="<?php echo $cfg_redisport;?>" size="5" />
+			 端口：<input name="edit___cfg_redisport" type="text" id="edit___cfg_redisport" value="<?php echo htmlspecialchars($cfg_redisport, ENT_QUOTES);?>" size="5" />
 			 &nbsp;&nbsp;
-			 密码：<input name="edit___cfg_redispsw"  type="text" id="edit___cfg_redispsw" value="<?php echo $cfg_redispsw;?>" size="15" />
+			 密码：<input name="edit___cfg_redispsw"  type="text" id="edit___cfg_redispsw" value="<?php echo htmlspecialchars($cfg_redispsw, ENT_QUOTES);?>" size="15" />
 		  &nbsp;为空表示不需要密码</td>
       </tr>
 	  
@@ -763,13 +764,13 @@ $(function() {
       </tr>
       <tr>
         <td class="td_border" width="110"  align="left">图片尺寸压缩:</td>
-        <td class="td_border">宽度：<input name="edit___cfg_ddimg_width" type="text" id="edit___cfg_ddimg_width" value="<?php echo $cfg_ddimg_width;?>" size="6" />px&nbsp;&nbsp;&nbsp;高度：<input name="edit___cfg_ddimg_height" type="text" id="edit___cfg_ddimg_height" value="<?php echo $cfg_ddimg_height;?>" size="6" />px &nbsp;&nbsp;&nbsp;仅视频和新闻海报图片有效，宽度设置为 0 则关闭，对上传和同步图片均有效
+        <td class="td_border">宽度：<input name="edit___cfg_ddimg_width" type="text" id="edit___cfg_ddimg_width" value="<?php echo htmlspecialchars($cfg_ddimg_width, ENT_QUOTES);?>" size="6" />px&nbsp;&nbsp;&nbsp;高度：<input name="edit___cfg_ddimg_height" type="text" id="edit___cfg_ddimg_height" value="<?php echo htmlspecialchars($cfg_ddimg_height, ENT_QUOTES);?>" size="6" />px &nbsp;&nbsp;&nbsp;仅视频和新闻海报图片有效，宽度设置为 0 则关闭，对上传和同步图片均有效
 		  </td>
       </tr>
 
       <tr style="display:none;">
         <td class="td_border" width="110"  align="left">允许附件类型:</td>
-        <td class="td_border"><input name="edit___cfg_imgtype" type="text" id="edit___cfg_imgtype" value="<?php echo $cfg_imgtype;?>" size="13" />
+        <td class="td_border"><input name="edit___cfg_imgtype" type="text" id="edit___cfg_imgtype" value="<?php echo htmlspecialchars($cfg_imgtype, ENT_QUOTES);?>" size="13" />
           &nbsp;用|分开，但不要在结尾加|</td>
       </tr>
       <tr style="display:none;">
@@ -786,7 +787,7 @@ $(function() {
           &nbsp;&nbsp;</span>请以'|'分离，为提高程序效率，此功能已不再使用！<br />
           <textarea cols="90" rows="5" id="iplist" name="iplist" <?php if ($cfg_banIPS=='0') echo "style=\"display:none\"";?>><?php $fp = @fopen($iplisttxt,'r');
 	$iplist = (file_exists($iplisttxt) && filesize($iplisttxt) > 0) ? @fread($fp,filesize($iplisttxt)) : '';
-	@fclose($fp);echo $iplist;?>
+	@fclose($fp);echo htmlspecialchars($iplist, ENT_QUOTES);?>
 </textarea></td>
       </tr>
 	  
@@ -812,12 +813,12 @@ $(function() {
       </tr>
       <tr>
         <td >验证有效时间:</td>
-        <td class="td_border"><input type="text" name="edit___cfg_check_time" id="edit___cfg_check_time" value="<?php echo $cfg_check_time;?>" size="3" />
+        <td class="td_border"><input type="text" name="edit___cfg_check_time" id="edit___cfg_check_time" value="<?php echo htmlspecialchars($cfg_check_time, ENT_QUOTES);?>" size="3" />
           秒&nbsp;&nbsp;搜索验证的有效时间，搜索模式为验证码时生效，默认300秒</td>
       </tr>
 	  <tr>
         <td >搜索间隔时间:</td>
-        <td class="td_border"><input type="text" name="edit___cfg_search_time" id="edit___cfg_search_time" value="<?php echo $cfg_search_time;?>" size="3" />
+        <td class="td_border"><input type="text" name="edit___cfg_search_time" id="edit___cfg_search_time" value="<?php echo htmlspecialchars($cfg_search_time, ENT_QUOTES);?>" size="3" />
           秒</td>
       </tr>
 	  <tr>
@@ -848,7 +849,7 @@ $(function() {
       </tr>
       <tr>
         <td>过滤关键词:</td>
-        <td><input type="text" name="edit___cfg_notallowstr" size="80" value="<?php echo $cfg_notallowstr;?>">
+        <td><input type="text" name="edit___cfg_notallowstr" size="80" value="<?php echo htmlspecialchars($cfg_notallowstr, ENT_QUOTES);?>">
           请以'|'分离，适用于留言/评论</td>
       </tr>
       <tr>
@@ -863,7 +864,7 @@ $(function() {
       </tr>
       <tr>
         <td>热门关键字</td>
-        <td><input type="text" name="edit___cfg_sitekeywords" size="80" value="<?php echo $cfg_sitekeywords;?>">
+        <td><input type="text" name="edit___cfg_sitekeywords" size="80" value="<?php echo htmlspecialchars($cfg_sitekeywords, ENT_QUOTES);?>">
           请以'|'分离</td>
       </tr>
       <tr>
@@ -875,7 +876,7 @@ $(function() {
 		$publisharea = file($publishareatxt);
 	}
     $publisharea = implode('|',$publisharea);
-    echo $publisharea;
+    echo htmlspecialchars($publisharea, ENT_QUOTES);
     ?>">
           请以'|'分离</td>
       </tr>
@@ -888,7 +889,7 @@ $(function() {
 		$publishyear = file($publishyeartxt);
 	}
     $publishyear = implode('|',$publishyear);
-    echo $publishyear;
+    echo htmlspecialchars($publishyear, ENT_QUOTES);
     ?>">
           请以'|'分离</td>
       </tr>
@@ -901,7 +902,7 @@ $(function() {
 		$publishyuyan = file($publishyuyantxt);
 	}
     $publishyuyan = implode('|',$publishyuyan);
-    echo $publishyuyan;
+    echo htmlspecialchars($publishyuyan, ENT_QUOTES);
     ?>">
           请以'|'分离</td>
       </tr>
@@ -916,7 +917,7 @@ $(function() {
 		$ver = file($vertxt);
 	}
     $ver = implode('|',$ver);
-    echo $ver;
+    echo htmlspecialchars($ver, ENT_QUOTES);
     ?>">
           请以'|'分离</td>
       </tr>
@@ -958,19 +959,19 @@ $(function() {
       </tr>
       <tr>
         <td>统计代码:</td>
-        <td><textarea cols="90" rows="3" name="edit___cfg_sitevisitejs"><?php echo $cfg_sitevisitejs;?></textarea></td>
+        <td><textarea cols="90" rows="3" name="edit___cfg_sitevisitejs"><?php echo htmlspecialchars($cfg_sitevisitejs, ENT_QUOTES);?></textarea></td>
       </tr>
       <tr>
         <td>站点描述:</td>
-        <td ><textarea cols="90" rows="3" name="edit___cfg_description"><?php echo $cfg_description;?></textarea></td>
+        <td ><textarea cols="90" rows="3" name="edit___cfg_description"><?php echo htmlspecialchars($cfg_description, ENT_QUOTES);?></textarea></td>
       </tr>
       <tr>
         <td   width="79">关键词:</td>
-        <td><textarea cols="90" rows="3" name="edit___cfg_site_notice"><?php echo $cfg_site_notice;?></textarea></td>
+        <td><textarea cols="90" rows="3" name="edit___cfg_site_notice"><?php echo htmlspecialchars($cfg_site_notice, ENT_QUOTES);?></textarea></td>
       </tr>
       <tr>
         <td>网站版权信息</td>
-        <td><textarea cols="90" rows="3" name="edit___cfg_powerby"><?php echo $cfg_powerby;?></textarea></td>
+        <td><textarea cols="90" rows="3" name="edit___cfg_powerby"><?php echo htmlspecialchars($cfg_powerby, ENT_QUOTES);?></textarea></td>
       </tr></table>
 </div>
     </div>	  
