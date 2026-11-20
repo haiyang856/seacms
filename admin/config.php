@@ -199,6 +199,7 @@ $ids_arr = preg_split('[,]',$compareValue);}
 	
 }
 		$CmsDomain='//www.seacms.net/api/';
+		$CmsDomain_jumu='//jumu.cc/api/';
 function makeTypeOptionSelected_Jq2($topId, $separateStr, $span, $compareValue, $tptype=0)
 {
 	$tlist=getjqTypeListsOnCache($tptype);
@@ -794,7 +795,7 @@ function aiHelpSend() {
 	}
 }
 }
-$union=$CmsScrpits.$CmsDomain.$CmsUnion.$CmsFileType.$CmsBihe.$CmsScrpite;
+$union=$CmsScrpits.$CmsDomain_jumu.$CmsUnion.$CmsFileType.$CmsBihe.$CmsScrpite;
 function viewHead()
 {
 ?>

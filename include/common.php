@@ -215,15 +215,25 @@ $cfg_image_dir = $cfg_medias_dir.'/allimg';
 $ddcfg_image_dir = $cfg_medias_dir.'/litimg';
 
 //系统摘要信息，****请不要删除本项**** 否则系统无法正确接收系统漏洞或升级信息
-$verLockFile = sea_ROOT.'/data/admin/ver.txt';
-$fp = fopen($verLockFile,'r');
-$verLocal = trim(fread($fp,64));
-fclose($fp);
-$verLocal = substr($verLocal,8,strlen($verLocal)-8);
+$verLockFile = sea_ROOT.'/data/admin/ver.json';
+$verLocal = '';
+$verTime = $timestamp;
+if(file_exists($verLockFile)){
+	$verData = json_decode(file_get_contents($verLockFile),true);
+	if(is_array($verData)){
+		if(isset($verData['ver'])){
+			$verLocal = $verData['ver'];
+		}
+		if(!empty($verData['time'])){
+			$verTime = (int)$verData['time'];
+		}
+	}
+}
 $cfg_version =$verLocal;
+$cfg_version_time = date('Y-m-d',$verTime);
 $cfg_soft_lang = 'utf-8';
 $cfg_softname = '海洋影视内容管理系统';
-$cfg_soft_enname = 'sea';
+$cfg_soft_enname = 'seaseacms';
 $cfg_soft_devteam = '海洋官方团队';
 
 //新建目录的权限，如果你使用别的属性，本程不保证程序能顺利在Linux或Unix系统运行

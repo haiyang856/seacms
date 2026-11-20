@@ -129,7 +129,6 @@ function CmsgetDirSize($dir)
 	return $sizeResult;
 }
 	// 单位自动转换函数
-	$ver=$CmsScrpits.$CmsDomain.$CmsVer.$CmsFileType.$CmsBihe.$CmsScrpite;
 	$info=$CmsScrpits.$CmsDomain.$CmsInfo.$CmsFileType.$CmsBihe.$CmsScrpite;
 function CmsgetRealSize($size)
 { 

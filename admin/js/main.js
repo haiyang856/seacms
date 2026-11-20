@@ -15,24 +15,6 @@ var ajax = new AJAX();ajax.setcharset("utf-8");
 //document.getElementByIdNew = getElementById;
 
 
-function openUpdateWin(width, height,str){
-	openWindow2(101,width,height,50)
-	var msgDiv=document.getElementById("msg")
-	var bgDiv=document.getElementById("bg")
-	var iWidth = document.documentElement.scrollWidth
-	var str="<div style='width:400px;'><div class='divboxtitle'><span onclick=\"closeWin();set(document.getElementById('update'),'<font color=red >版本暂未升级...</font>');\" ><img src='../pic/btn_close.gif'/></span>seacms在线升级</div><div  class='divboxbody'>"+str+"<input type='button' value='进入升级页面' id='openwin' class='rb1'/>&nbsp;&nbsp;&nbsp;&nbsp;<input id='closewin' type='button' value='取   消' name='button' class='rb1'  /></div><div class='divboxbottom'>Power By seacms</div></div>"
-	msgDiv.style.cssText += "FONT-SIZE: 13px;top:100px;left:"+(iWidth-width)/2+"px;text-align:center;";
-	set(msgDiv,str)
-	document.getElementById("closewin").onclick = function(){
-		closeWin()
-		set(document.getElementById("update"),"<font color='red'>版本暂未升级...</font>");
-	}
-	document.getElementById("openwin").onclick = function(){
-		closeWin()
-		location.href='admin_update.php';
-	}
-}
-
 function getQueryVariable(variable,url)
 {
        var query = url;
@@ -88,24 +70,6 @@ function clearColHis()
 	);
 }
  
-function checkNewVersionCallBack(obj){
-	 
-	if (obj.responseText == "False"){
-		set(document.getElementById("update"),"<font color='red'>&nbsp;&nbsp;当前已是最新版本!</font>");
-	}else{
-		openUpdateWin(400, "auto",obj.responseText)	
-	}
-}
-
-function checkNewVersion(){
-	set(document.getElementById("update"),"<font color='red'>&nbsp;&nbsp;请稍等，正在检测新版本...</font>");
-	var getUrl = "admin_update.php?action=isNew";
-	ajax.get(
-		getUrl,
-		checkNewVersionCallBack
-	);	
-}
-
 function ajaxFunction(url){
 	set(document.getElementById("wait"),"<font color='red'>目标网站正在采集中，请稍后.....</font>");
 	location.href=url;
