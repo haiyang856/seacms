@@ -19,10 +19,6 @@ if( is_dir(dirname(__FILE__).'/../install') )
   	fwrite($fp,'ok');
   	fclose($fp);
 	}
-	//为了防止未知安全性问题，强制禁用安装程序的文件
-	if( file_exists("../install/index.php") ) {
-		@rename("../install/index.php", "../install/index.phpbak");
-	}
 }
 
 

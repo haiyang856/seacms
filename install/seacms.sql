@@ -9,7 +9,7 @@ CREATE TABLE `sea_admin` (
   `groupid` smallint(4) NOT NULL,
   `state` smallint(4) NOT NULL default '1',
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_arcrank`;
 CREATE TABLE `sea_arcrank` (
@@ -21,7 +21,7 @@ CREATE TABLE `sea_arcrank` (
   `scores` mediumint(8) NOT NULL default '0',
   `purviews` mediumtext,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_comment`;
 CREATE TABLE `sea_comment` (
@@ -41,8 +41,10 @@ CREATE TABLE `sea_comment` (
   `pic` char(255) NOT NULL default '',
   `vote` int(6) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `v_id` (`v_id`,`ischeck`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  KEY `v_id` (`v_id`,`ischeck`),
+  KEY `idx_vid_check_id` (`v_id`,`ischeck`,`id`),
+  KEY `idx_ip_id` (`ip`,`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_content`;
 CREATE TABLE `sea_content` (
@@ -50,7 +52,7 @@ CREATE TABLE `sea_content` (
   `tid` smallint(8) unsigned NOT NULL default '0',
   `body` mediumtext,
   PRIMARY KEY  (`v_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_count`;
 CREATE TABLE `sea_count` (
@@ -59,7 +61,7 @@ CREATE TABLE `sea_count` (
   `serverurl` varchar(255) default NULL,
   `updatetime` varchar(50) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_co_cls`;
 CREATE TABLE `sea_co_cls` (
@@ -69,7 +71,7 @@ CREATE TABLE `sea_co_cls` (
   `cotype` tinyint(4) NOT NULL default '0',  
   PRIMARY KEY  (`id`),
   KEY `sysclsid` (`sysclsid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_co_config`;
 CREATE TABLE `sea_co_config` (
@@ -79,7 +81,7 @@ CREATE TABLE `sea_co_config` (
   `getconnum` int(10) NOT NULL default '0',
   `cotype` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`cid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_co_data`;
 CREATE TABLE `sea_co_data` (
@@ -120,7 +122,7 @@ CREATE TABLE `sea_co_data` (
   PRIMARY KEY  (`v_id`),
   KEY `tid` (`v_rank`,`tid`,`v_commend`,`v_hit`),
   KEY `v_addtime` (`v_addtime`,`v_digg`,`v_tread`,`v_inbase`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_co_news`;
 CREATE TABLE `sea_co_news` (
@@ -142,7 +144,7 @@ CREATE TABLE `sea_co_news` (
   PRIMARY KEY  (`n_id`),
   KEY `tid` (`tid`,`n_hit`),
   KEY `v_addtime` (`n_inbase`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ;
 
 DROP TABLE IF EXISTS `sea_co_filters`;
 CREATE TABLE `sea_co_filters` (
@@ -157,7 +159,7 @@ CREATE TABLE `sea_co_filters` (
   `Flag` tinyint(1) NOT NULL,
   `cotype` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ;
 
 DROP TABLE IF EXISTS `sea_co_type`;
 CREATE TABLE `sea_co_type` (
@@ -180,7 +182,7 @@ CREATE TABLE `sea_co_type` (
   PRIMARY KEY  (`tid`),
   KEY `cid` (`cid`,`classid`),
   KEY `addtime` (`addtime`,`cjtime`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_co_url`;
 CREATE TABLE `sea_co_url` (
@@ -195,7 +197,7 @@ CREATE TABLE `sea_co_url` (
   PRIMARY KEY  (`uid`),
   KEY `cid` (`cid`,`tid`),
   KEY `succ` (`succ`,`err`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_crons`;
 CREATE TABLE `sea_crons` (
@@ -212,17 +214,17 @@ CREATE TABLE `sea_crons` (
   `minute` char(36) NOT NULL default '',
   PRIMARY KEY  (`cronid`),
   KEY `nextrun` (`available`,`nextrun`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_data`;
 CREATE TABLE `sea_data` (
   `v_id` mediumint(8) unsigned NOT NULL auto_increment,
   `tid` smallint(8) unsigned NOT NULL default '0',
-  `v_name` char(255) NOT NULL default '',
+  `v_name` varchar(120) NOT NULL default '',
   `v_state` int(10) unsigned NOT NULL default '0',
-  `v_pic` char(255) NOT NULL default '',
-  `v_spic` char(255) NOT NULL default '',
-  `v_gpic` char(255) NOT NULL default '',
+  `v_pic` varchar(255) NOT NULL default '',
+  `v_spic` varchar(255) NOT NULL default '',
+  `v_gpic` varchar(255) NOT NULL default '',
   `v_hit` mediumint(8) unsigned NOT NULL default '0',
   `v_money` smallint(6) NOT NULL default '0',
   `v_vip` varchar(255) NOT NULL default '',
@@ -233,14 +235,14 @@ CREATE TABLE `sea_data` (
   `v_wrong` smallint(8) unsigned NOT NULL default '0',
   `v_ismake` smallint(1) unsigned NOT NULL default '0',
   `v_actor` varchar(200) default NULL,
-  `v_color` char(7) NOT NULL default '',
+  `v_color` varchar(7) NOT NULL default '',
   `v_publishyear` int(10) NULL default '0',
-  `v_publisharea` char(20) NOT NULL default '',
+  `v_publisharea` varchar(20) NOT NULL default '',
   `v_addtime` int(10) unsigned NOT NULL default '0',
   `v_topic` mediumint(8) unsigned NOT NULL default '0',
-  `v_note` char(30) NOT NULL default '',
-  `v_tags` char(30) NOT NULL default '',
-  `v_letter` char(3) NOT NULL default '',
+  `v_note` varchar(30) NOT NULL default '',
+  `v_tags` varchar(30) NOT NULL default '',
+  `v_letter` varchar(3) NOT NULL default '',
   `v_isunion` smallint(6) NOT NULL default '0',
   `v_recycled` smallint(6) NOT NULL default '0',
   `v_director` varchar(200) default NULL,
@@ -250,13 +252,13 @@ CREATE TABLE `sea_data` (
   `v_scorenum` int(10) default '1',
   `v_extratype` text,
   `v_jq` text,
-  `v_nickname` CHAR( 60 ) NULL ,
-  `v_reweek` CHAR( 60 ) NULL ,
+  `v_nickname` varchar(60) NULL ,
+  `v_reweek` varchar(60) NULL ,
   `v_douban` FLOAT NULL default '0',
   `v_mtime` FLOAT NULL default '0',
   `v_imdb` FLOAT NULL default '0',
-  `v_tvs` CHAR( 60 ) NULL ,
-  `v_company` CHAR( 60 ) NULL ,
+  `v_tvs` varchar(60) NULL ,
+  `v_company` varchar(60) NULL ,
   `v_dayhit` INT( 10 ) NULL ,
   `v_weekhit` INT( 10 ) NULL ,
   `v_monthhit` INT( 10 ) NULL ,
@@ -274,8 +276,15 @@ CREATE TABLE `sea_data` (
   PRIMARY KEY  (`v_id`),
   KEY `idx_tid` (`tid`,`v_recycled`,`v_addtime`),
   KEY `idx_addtime` (`v_addtime`),
-  KEY `idx_name` (`v_name`,`tid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  KEY `idx_name` (`v_name`,`tid`),
+  KEY `idx_rec_dayhit` (`v_recycled`,`v_dayhit`),
+  KEY `idx_rec_hit` (`v_recycled`,`v_hit`),
+  KEY `idx_rec_score` (`v_recycled`,`v_score`),
+  KEY `idx_rec_douban` (`v_recycled`,`v_douban`),
+  KEY `idx_tid_dayhit` (`tid`,`v_recycled`,`v_dayhit`),
+  KEY `idx_tid_hit` (`tid`,`v_recycled`,`v_hit`),
+  KEY `idx_tid_score` (`tid`,`v_recycled`,`v_score`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_favorite`;
 CREATE TABLE sea_favorite(
@@ -283,8 +292,10 @@ CREATE TABLE sea_favorite(
   `uid` int(11) NOT NULL default 0,
   `vid` int(11) NOT NULL default 0,
   `kptime` int(10) NOT NULL default 0,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  PRIMARY KEY  (`id`),
+  KEY `idx_vid` (`vid`),
+  KEY `idx_uid_vid` (`uid`,`vid`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_erradd`;
 CREATE TABLE `sea_erradd` (
@@ -296,7 +307,7 @@ CREATE TABLE `sea_erradd` (
   `sendtime` int(10) unsigned NOT NULL default '0',
   `ischeck` INT(1) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_flink`;
 CREATE TABLE `sea_flink` (
@@ -310,7 +321,7 @@ CREATE TABLE `sea_flink` (
   `dtime` int(10) unsigned NOT NULL default '0',
   `ischeck` smallint(6) NOT NULL default '1',
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_guestbook`;
 CREATE TABLE `sea_guestbook` (
@@ -325,8 +336,9 @@ CREATE TABLE `sea_guestbook` (
   `ischeck` smallint(6) NOT NULL default '1',
   `msg` text,
   PRIMARY KEY  (`id`),
-  KEY `ischeck` (`ischeck`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  KEY `ischeck` (`ischeck`),
+  KEY `idx_ischeck_id` (`ischeck`,`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_myad`;
 CREATE TABLE `sea_myad` (
@@ -338,7 +350,7 @@ CREATE TABLE `sea_myad` (
   `adsbody` text,
   PRIMARY KEY  (`aid`),
   KEY `timeset` (`timeset`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_mytag`;
 CREATE TABLE `sea_mytag` (
@@ -349,7 +361,7 @@ CREATE TABLE `sea_mytag` (
   `tagcontent` text,
   PRIMARY KEY  (`aid`),
   KEY `tagname` (`tagname`,`addtime`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_news`;
 CREATE TABLE `sea_news` (
@@ -383,7 +395,7 @@ CREATE TABLE `sea_news` (
   PRIMARY KEY  (`n_id`),
   KEY `tid` (`n_rank`,`tid`,`n_commend`,`n_hit`),
   KEY `v_addtime` (`n_addtime`,`n_digg`,`n_tread`,`n_isunion`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_playdata`;
 CREATE TABLE `sea_playdata` (
@@ -392,7 +404,7 @@ CREATE TABLE `sea_playdata` (
   `body` mediumtext,
   `body1` mediumtext,
   PRIMARY KEY  (`v_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_search_keywords`;
 CREATE TABLE `sea_search_keywords` (
@@ -403,8 +415,10 @@ CREATE TABLE `sea_search_keywords` (
   `result` mediumint(8) unsigned NOT NULL default '0',
   `lasttime` int(10) unsigned NOT NULL default '0',
   `tid` smallint(5) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`aid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  PRIMARY KEY  (`aid`),
+  UNIQUE KEY `uk_keyword` (`keyword`),
+  KEY `idx_lasttime_count` (`lasttime`,`count`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_tags`;
 CREATE TABLE `sea_tags` (
@@ -415,7 +429,7 @@ CREATE TABLE `sea_tags` (
   PRIMARY KEY  (`tagid`),
   KEY `usenum` (`usenum`),
   KEY `tag` (`tag`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_temp`;
 CREATE TABLE `sea_temp` (
@@ -438,7 +452,7 @@ CREATE TABLE `sea_temp` (
   PRIMARY KEY  (`v_id`),
   KEY `tid` (`tid`),
   KEY `v_addtime` (`v_addtime`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_topic`;
 CREATE TABLE `sea_topic` (
@@ -458,7 +472,7 @@ CREATE TABLE `sea_topic` (
   `addtime` INT(10) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `sort` (`sort`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_type`;
 CREATE TABLE `sea_type` (
@@ -479,7 +493,7 @@ CREATE TABLE `sea_type` (
   PRIMARY KEY  (`tid`),
   KEY `upid` (`upid`,`ishidden`),
   KEY `torder` (`torder`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_jqtype`;
 CREATE TABLE `sea_jqtype` (
@@ -488,7 +502,7 @@ CREATE TABLE `sea_jqtype` (
   `tname` char(30) NOT NULL default '',
   `ishidden` smallint(6) NOT NULL default '0',
   PRIMARY KEY  (`tid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_member`;
 CREATE TABLE `sea_member` (
@@ -510,8 +524,10 @@ CREATE TABLE `sea_member` (
   `msgbody` TEXT NULL, 
   `msgstate` VARCHAR(2) NOT NULL,
   `pic` VARCHAR(255) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `uk_username` (`username`),
+  KEY `idx_email` (`email`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_member_group`;
 CREATE TABLE `sea_member_group` (
@@ -522,7 +538,7 @@ CREATE TABLE `sea_member_group` (
   `g_upgrade` int(11) NOT NULL default '0',
   `g_authvalue` int(11) NOT NULL default '0',
   PRIMARY KEY  (`gid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_buy`;
 CREATE TABLE IF NOT EXISTS `sea_buy` (
@@ -533,7 +549,7 @@ CREATE TABLE IF NOT EXISTS `sea_buy` (
   `vpaypoints` int(10) NOT NULL DEFAULT '0',
   `kptime` int(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_cck`;
 CREATE TABLE IF NOT EXISTS `sea_cck` (
@@ -546,7 +562,7 @@ CREATE TABLE IF NOT EXISTS `sea_cck` (
   `status` varchar(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `sea_ie`;
 CREATE TABLE IF NOT EXISTS `sea_ie` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -554,7 +570,7 @@ CREATE TABLE IF NOT EXISTS `sea_ie` (
   `addtime` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `sea_zyk`;
 CREATE TABLE IF NOT EXISTS `sea_zyk` (
   `zid` int(6) NOT NULL AUTO_INCREMENT,
@@ -565,7 +581,7 @@ CREATE TABLE IF NOT EXISTS `sea_zyk` (
   `filter_config` TEXT COMMENT '过滤配置(JSON格式)',
   `replace_config` TEXT COMMENT '替换配置(JSON格式)',
   PRIMARY KEY (`zid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_hyzbuy`;
 CREATE TABLE IF NOT EXISTS `sea_hyzbuy` (
@@ -576,7 +592,7 @@ CREATE TABLE IF NOT EXISTS `sea_hyzbuy` (
   `mon` int(6) NOT NULL,
   `paytime` int(10) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_danmaku_report`;
 CREATE TABLE IF NOT EXISTS `sea_danmaku_report` (
@@ -588,7 +604,7 @@ CREATE TABLE IF NOT EXISTS `sea_danmaku_report` (
   `ip` varchar(16) NOT NULL COMMENT '发送弹幕的IP地址',
   PRIMARY KEY (`text`),
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_danmaku_ip`;
 CREATE TABLE IF NOT EXISTS `sea_danmaku_ip` (
@@ -596,7 +612,7 @@ CREATE TABLE IF NOT EXISTS `sea_danmaku_ip` (
   `c` int(5) NOT NULL DEFAULT '1' COMMENT '规定时间内的发送次数',
   `time` int(10) NOT NULL,
   PRIMARY KEY (`ip`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `sea_danmaku_list`;
 CREATE TABLE IF NOT EXISTS `sea_danmaku_list` (
@@ -612,4 +628,4 @@ CREATE TABLE IF NOT EXISTS `sea_danmaku_list` (
   `user` varchar(20) NOT NULL COMMENT '用户名',
   PRIMARY KEY (`cid`),
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
