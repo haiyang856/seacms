@@ -229,6 +229,7 @@ function upd_action_check()
 	$local  = upd_local_version();
 	$latest = upd_fetch_latest();
 	$probe  = upd_probe_zip();
+	$local['time_text'] = $local['time'] > 0 ? date('Y-m-d H:i:s', $local['time']) : '';
 	if (!$latest['ok']) {
 		upd_json(array(
 			'ok'      => false,
@@ -238,11 +239,13 @@ function upd_action_check()
 			'errors'  => $latest['errors']
 		));
 	}
-	$hasUpdate = ($latest['data']['time'] > $local['time']) || ($latest['data']['ver'] !== $local['ver']);
+	$latestData = $latest['data'];
+	$latestData['time_text'] = $latestData['time'] > 0 ? date('Y-m-d H:i:s', $latestData['time']) : '';
+	$hasUpdate = ($latestData['time'] > $local['time']) || ($latestData['ver'] !== $local['ver']);
 	upd_json(array(
 		'ok'        => true,
 		'local'     => $local,
-		'latest'    => $latest['data'],
+		'latest'    => $latestData,
 		'hasUpdate' => $hasUpdate,
 		'source'    => $latest['source'],
 		'network'   => $probe,
@@ -299,6 +302,43 @@ function upd_action_download()
 		'mirrors'  => upd_url_sources($updOfficialZip, $updMirrors),
 		'manual'   => 'data/update/update.zip'
 	));
+}
+
+/* ================= 动作：本地上传升级包 ================= */
+function upd_action_upload()
+{
+	global $updZip, $updDir, $updProgress;
+	if (!upd_csrf_ok()) upd_json(array('ok' => false, 'message' => 'CSRF 校验失败，请刷新页面重试'));
+	if (!upd_ensure_dir($updDir)) upd_json(array('ok' => false, 'message' => 'data/update 目录不可写'));
+	if (!isset($_FILES['file']) || !is_array($_FILES['file'])) upd_json(array('ok' => false, 'message' => '未接收到上传文件'));
+	$f = $_FILES['file'];
+	if (!empty($f['error'])) {
+		$map = array(
+			UPLOAD_ERR_INI_SIZE   => '文件超过服务器 upload_max_filesize 限制（'.ini_get('upload_max_filesize').'）',
+			UPLOAD_ERR_FORM_SIZE  => '文件超过表单允许大小',
+			UPLOAD_ERR_PARTIAL    => '文件仅上传了一部分，请重试',
+			UPLOAD_ERR_NO_FILE    => '未选择文件',
+			UPLOAD_ERR_NO_TMP_DIR => '服务器缺少临时目录',
+			UPLOAD_ERR_CANT_WRITE => '服务器临时目录不可写',
+			UPLOAD_ERR_EXTENSION  => '上传被 PHP 扩展拦截'
+		);
+		upd_json(array('ok' => false, 'message' => isset($map[$f['error']]) ? $map[$f['error']] : '上传失败（错误码 '.$f['error'].'）'));
+	}
+	if (!is_uploaded_file($f['tmp_name'])) upd_json(array('ok' => false, 'message' => '上传文件校验失败'));
+	$size = @filesize($f['tmp_name']);
+	if ($size <= 0) upd_json(array('ok' => false, 'message' => '上传文件为空'));
+	$zip = new ZipArchive();
+	if ($zip->open($f['tmp_name']) !== true) upd_json(array('ok' => false, 'message' => '文件不是有效的 ZIP 升级包'));
+	$hasSql = false;
+	for ($i = 0; $i < $zip->numFiles; $i++) {
+		$name = str_replace('\\', '/', $zip->getNameIndex($i));
+		if (preg_match('#(^|/)install/seacms\.sql$#i', $name)) { $hasSql = true; break; }
+	}
+	$zip->close();
+	if (!$hasSql) upd_json(array('ok' => false, 'message' => '升级包中未找到 install/seacms.sql，请确认下载的是完整升级包'));
+	if (!@move_uploaded_file($f['tmp_name'], $updZip)) upd_json(array('ok' => false, 'message' => '升级包保存失败，请检查 data/update 目录权限'));
+	@file_put_contents($updProgress, json_encode(array('status' => 'done', 'percent' => 100, 'download' => $size, 'total' => $size, 'url' => '本地上传'), JSON_UNESCAPED_UNICODE));
+	upd_json(array('ok' => true, 'size' => $size, 'size_text' => upd_size_text($size)));
 }
 
 /* ================= 动作：进度查询 ================= */
@@ -705,6 +745,20 @@ function upd_action_upgrade()
 	}
 	upd_emit('success', '解压完成');
 
+	/* 1.5 升级包版本一致性校验 */
+	$pkgVerFile = $root.'/data/admin/ver.json';
+	$pkgTime = 0;
+	if (is_file($pkgVerFile)) {
+		$pkgData = json_decode(@file_get_contents($pkgVerFile), true);
+		if (is_array($pkgData) && isset($pkgData['time'])) $pkgTime = (int)$pkgData['time'];
+	}
+	$localVer = upd_local_version();
+	if ($pkgTime > 0 && $pkgTime === (int)$localVer['time']) {
+		upd_rmdir($updPkg);
+		upd_emit('success', '升级包版本和当前版本一致，无需升级。');
+		exit();
+	}
+
 	/* 2. 递归遍历，权限校验与修正 */
 	upd_emit('info', '开始递归校验文件权限...');
 	$fileMap = array();
@@ -831,13 +885,15 @@ function upd_action_upgrade()
 $updAct = isset($_GET['act']) ? $_GET['act'] : '';
 if ($updAct === 'check') { upd_action_check(); }
 if ($updAct === 'download') { upd_action_download(); }
+if ($updAct === 'upload') { upd_action_upload(); }
 if ($updAct === 'progress') { upd_action_progress(); }
 if ($updAct === 'upgrade') { upd_action_upgrade(); }
 
 /* ================= 页面 ================= */
 $updLocal = upd_local_version();
-$updLocalTimeText = $updLocal['time'] > 0 ? date('Y-m-d H:i', $updLocal['time']) : '未知';
+$updLocalTimeText = $updLocal['time'] > 0 ? date('Y-m-d H:i:s', $updLocal['time']) : '未知';
 $updCsrf = admin_csrf_token();
+$updUploadMaxText = ini_get('upload_max_filesize');
 $updMirrorUrls = upd_url_sources($updOfficialZip, $updMirrors);
 ?>
 <!DOCTYPE html>
@@ -850,13 +906,19 @@ $updMirrorUrls = upd_url_sources($updOfficialZip, $updMirrors);
 <style>
 .upd-card{margin-bottom:14px;}
 .upd-row{padding:10px 14px;font-size:13px;line-height:1.9;}
-.upd-label{color:#666;display:inline-block;min-width:82px;}
+.upd-label{color:#666;display:inline-block;}
 .upd-ver{font-weight:bold;color:#1a5fb4;}
 .upd-muted{color:#888;}
 .upd-log{list-style:none;margin:0;padding:8px 14px;font-family:Menlo,Consolas,monospace;font-size:12px;max-height:320px;overflow:auto;background:#fafafa;border:1px solid #e5e5e5;}
 .upd-log li{padding:3px 0;border-bottom:1px dashed #eee;word-break:break-all;}
 .upd-success{color:#0a7d32;}
 .upd-tip-ok{color:#0a7d32;font-weight:bold;}
+.upd-tip-new{color:#d0021b;font-weight:bold;}
+.upd-spinner{display:inline-block;width:12px;height:12px;border:2px solid #c9d6e3;border-top-color:#1a73e8;border-radius:50%;margin-right:5px;vertical-align:-2px;animation:upd-spin .7s linear infinite;}
+@keyframes upd-spin{to{transform:rotate(360deg);}}
+#changelog{line-height:1.55;}
+#changelog li{color:#3f8f61;list-style:none;line-height:1.5;margin:1px 0;}
+#changelog li::before{content:'';display:inline-block;width:4px;height:4px;border-radius:50%;background:#8ec9a8;vertical-align:middle;margin-right:6px;position:relative;top:-1px;}
 .upd-error{color:#c62828;}
 .upd-info{color:#555;}
 .upd-time{color:#aaa;margin-right:6px;}
@@ -880,7 +942,7 @@ $updMirrorUrls = upd_url_sources($updOfficialZip, $updMirrors);
 <tr class="thead"><th colspan="2">版本信息</th></tr>
 <tr><td class="upd-row" colspan="2">
 	<span class="upd-label">当前版本：</span><span class="upd-ver" id="localVer"><?php echo htmlspecialchars($updLocal['ver'] !== '' ? $updLocal['ver'] : '未知', ENT_QUOTES, 'utf-8'); ?></span>
-	<span class="upd-muted">（<?php echo $updLocalTimeText; ?>）</span>
+	<span class="upd-muted" id="localTime">（<?php echo $updLocalTimeText; ?>）</span>
 	&nbsp;&nbsp;<span class="upd-label">最新版本：</span><span class="upd-ver" id="latestVer">检测中...</span>
 	<span class="upd-muted" id="latestTime"></span>
 	<div id="netInfo" class="upd-muted" style="margin-top:6px;"></div>
@@ -920,15 +982,19 @@ $updMirrorUrls = upd_url_sources($updOfficialZip, $updMirrors);
 </table>
 
 <div id="manualBox" class="upd-links" style="display:none;">
-	<b>自动下载失败，请手动升级：</b><br />
-	1. 使用下面的地址下载 ZIP 升级包；<br />
-	2. 将文件命名为 <b>update.zip</b>，上传到服务器 <b>data/update/</b> 目录；<br />
-	3. 点击下方「使用已上传的升级包继续」。<br /><br />
+	<b id="manualTitle">自动下载失败，请手动下载升级包：</b><br />
+	1. 点击下方官方或加速地址下载 ZIP 升级包（也可访问 <a href="https://github.com/<?php echo htmlspecialchars($updRepo, ENT_QUOTES, 'utf-8'); ?>" target="_blank">GitHub 仓库</a> 手动下载）；<br />
+	2. 选择已下载的 ZIP 文件，点击「上传并升级」，程序会自动上传并开始升级；<br />
+	3. 也可将文件命名为 <b>update.zip</b> 上传到服务器 <b>data/update/</b> 目录，再点击「使用已上传的升级包继续」。<br />
+	<span class="upd-muted">单个文件不超过 <?php echo htmlspecialchars($updUploadMaxText, ENT_QUOTES, 'utf-8'); ?>。</span><br /><br />
 	官方地址：<a id="manualOfficial" href="#" target="_blank"></a><br />
 	<?php foreach ($updMirrorUrls as $i => $u) { if ($i === 0) continue; ?>
 	加速地址 <?php echo $i; ?>：<a href="<?php echo htmlspecialchars($u, ENT_QUOTES, 'utf-8'); ?>" target="_blank"><?php echo htmlspecialchars($u, ENT_QUOTES, 'utf-8'); ?></a><br />
 	<?php } ?>
-	<br /><button type="button" class="upd-btn" id="btnManual">使用已上传的升级包继续</button>
+	<br /><input type="file" id="manualFile" accept=".zip,application/zip" />
+	<button type="button" class="upd-btn" id="btnUpload">上传并升级</button>
+	<button type="button" class="upd-btn gray" id="btnManual">使用已上传的升级包继续</button>
+	<div id="uploadTip" class="upd-muted" style="margin-top:6px;"></div>
 </div>
 
 </div>
@@ -941,6 +1007,12 @@ var OFFICIAL = <?php echo json_encode($updOfficialZip, JSON_UNESCAPED_SLASHES); 
 var busy = false;
 
 function $(id){ return document.getElementById(id); }
+function showManual(title){
+	if (title) $('manualTitle').textContent = title;
+	$('manualOfficial').textContent = OFFICIAL;
+	$('manualOfficial').href = OFFICIAL;
+	$('manualBox').style.display = 'block';
+}
 function addStep(status, msg){
 	var li = document.createElement('li');
 	li.className = 'upd-' + (status === 'success' ? 'success' : (status === 'error' ? 'error' : 'info'));
@@ -969,10 +1041,11 @@ function setBusy(v){
 function renderVersion(j){
 	if (j.local) {
 		$('localVer').textContent = j.local.ver || '未知';
+		if (j.local.time_text) $('localTime').textContent = '（' + j.local.time_text + '）';
 	}
 	if (j.latest) {
 		$('latestVer').textContent = j.latest.ver || '未知';
-		$('latestTime').textContent = j.latest.time ? '（' + new Date(j.latest.time * 1000).toLocaleString() + '）' : '';
+		$('latestTime').textContent = j.latest.time_text ? '（' + j.latest.time_text + '）' : '';
 		var list = $('changelog');
 		list.innerHTML = '';
 		var info = j.latest.info || [];
@@ -989,21 +1062,21 @@ function renderVersion(j){
 		}
 		$('changelogBox').style.display = j.hasUpdate ? 'block' : 'none';
 		$('checkTip').textContent = j.hasUpdate ? '发现可用更新' : '当前已是最新版本';
-		$('checkTip').className = j.hasUpdate ? 'upd-muted' : 'upd-tip-ok';
+		$('checkTip').className = j.hasUpdate ? 'upd-tip-new' : 'upd-tip-ok';
 	} else {
 		$('latestVer').textContent = '获取失败';
 	}
 	if (j.network) {
 		if (j.network.ok) {
-			$('netInfo').textContent = '升级包线路：' + (j.network.official ? 'GitHub 官方可用' : '官方不可用，已探测到可用加速线路');
+			$('netInfo').textContent = '升级线路：' + (j.network.official ? 'GitHub 官方可用' : '官方不可用，已探测到可用加速线路');
 		} else {
-			$('netInfo').textContent = '升级包线路：全部不可用，请检查网络或手动下载';
+			$('netInfo').textContent = '升级线路：全部不可用，请检查网络或手动下载';
 		}
 	}
 }
 function checkVersion(){
 	if (busy) return;
-	$('checkTip').textContent = '检测中...';
+	$('checkTip').innerHTML = '<span class="upd-spinner"></span>检测中...';
 	$('checkTip').className = 'upd-muted';
 	$('latestVer').textContent = '检测中...';
 	fetch('?act=check&_=' + Date.now())
@@ -1014,9 +1087,11 @@ function checkVersion(){
 				$('checkTip').textContent = '检测失败：' + (j.message || '网络异常');
 				$('checkTip').className = 'upd-muted';
 				$('changelogBox').style.display = 'none';
+				showManual('无法获取 GitHub 最新版本信息，请手动下载升级包：');
+				addStep('error', '无法获取 GitHub 最新版本信息，可以手动升级。如已完成升级，则无需理会。');
 			}
 		})
-		.catch(function(){ $('checkTip').textContent = '检测失败：网络请求异常'; $('checkTip').className = 'upd-muted'; });
+		.catch(function(){ $('checkTip').textContent = '检测失败：网络请求异常'; $('checkTip').className = 'upd-muted'; showManual('网络请求异常，无法获取 GitHub 最新版本信息，请手动下载升级包：'); });
 }
 function pollProgress(){
 	fetch('?act=progress&_=' + Date.now())
@@ -1056,18 +1131,14 @@ function doDownload(){
 			} else {
 				addStep('error', j.message || '下载失败');
 				if (j.errors) for (var i = 0; i < Math.min(j.errors.length, 3); i++) addStep('error', j.errors[i]);
-				$('manualOfficial').textContent = OFFICIAL;
-				$('manualOfficial').href = OFFICIAL;
-				$('manualBox').style.display = 'block';
+				showManual('自动下载失败，请手动下载升级包：');
 				setBusy(false);
 			}
 		})
 		.catch(function(e){
 			clearInterval(timer);
 			addStep('error', '下载请求异常：' + e);
-			$('manualOfficial').textContent = OFFICIAL;
-			$('manualOfficial').href = OFFICIAL;
-			$('manualBox').style.display = 'block';
+			showManual('网络异常，自动下载失败，请手动下载升级包：');
 			setBusy(false);
 		});
 }
@@ -1118,6 +1189,49 @@ function runUpgrade(){
 }
 $('btnRecheck').onclick = checkVersion;
 $('btnUpgrade').onclick = doDownload;
+$('btnUpload').onclick = function(){
+	if (busy) return;
+	var inp = $('manualFile');
+	if (!inp.files || !inp.files.length) {
+		$('uploadTip').className = 'upd-error';
+		$('uploadTip').textContent = '请先选择 ZIP 升级包';
+		return;
+	}
+	var f = inp.files[0];
+	if (!/\.zip$/i.test(f.name)) {
+		$('uploadTip').className = 'upd-error';
+		$('uploadTip').textContent = '仅支持 .zip 格式的升级包';
+		return;
+	}
+	setBusy(true);
+	$('uploadTip').className = 'upd-muted';
+	$('uploadTip').textContent = '正在上传 ' + f.name + '（' + fmtSize(f.size) + '）...';
+	addStep('info', '开始上传本地升级包：' + f.name + '（' + fmtSize(f.size) + '）');
+	var fd = new FormData();
+	fd.append('csrf_token', TOKEN);
+	fd.append('file', f);
+	fetch('?act=upload', { method: 'POST', body: fd })
+		.then(function(r){ return r.json(); })
+		.then(function(j){
+			if (j.ok) {
+				$('uploadTip').className = 'upd-success';
+				$('uploadTip').textContent = '上传完成（' + j.size_text + '），开始升级...';
+				addStep('success', '升级包上传完成（' + j.size_text + '）');
+				runUpgrade();
+			} else {
+				$('uploadTip').className = 'upd-error';
+				$('uploadTip').textContent = j.message || '上传失败';
+				addStep('error', j.message || '升级包上传失败');
+				setBusy(false);
+			}
+		})
+		.catch(function(e){
+			$('uploadTip').className = 'upd-error';
+			$('uploadTip').textContent = '上传请求异常：' + e;
+			addStep('error', '上传请求异常：' + e);
+			setBusy(false);
+		});
+};
 $('btnManual').onclick = function(){
 	if (busy) return;
 	addStep('info', '尝试使用 data/update/update.zip...');
