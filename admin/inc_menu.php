@@ -30,11 +30,12 @@ $menu=array (
 		'link'=>"index_body.php",
 		0=>"首页",
 		1=>"<a target='I2' href='index_body.php'>后台首页</a>",
-		2=>"<a target='I2' href='admin_info.php'>数据统计</a>",	
-		3=>"<a target='I2' href='admin_searchwords.php'>搜索统计</a>",	
-		4=>"<a target='I2' href='admin_menu.php'>快捷菜单</a>",	
+		2=>"<a target='I2' href='admin_update.php'>在线升级</a>",
+		3=>"<a target='I2' href='admin_info.php'>数据统计</a>",	
+		4=>"<a target='I2' href='admin_searchwords.php'>搜索统计</a>",	
+		5=>"<a target='I2' href='admin_menu.php'>快捷菜单</a>",	
 		
-		5=>"",
+		6=>"",
 	),
 	'content'=>array (
 		'link'=>"admin_video.php?action=else",
