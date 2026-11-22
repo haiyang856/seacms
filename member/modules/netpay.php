@@ -118,6 +118,13 @@ foreach ($available as $index => $item) {
         . '<span class="np-desc">' . member_e($item['desc']) . '</span>'
         . '</label>';
 }
+$usdtOn = false;
+foreach ($available as $item) {
+    if ($item['currency'] === 'USDT') {
+        $usdtOn = true;
+        break;
+    }
+}
 $presetsHtml = '';
 $min = floatval(netpay_cfg('pay_min_money', 1));
 $max = floatval(netpay_cfg('pay_max_money', 5000));
@@ -127,9 +134,22 @@ foreach (array(10, 50, 100, 200, 500) as $preset) {
     }
 }
 
+global $cfg_pointsname;
+$pointsName = member_e(isset($cfg_pointsname) ? $cfg_pointsname : '');
+$cnyPoints = rtrim(rtrim(number_format(floatval(netpay_cfg('pay_cny_points')), 2, '.', ''), '0'), '.');
+$usdtPoints = rtrim(rtrim(number_format(floatval(netpay_cfg('pay_usdt_points')), 2, '.', ''), '0'), '.');
+$rateHint = '（人民币 1 元 = ' . $cnyPoints . ' ' . $pointsName;
+if ($usdtOn) {
+    $rateHint .= '；USDT 1 枚 = ' . $usdtPoints . ' ' . $pointsName;
+}
+$rateHint .= '）';
+$limitHint = '单笔限额 ' . netpay_amount_plain($min) . ' - ' . netpay_amount_plain($max) . '（人民币按元' . ($usdtOn ? '，USDT 按枚' : '') . '）。';
+
 member_sets(array(
-    'pay_cny_points'  => rtrim(rtrim(number_format(floatval(netpay_cfg('pay_cny_points')), 2, '.', ''), '0'), '.'),
-    'pay_usdt_points' => rtrim(rtrim(number_format(floatval(netpay_cfg('pay_usdt_points')), 2, '.', ''), '0'), '.'),
+    'pay_cny_points'  => $cnyPoints,
+    'pay_usdt_points' => $usdtPoints,
+    'pay_rate_hint'   => $rateHint,
+    'pay_limit_hint'  => $limitHint,
     'pay_min_money'   => netpay_amount_plain($min),
     'pay_max_money'   => netpay_amount_plain($max),
     'pay_channels'    => $channelsHtml,

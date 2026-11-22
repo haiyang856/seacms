@@ -23,7 +23,7 @@
               {member:pay_presets}
               <input type="text" name="amount" id="netpayAmount" class="form-control netpay-amount" placeholder="自定义金额" autocomplete="off" />
             </div>
-            <div class="netpay-help">单笔限额 {member:pay_min_money} - {member:pay_max_money}（人民币按元，USDT 按枚）。</div>
+            <div class="netpay-help">{member:pay_limit_hint}</div>
           </div>
 
           <div class="netpay-block">
@@ -35,7 +35,7 @@
 
           <div class="netpay-preview">
             预计到账：<strong id="netpayPoints">0</strong> {member:pointsname}
-            <span class="netpay-rate">（人民币 1 元 = {member:pay_cny_points} {member:pointsname}；USDT 1 枚 = {member:pay_usdt_points} {member:pointsname}）</span>
+            <span class="netpay-rate">{member:pay_rate_hint}</span>
           </div>
 
           <div class="netpay-actions">
