@@ -39,5 +39,6 @@ function DoDrop(dbname)
 </head>
 
 <body>
+<?php $ai_widget_endpoint = '../admin_video.php?action=ai_help'; include dirname(__FILE__) . '/../../../../../include/ai_widget.php'; ?>
 </body>
 </html>

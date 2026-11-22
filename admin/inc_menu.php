@@ -102,6 +102,8 @@ $menu=array (
 		6=>"<a target='I2' href='admin_vpaylog.php'>视频购买记录</a>",
 		7=>"<a target='I2' href='admin_hyzlog.php'>会员购买记录</a>",
 		8=>"<a target='I2' href='admin_notify.php'>会员消息通知</a>",
+		9=>"",
+		10=>"<a target='I2' href='admin_dist.php'>分销代理系统</a>",
 	),
 	'tool'=>array (
 		'link'=>"admin_datarelate.php?action=repeat",

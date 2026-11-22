@@ -41,6 +41,11 @@ function netpay_create_order($uid, $uname, $amount, $currency, $channel, $extra 
     if (!in_array($channel, array('alipay', 'wechat', 'mazfu', 'usdt'), true)) {
         return array('ok' => false, 'error' => '不支持的支付方式');
     }
+    // 金额小数位校验：最多两位，避免静默四舍五入造成展示与记账不一致
+    $rawAmount = trim((string)$amount);
+    if (preg_match('/\.\d{3,}$/', $rawAmount)) {
+        return array('ok' => false, 'error' => '充值金额最多保留两位小数');
+    }
     $amount = netpay_normalize_amount($amount);
     if ($amount === false) {
         return array('ok' => false, 'error' => '充值金额需在 ' . netpay_cfg('pay_min_money') . ' - ' . netpay_cfg('pay_max_money') . ' 之间');

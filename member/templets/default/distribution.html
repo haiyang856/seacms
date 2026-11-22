@@ -1,0 +1,108 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>分销中心</h2>
+        <span class="card-sub">等级：{member:fx_grade} · 状态：{member:fx_status}</span>
+      </div>
+      <div class="card-body">
+        <div class="fx-tabs">
+          <a href="?action=fx" class="fx-tab {if:{member:fx_tab}==overview}active{end if}">概览</a>
+          <a href="?action=fx&do=team" class="fx-tab {if:{member:fx_tab}==team}active{end if}">我的团队</a>
+          <a href="?action=fx&do=commission" class="fx-tab {if:{member:fx_tab}==commission}active{end if}">佣金明细</a>
+          <a href="?action=fx&do=withdraw" class="fx-tab {if:{member:fx_tab}==withdraw}active{end if}">提现 / 兑换</a>
+          <a href="?action=fx&do=material" class="fx-tab {if:{member:fx_tab}==material}active{end if}">推广素材</a>
+        </div>
+
+        <div class="fx-stats">
+          <div class="fx-stat primary">
+            <div class="label">可提现余额（元）</div>
+            <div class="value">{member:fx_available}</div>
+            <div class="sub">待结算 {member:fx_pending} 元 · 冻结 {member:fx_frozen} 元</div>
+          </div>
+          <div class="fx-stat">
+            <div class="label">累计佣金（元）</div>
+            <div class="value">{member:fx_total}</div>
+            <div class="sub">已提现 {member:fx_withdrawn} 元</div>
+          </div>
+          <div class="fx-stat">
+            <div class="label">已转积分（元）</div>
+            <div class="value">{member:fx_points_converted}</div>
+            <div class="sub">负余额 {member:fx_negative} 元</div>
+          </div>
+        </div>
+
+        <div class="fx-team-row">
+          <div class="fx-team-item"><strong>{member:fx_team1}</strong><span>一级团队</span></div>
+          <div class="fx-team-item"><strong>{member:fx_team2}</strong><span>二级团队</span></div>
+          <div class="fx-team-item"><strong>{member:fx_team3}</strong><span>三级团队</span></div>
+        </div>
+
+        <div class="fx-invite">
+          <div class="fx-invite-info">
+            <h3>我的专属邀请</h3>
+            <p>邀请码：<strong class="fx-code">{member:fx_invite_code}</strong></p>
+            <p class="fx-label">推广链接</p>
+            <input type="text" class="fx-link" readonly value="{member:fx_invite_link}" onclick="this.select();">
+            <p class="fx-actions">
+              <button type="button" class="btn btn-primary fx-copy" data-copy="{member:fx_invite_link}">复制链接</button>
+              <a class="btn btn-default" href="?action=fx&do=material">获取推广素材</a>
+            </p>
+            <p class="fx-tip">通过您的链接注册的用户将成为您的下级，其真实消费按 L1/L2/L3 规则计佣，T+{member:fx_observe_days} 结算（新用户风控观察期 T+{member:fx_newbie_observe_days}）。</p>
+          </div>
+          <div class="fx-invite-qr">
+            <div class="fx-qr" data-fx-qr data-link="{member:fx_invite_link}"></div>
+            <p class="fx-qr-tip">扫码注册自动绑定</p>
+          </div>
+        </div>
+
+        {if:{member:fx_can_bind}==1}
+        <div class="fx-bind">
+          <h3>绑定邀请人</h3>
+          <p class="fx-tip">注册满 {member:fx_register_days} 天内、且未产生消费、无下级时可补绑一次；绑定后不可更改。</p>
+          <form method="post" action="?action=fx" class="fx-form">
+            <input type="hidden" name="csrf_token" value="{member:csrftoken}">
+            <input type="hidden" name="op" value="bind">
+            <input type="text" name="ref" maxlength="16" placeholder="请输入邀请码" required>
+            <button type="submit" class="btn btn-primary">确认绑定</button>
+          </form>
+        </div>
+        {end if}
+
+        <script src="../pic/member/qrcode.min.js"></script>
+        <script>
+        (function () {
+          document.querySelectorAll('.fx-copy').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var text = btn.getAttribute('data-copy') || '';
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function () { alert('链接已复制'); });
+              } else {
+                window.prompt('请手动复制链接', text);
+              }
+            });
+          });
+          document.querySelectorAll('[data-fx-qr]').forEach(function (el) {
+            var link = el.getAttribute('data-link') || '';
+            if (!window.QRCode || link === '') {
+              el.innerHTML = '<a href="' + link + '" target="_blank" rel="noopener">打开推广链接</a>';
+              return;
+            }
+            new QRCode(el, {
+              text: link,
+              width: 180,
+              height: 180,
+              colorDark: '#000000',
+              colorLight: '#ffffff',
+              correctLevel: QRCode.CorrectLevel.M
+            });
+          });
+        })();
+        </script>
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

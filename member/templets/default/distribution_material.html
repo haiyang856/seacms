@@ -1,0 +1,69 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>推广素材</h2>
+        <span class="card-sub">复制文案或二维码，邀请好友注册</span>
+      </div>
+      <div class="card-body">
+        <div class="fx-tabs">
+          <a href="?action=fx" class="fx-tab">概览</a>
+          <a href="?action=fx&do=team" class="fx-tab">我的团队</a>
+          <a href="?action=fx&do=commission" class="fx-tab">佣金明细</a>
+          <a href="?action=fx&do=withdraw" class="fx-tab">提现 / 兑换</a>
+          <a href="?action=fx&do=material" class="fx-tab {if:{member:fx_tab}==material}active{end if}">推广素材</a>
+        </div>
+
+        <div class="fx-material">
+          <div class="fx-material-code">
+            <p>我的邀请码</p>
+            <strong class="fx-code">{member:fx_invite_code}</strong>
+          </div>
+          <div class="fx-material-text">
+            <p class="fx-label">推广文案</p>
+            <textarea readonly rows="4" onclick="this.select();">{member:fx_share_text}</textarea>
+            <p class="fx-label">推广链接</p>
+            <input type="text" class="fx-link" readonly value="{member:fx_invite_link}" onclick="this.select();">
+          </div>
+          <div class="fx-material-qr">
+            <div class="fx-qr" data-fx-qr data-link="{member:fx_invite_link}"></div>
+            <p>扫码注册自动绑定</p>
+          </div>
+        </div>
+
+        <div class="fx-rules fx-material-rules">
+          <h3>推广规范</h3>
+          <ul>
+            <li>仅可分享真实影视内容与服务，不得承诺收益或使用虚假宣传。</li>
+            <li>禁止自荐、循环绑定、买卖关系等违规行为，一经发现冻结佣金。</li>
+            <li>佣金仅对真实消费计算，退款订单将冲正对应佣金。</li>
+            <li>三级为上限，团队层级可见范围仅限直属 3 级。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<script src="../pic/member/qrcode.min.js"></script>
+<script>
+(function () {
+  document.querySelectorAll('[data-fx-qr]').forEach(function (el) {
+    var link = el.getAttribute('data-link') || '';
+    if (!window.QRCode || link === '') {
+      el.innerHTML = '<a href="' + link + '" target="_blank" rel="noopener">打开推广链接</a>';
+      return;
+    }
+    new QRCode(el, {
+      text: link,
+      width: 180,
+      height: 180,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  });
+})();
+</script>
+{seacms:foot}

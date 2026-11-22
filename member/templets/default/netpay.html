@@ -71,6 +71,11 @@ function npRefreshPoints() {
   if (el) { el.innerHTML = points; }
 }
 function netpaySubmitCheck() {
+  var rawAmount = (document.getElementById('netpayAmount').value || '').trim();
+  if (/\.\d{3,}$/.test(rawAmount)) {
+    alert('充值金额最多保留两位小数');
+    return false;
+  }
   var amount = parseFloat(document.getElementById('netpayAmount').value);
   if (isNaN(amount) || amount <= 0) {
     alert('请输入充值金额');

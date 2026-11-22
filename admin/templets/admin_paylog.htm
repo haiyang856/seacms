@@ -8,19 +8,17 @@
 <script src="js/common.js" type="text/javascript"></script>
 <script src="js/main.js" type="text/javascript"></script>
 <style type="text/css">
-.paylog-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 4px;}
-.paylog-card{background:#fff;border:1px solid #e6ebf0;border-radius:6px;padding:14px 16px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
-.paylog-card .label{color:#6b7280;font-size:13px;margin-bottom:6px;}
-.paylog-card .value{font-size:22px;font-weight:600;color:#1f2937;line-height:1.2;}
-.paylog-card .sub{color:#98a2b3;font-size:12px;margin-top:6px;}
+.paylog-stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:10px 0 4px;}
+.paylog-card{background:#fff;border:1px solid #e6ebf0;border-radius:6px;padding:9px 10px;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+.paylog-card .label{color:#6b7280;font-size:11px;margin-bottom:3px;}
+.paylog-card .value{font-size:17px;font-weight:600;color:#1f2937;line-height:1.2;}
+.paylog-card .sub{color:#98a2b3;font-size:11px;margin-top:3px;}
 .paylog-card.card-r{border-left:4px solid #f59e0b;}
 .paylog-card.online-r{border-left:4px solid #2563eb;}
 .paylog-card.dist-r{border-left:4px solid #10b981;}
 .paylog-card.sign-r{border-left:4px solid #8b5cf6;}
 .paylog-card.promo-r{border-left:4px solid #0ea5e9;}
 .paylog-card.reg-r{border-left:4px solid #f43f5e;}
-.paylog-stats.secondary{margin-top:10px;}
-.paylog-stats.secondary .value{font-size:18px;}
 .paylog-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;line-height:18px;}
 .paylog-b1{background:#fff7e6;color:#ad6800;}
 .paylog-b2{background:#e6f4ff;color:#0958d9;}
@@ -45,9 +43,13 @@
 .paylog-filter{background:#fafbfc;border:1px solid #eef1f4;border-radius:6px;padding:10px 12px;margin:10px 0;}
 .paylog-filter input,.paylog-filter select{height:28px;line-height:28px;padding:0 6px;border:1px solid #d5dbe1;border-radius:3px;font-size:12px;}
 .paylog-filter input[type=text]{width:150px;}
+.paylog-filter input.paylog-uname{width:75px;}
+.paylog-filter input.paylog-date{width:100px;}
 .paylog-empty{text-align:center;color:#8c8c8c;padding:28px 0;}
 .paylog-small{color:#98a2b3;font-size:11px;}
-@media screen and (max-width:900px){.paylog-stats{grid-template-columns:1fr;}}
+@media screen and (max-width:720px){.paylog-stats{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media screen and (max-width:520px){.paylog-stats{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media screen and (max-width:380px){.paylog-stats{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -63,38 +65,35 @@
             <div class="paylog-stats">
               <div class="paylog-card card-r">
                 <div class="label">充值卡充值总额</div>
-                <div class="value"><?php echo number_format($overall['card_points']); ?> <span style="font-size:13px;font-weight:400;color:#6b7280;">积分</span></div>
+                <div class="value"><?php echo number_format($overall['card_points']); ?> <span style="font-size:11px;font-weight:400;color:#6b7280;">积分</span></div>
                 <div class="sub">已入账 <?php echo intval($overall['card_count']); ?> 笔</div>
               </div>
               <div class="paylog-card online-r">
                 <div class="label">在线充值总额</div>
                 <div class="value">￥<?php echo number_format($overall['online_cny'], 2); ?></div>
-                <div class="sub">USDT：<?php echo rtrim(rtrim(number_format($overall['online_usdt'], 2, '.', ''), '0'), '.'); ?> USDT · 已入账 <?php echo intval($overall['online_count']); ?> 笔</div>
+                <div class="sub">已入账 <?php echo intval($overall['online_count']); ?> 笔</div>
               </div>
               <div class="paylog-card dist-r">
                 <div class="label">分销提成总额</div>
-                <div class="value"><?php echo number_format($overall['dist_points']); ?> <span style="font-size:13px;font-weight:400;color:#6b7280;">积分</span></div>
+                <div class="value"><?php echo number_format($overall['dist_points']); ?> <span style="font-size:11px;font-weight:400;color:#6b7280;">积分</span></div>
                 <div class="sub">已入账 <?php echo intval($overall['dist_count']); ?> 笔</div>
               </div>
-            </div>
-            <div class="paylog-stats secondary">
               <div class="paylog-card sign-r">
                 <div class="label">签到奖励总额</div>
-                <div class="value"><?php echo number_format($overall['sign_points']); ?> <span style="font-size:13px;font-weight:400;color:#6b7280;">积分</span></div>
+                <div class="value"><?php echo number_format($overall['sign_points']); ?> <span style="font-size:11px;font-weight:400;color:#6b7280;">积分</span></div>
                 <div class="sub">已发放 <?php echo intval($overall['sign_count']); ?> 笔</div>
               </div>
               <div class="paylog-card promo-r">
                 <div class="label">推广链接奖励总额</div>
-                <div class="value"><?php echo number_format($overall['promo_points']); ?> <span style="font-size:13px;font-weight:400;color:#6b7280;">积分</span></div>
+                <div class="value"><?php echo number_format($overall['promo_points']); ?> <span style="font-size:11px;font-weight:400;color:#6b7280;">积分</span></div>
                 <div class="sub">已发放 <?php echo intval($overall['promo_count']); ?> 笔</div>
               </div>
               <div class="paylog-card reg-r">
                 <div class="label">注册赠送积分总额</div>
-                <div class="value"><?php echo number_format($overall['reg_points']); ?> <span style="font-size:13px;font-weight:400;color:#6b7280;">积分</span></div>
+                <div class="value"><?php echo number_format($overall['reg_points']); ?> <span style="font-size:11px;font-weight:400;color:#6b7280;">积分</span></div>
                 <div class="sub">已发放 <?php echo intval($overall['reg_count']); ?> 笔</div>
               </div>
             </div>
-            <div class="paylog-small">筛选范围内已入账合计：充值卡 <?php echo number_format($filtered['card_points']); ?> 积分 · 在线 ￥<?php echo number_format($filtered['online_cny'], 2); ?> + <?php echo rtrim(rtrim(number_format($filtered['online_usdt'], 2, '.', ''), '0'), '.'); ?> USDT · 分销 <?php echo number_format($filtered['dist_points']); ?> 积分 · 签到 <?php echo number_format($filtered['sign_points']); ?> 积分 · 推广 <?php echo number_format($filtered['promo_points']); ?> 积分 · 注册 <?php echo number_format($filtered['reg_points']); ?> 积分</div>
           </td>
         </tr>
         <tr>
@@ -114,6 +113,7 @@
               <select name="status">
                 <option value=""<?php echo $status === '' ? ' selected' : ''; ?>>全部</option>
                 <option value="1"<?php echo $status === '1' ? ' selected' : ''; ?>>已完成</option>
+                <option value="2"<?php echo $status === '2' ? ' selected' : ''; ?>>已关闭</option>
                 <option value="4"<?php echo $status === '4' ? ' selected' : ''; ?>>已退款</option>
                 <option value="0"<?php echo $status === '0' ? ' selected' : ''; ?>>待支付</option>
                 <option value="9"<?php echo $status === '9' ? ' selected' : ''; ?>>未知</option>
@@ -130,9 +130,9 @@
                 <option value="promo"<?php echo $channel === 'promo' ? ' selected' : ''; ?>>推广链接</option>
                 <option value="reg"<?php echo $channel === 'reg' ? ' selected' : ''; ?>>注册赠送</option>
               </select>
-              &nbsp;用户：<input type="text" name="uname" value="<?php echo netpay_html($uname); ?>" placeholder="用户名或UID" />
-              &nbsp;时间：<input type="text" name="startdate" value="<?php echo netpay_html($startdate); ?>" placeholder="2026-01-01" />
-              - <input type="text" name="enddate" value="<?php echo netpay_html($enddate); ?>" placeholder="2026-12-31" />
+              &nbsp;用户：<input type="text" name="uname" class="paylog-uname" value="<?php echo netpay_html($uname); ?>" placeholder="用户名或UID" />
+              &nbsp;时间：<input type="text" name="startdate" class="paylog-date" value="<?php echo netpay_html($startdate); ?>" placeholder="2026-01-01" />
+              - <input type="text" name="enddate" class="paylog-date" value="<?php echo netpay_html($enddate); ?>" placeholder="2026-12-31" />
               <input type="submit" value="筛 选" class="btn" />
               <input type="button" value="重 置" class="btn" onclick="location.href='admin_paylog.php';" />
             </form>
@@ -159,7 +159,7 @@
             $rowType = intval($row['rtype']);
             $rowStatus = intval($row['status']);
             $badge = $rowType === 1 ? 'paylog-b1' : ($rowType === 2 ? 'paylog-b2' : ($rowType === 3 ? 'paylog-b3' : ($rowType === 4 ? 'paylog-b4' : ($rowType === 5 ? 'paylog-b5' : 'paylog-b6'))));
-            $statusClass = in_array($rowStatus, array(0, 1, 4), true) ? 'paylog-s' . $rowStatus : 'paylog-s-unknown';
+            $statusClass = in_array($rowStatus, array(0, 1, 2, 4), true) ? 'paylog-s' . $rowStatus : 'paylog-s-unknown';
         ?>
         <tr bgcolor="#FFF" onmouseover="style.backgroundColor='#E6F2FB'" onmouseout="style.backgroundColor='#FFF'">
           <td height="30" class="td_border" style="text-align:center"><?php echo intval($row['id']); ?></td>

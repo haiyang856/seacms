@@ -1,0 +1,68 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>佣金明细</h2>
+        <span class="card-sub">共 {member:fx_commission_total} 条 · 待结算佣金 T+{member:fx_observe_days} 后转入可提现（新用户风控观察期 T+{member:fx_newbie_observe_days}）</span>
+      </div>
+      <div class="card-body">
+        <div class="fx-tabs">
+          <a href="?action=fx" class="fx-tab">概览</a>
+          <a href="?action=fx&do=team" class="fx-tab">我的团队</a>
+          <a href="?action=fx&do=commission" class="fx-tab {if:{member:fx_tab}==commission}active{end if}">佣金明细</a>
+          <a href="?action=fx&do=withdraw" class="fx-tab">提现 / 兑换</a>
+          <a href="?action=fx&do=material" class="fx-tab">推广素材</a>
+        </div>
+
+        <div class="fx-subtabs">
+          <a href="?action=fx&do=commission" class="{if:{member:fx_st}==-1}active{end if}">全部</a>
+          <a href="?action=fx&do=commission&st=0" class="{if:{member:fx_st}==0}active{end if}">待结算</a>
+          <a href="?action=fx&do=commission&st=1" class="{if:{member:fx_st}==1}active{end if}">可提现</a>
+          <a href="?action=fx&do=commission&st=2" class="{if:{member:fx_st}==2}active{end if}">提现冻结</a>
+          <a href="?action=fx&do=commission&st=3" class="{if:{member:fx_st}==3}active{end if}">已发放</a>
+          <a href="?action=fx&do=commission&st=4" class="{if:{member:fx_st}==4}active{end if}">已取消</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table member-table">
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th class="hidden-xs">订单号</th>
+                <th>购买者</th>
+                <th>层级</th>
+                <th class="hidden-xs">计佣基数</th>
+                <th>比例</th>
+                <th>佣金（元）</th>
+                <th>状态</th>
+                <th class="hidden-xs">预计结算</th>
+              </tr>
+            </thead>
+            <tbody>
+              {member:fx_commission}
+              <tr>
+                <td>[fx_commission:time]</td>
+                <td class="hidden-xs fx-order">[fx_commission:order]</td>
+                <td>[fx_commission:buyer]</td>
+                <td>[fx_commission:level]</td>
+                <td class="hidden-xs">[fx_commission:base]</td>
+                <td>[fx_commission:rate]</td>
+                <td>[fx_commission:amount]</td>
+                <td><span class="fx-badge [fx_commission:statusclass]">[fx_commission:status]</span></td>
+                <td class="hidden-xs">[fx_commission:settle]</td>
+              </tr>
+              {/member:fx_commission}
+              {member:fx_commission-empty}
+              <tr><td colspan="9" class="text-center text-muted">暂无佣金记录</td></tr>
+              {/member:fx_commission-empty}
+            </tbody>
+          </table>
+        </div>
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

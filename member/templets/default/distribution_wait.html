@@ -1,0 +1,42 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>分销中心</h2>
+        <span class="card-sub">当前状态：{member:fx_status}</span>
+      </div>
+      <div class="card-body">
+        <div class="fx-wait">
+          <h3>{member:fx_wait_title}</h3>
+          <p class="fx-reason">{member:fx_reason}</p>
+          <div class="fx-progress">
+            <div class="fx-progress-bar" style="width:{member:fx_progress}%"></div>
+          </div>
+          <p class="fx-progress-text">累计有效消费 <strong>{member:fx_consume}</strong> 元 / 达标 {member:fx_threshold} 元</p>
+          <ul class="fx-rules">
+            <li>账号状态正常，且已完成邮箱验证（{member:fx_email}）</li>
+            <li>注册满 {member:fx_register_days} 天，近 90 天无违规记录</li>
+            <li>累计有效消费达到门槛后，系统每日自动开通并生成专属邀请码</li>
+            <li>佣金仅来自真实商品/会员消费，充值不计佣</li>
+          </ul>
+        </div>
+
+        {if:{member:fx_can_bind}==1}
+        <div class="fx-bind">
+          <h3>绑定邀请人</h3>
+          <p class="fx-tip">若您通过他人邀请链接注册但未自动绑定，可在注册 {member:fx_register_days} 天内补绑一次；绑定后不可更改。</p>
+          <form method="post" action="?action=fx" class="fx-form">
+            <input type="hidden" name="csrf_token" value="{member:csrftoken}">
+            <input type="hidden" name="op" value="bind">
+            <input type="text" name="ref" maxlength="16" placeholder="请输入邀请码" required>
+            <button type="submit" class="btn btn-primary">确认绑定</button>
+          </form>
+        </div>
+        {end if}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

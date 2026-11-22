@@ -1,0 +1,96 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>提现 / 兑换</h2>
+        <span class="card-sub">最低提现 {member:fx_min_withdraw} 元 · 审核通过后线下打款</span>
+      </div>
+      <div class="card-body">
+        <div class="fx-tabs">
+          <a href="?action=fx" class="fx-tab">概览</a>
+          <a href="?action=fx&do=team" class="fx-tab">我的团队</a>
+          <a href="?action=fx&do=commission" class="fx-tab">佣金明细</a>
+          <a href="?action=fx&do=withdraw" class="fx-tab {if:{member:fx_tab}==withdraw}active{end if}">提现 / 兑换</a>
+          <a href="?action=fx&do=material" class="fx-tab">推广素材</a>
+        </div>
+
+        <div class="fx-balance">
+          <div><span>可提现余额</span><strong>{member:fx_available} 元</strong></div>
+          <div><span>提现冻结</span><strong>{member:fx_frozen} 元</strong></div>
+          <div><span>待结算</span><strong>{member:fx_pending} 元</strong></div>
+        </div>
+
+        <div class="fx-two-col">
+          <div class="fx-form-box">
+            <h3>申请提现</h3>
+            <form method="post" action="?action=fx&do=withdraw" class="fx-form fx-form-col">
+              <input type="hidden" name="csrf_token" value="{member:csrftoken}">
+              <input type="hidden" name="op" value="withdraw">
+              <label>提现金额（元）</label>
+              <input type="text" name="amount" placeholder="最低 {member:fx_min_withdraw}" required>
+              <label>收款方式</label>
+              <select name="channel">
+                <option value="alipay">支付宝</option>
+                <option value="wechat">微信</option>
+                <option value="bank">银行卡</option>
+                <option value="usdt">USDT</option>
+              </select>
+              <label>收款账户</label>
+              <input type="text" name="account_info" maxlength="200" placeholder="账号 / 姓名 / 开户行" required>
+              <button type="submit" class="btn btn-primary">提交申请</button>
+            </form>
+          </div>
+          <div class="fx-form-box">
+            <h3>佣金转积分</h3>
+            <p class="fx-tip">1 元 = {member:fx_exchange_rate} 积分，实时到账，转换后不可撤回。</p>
+            <form method="post" action="?action=fx&do=withdraw" class="fx-form fx-form-col" onsubmit="return confirm('确认将佣金兑换为积分？');">
+              <input type="hidden" name="csrf_token" value="{member:csrftoken}">
+              <input type="hidden" name="op" value="convert">
+              <label>兑换金额（元）</label>
+              <input type="text" name="amount" placeholder="不超过可提现余额" required>
+              <button type="submit" class="btn btn-default">立即兑换</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table member-table">
+            <thead>
+              <tr>
+                <th>申请时间</th>
+                <th class="hidden-xs">提现单号</th>
+                <th>金额（元）</th>
+                <th class="hidden-xs">手续费</th>
+                <th class="hidden-xs">实付</th>
+                <th class="hidden-xs">方式</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {member:fx_withdraw}
+              <tr>
+                <td>[fx_withdraw:time]</td>
+                <td class="hidden-xs fx-order">[fx_withdraw:no]</td>
+                <td>[fx_withdraw:amount]</td>
+                <td class="hidden-xs">[fx_withdraw:fee]</td>
+                <td class="hidden-xs">[fx_withdraw:real]</td>
+                <td class="hidden-xs">[fx_withdraw:channel]</td>
+                <td><span class="fx-badge [fx_withdraw:statusclass]">[fx_withdraw:status]</span></td>
+                <td>[fx_withdraw:cancel_html]</td>
+              </tr>
+              {/member:fx_withdraw}
+              {member:fx_withdraw-empty}
+              <tr><td colspan="8" class="text-center text-muted">暂无提现记录</td></tr>
+              {/member:fx_withdraw-empty}
+            </tbody>
+          </table>
+        </div>
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

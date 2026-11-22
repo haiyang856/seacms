@@ -65,6 +65,9 @@ if($action=="list")
 {
 	@session_write_close();
 	top();
+	require_once(sea_INC.'/ai.php');
+	$_aiCfg = deepseek_load_config();
+	$aiBindEnabled = ($_aiCfg['open'] === 'on' && !empty($_aiCfg['api_key']));
 	if (empty($pg)||$pg<=0)$pg=1;
 	if($rid=='seazmt3zz2cmszmt')
 	{
@@ -186,7 +189,40 @@ if($action=="list")
 			}
 		  
 		  ?>
+          <?php if($aiBindEnabled){ ?>
+          <li style="float:none;clear:both;width:auto;margin:8px 3px 3px;display:inline-block;">
+            <input type="button" class="btn" value="AI 一键绑定" style="height:24px;padding:0 12px;background:#33a47f;border:1px solid #fff;color:#fff;border-radius:3px;cursor:pointer;" onclick="aiBindAll(this)" />
+            <span id="aibind_tip" style="color:#666;font-size:12px;margin-left:8px;"></span>
+          </li>
+          <?php } ?>
         </ul>
+        <?php if($aiBindEnabled){ ?>
+        <script type="text/javascript">
+        var aiBindRid = <?php echo json_encode($rid); ?>;
+        var aiBindUrl = <?php echo json_encode($var_url); ?>;
+        function aiBindAll(btn){
+          if(!confirm('将调用 AI 根据分类名称自动绑定全部未绑定的远端分类，是否继续？')) return;
+          if(btn){ btn.disabled = true; btn.value = 'AI 匹配中...'; }
+          var tip = document.getElementById('aibind_tip');
+          if(tip){ tip.innerHTML = '<font color="#e67e22">正在请求 AI 匹配分类，请稍候...</font>'; }
+          var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+          xhr.open('POST', 'admin_reslib.php?ac=aibind', true);
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.onreadystatechange = function(){
+            if(xhr.readyState != 4) return;
+            if(btn){ btn.disabled = false; btn.value = 'AI 一键绑定'; }
+            var res = null;
+            try{ res = JSON.parse(xhr.responseText); }catch(e){}
+            if(!res){ if(tip) tip.innerHTML = ''; alert('AI 绑定失败：' + xhr.responseText); return; }
+            if(!res.ok){ if(tip) tip.innerHTML = ''; alert('AI 绑定失败：' + (res.error || '未知错误')); return; }
+            if(tip){ tip.innerHTML = '<font color="green">已绑定 ' + res.bound + ' 个，未匹配 ' + res.unmatched + ' 个</font>'; }
+            alert('AI 一键绑定完成\n\n远端分类共 ' + res.total + ' 个\n已绑定 ' + res.bound + ' 个\n未匹配 ' + res.unmatched + ' 个\n已存在绑定跳过 ' + res.skipped + ' 个');
+            if(res.bound > 0){ location.reload(); }
+          };
+          xhr.send('rid=' + encodeURIComponent(aiBindRid) + '&url=' + encodeURIComponent(aiBindUrl));
+        }
+        </script>
+        <?php } ?>
         </th>
       </tr>
       <tr>
@@ -427,6 +463,189 @@ elseif($action=="bindsubmit")
 		echo "nobind";
 		exit;
 	}
+}
+elseif($action=="aibind")
+{
+	@session_write_close();
+	header('Content-Type: application/json; charset=utf-8');
+	require_once(sea_INC.'/ai.php');
+
+	$bindRid = trim((string)$rid);
+	$bindUrl = trim((string)$var_url);
+	if($bindRid==='' || $bindUrl==='' || !preg_match('#^https?://#i', $bindUrl))
+	{
+		echo json_encode(array('ok'=>false,'error'=>'缺少资源库参数'), JSON_UNESCAPED_UNICODE);
+		exit;
+	}
+
+	$aiCfg = deepseek_load_config();
+	if($aiCfg['open'] !== 'on' || empty($aiCfg['api_key']))
+	{
+		echo json_encode(array('ok'=>false,'error'=>'AI 未开启或 API Key 未配置，请先在「AI 智能扩展」中设置'), JSON_UNESCAPED_UNICODE);
+		exit;
+	}
+
+	// 1. 获取远端分类
+	$apiUrl = $bindUrl.(strpos($bindUrl,'?')!==false?'&':'?').'ac=list';
+	$content = cget($apiUrl,$isref);
+	if(trim($content)=='') $content = cget($apiUrl,0);
+	$remoteTypes = array();
+	$json = json_decode($content, true);
+	if(is_array($json) && isset($json['class']) && is_array($json['class']))
+	{
+		foreach($json['class'] as $ty)
+		{
+			$typeId = isset($ty['type_id']) ? trim((string)$ty['type_id']) : '';
+			$typeName = isset($ty['type_name']) ? trim((string)$ty['type_name']) : '';
+			if($typeId!=='') $remoteTypes[$bindRid.'_'.$typeId] = $typeName;
+		}
+	}
+	else
+	{
+		$xml = @simplexml_load_string(xmlSafeStr($content),'SimpleXMLElement',LIBXML_NOCDATA|LIBXML_NOENT);
+		if($xml && isset($xml->class))
+		{
+			foreach($xml->class->ty as $ty)
+			{
+				$typeId = trim((string)$ty['id']);
+				$typeName = trim((string)$ty);
+				if($typeId!=='') $remoteTypes[$bindRid.'_'.$typeId] = $typeName;
+			}
+		}
+	}
+	if(empty($remoteTypes))
+	{
+		echo json_encode(array('ok'=>false,'error'=>'获取远端分类失败，请确认资源库地址可访问'), JSON_UNESCAPED_UNICODE);
+		exit;
+	}
+
+	// 2. 本地分类与现有绑定
+	$localTypes = array();
+	$dsql->SetQuery("SELECT tid,tname FROM sea_type ORDER BY tid ASC");
+	$dsql->Execute('ai_local_types');
+	while($row=$dsql->GetObject('ai_local_types'))
+	{
+		$localTypes[intval($row->tid)] = trim($row->tname);
+	}
+	if(empty($localTypes))
+	{
+		echo json_encode(array('ok'=>false,'error'=>'本地分类为空'), JSON_UNESCAPED_UNICODE);
+		exit;
+	}
+
+	$unionidByTid = array();
+	$currentBind = array();
+	$dsql->SetQuery("SELECT tid,unionid FROM sea_type");
+	$dsql->Execute('ai_bind_rows');
+	while($row=$dsql->GetObject('ai_bind_rows'))
+	{
+		$tid = intval($row->tid);
+		$unionidByTid[$tid] = (string)$row->unionid;
+		foreach(explode(',',(string)$row->unionid) as $one)
+		{
+			$one = trim($one);
+			if($one!=='') $currentBind[$one] = $tid;
+		}
+	}
+
+	// 3. 仅处理未绑定的远端分类，保留已有绑定
+	$pending = array();
+	foreach($remoteTypes as $remoteKey=>$remoteName)
+	{
+		if(!isset($currentBind[$remoteKey])) $pending[$remoteKey] = $remoteName;
+	}
+	$skipped = count($remoteTypes) - count($pending);
+	if(empty($pending))
+	{
+		echo json_encode(array('ok'=>true,'total'=>count($remoteTypes),'bound'=>0,'unmatched'=>0,'skipped'=>$skipped,'changed'=>0), JSON_UNESCAPED_UNICODE);
+		exit;
+	}
+
+	// 4. 调用 AI 生成分类映射
+	$remotePayload = array();
+	foreach($pending as $k=>$v) $remotePayload[] = array('id'=>$k,'name'=>$v);
+	$localPayload = array();
+	foreach($localTypes as $tid=>$tname) $localPayload[] = array('tid'=>$tid,'name'=>$tname);
+
+	$sysPrompt = '你是影视 CMS 的分类映射助手。请把资源库分类按语义映射到最合适的本地分类。只输出一个 JSON 对象，键为资源库分类 id，值为本地分类 tid（整数），无法匹配时值为 0。不要输出 JSON 以外的任何内容。';
+	$userPrompt = "资源库分类：\n".json_encode($remotePayload, JSON_UNESCAPED_UNICODE)
+		."\n\n本地分类：\n".json_encode($localPayload, JSON_UNESCAPED_UNICODE)
+		."\n\n要求：\n1. 按语义选择最接近的本地分类，例如「动作片」可映射到「动作」；\n2. 允许多个资源库分类映射到同一个本地分类；\n3. 确实无法对应的填 0，不要勉强匹配。";
+
+	$aiResp = deepseek_chat(array(
+		array('role'=>'system','content'=>$sysPrompt),
+		array('role'=>'user','content'=>$userPrompt),
+	),0.1,true,120);
+	if(!$aiResp['ok'])
+	{
+		echo json_encode(array('ok'=>false,'error'=>'AI 调用失败：'.$aiResp['error']), JSON_UNESCAPED_UNICODE);
+		exit;
+	}
+	$jsonText = deepseek_extract_json($aiResp['content']);
+	$map = $jsonText ? json_decode($jsonText, true) : null;
+	if(!is_array($map))
+	{
+		echo json_encode(array('ok'=>false,'error'=>'AI 返回内容无法解析为分类映射'), JSON_UNESCAPED_UNICODE);
+		exit;
+	}
+
+	// 5. 校验映射并写入 sea_type.unionid
+	$finalMap = array();
+	$bound = 0;
+	$unmatched = 0;
+	foreach($pending as $remoteKey=>$remoteName)
+	{
+		$target = 0;
+		if(isset($map[$remoteKey]))
+		{
+			$target = intval($map[$remoteKey]);
+		}
+		else
+		{
+			$shortId = substr($remoteKey, strlen($bindRid)+1);
+			if(isset($map[$shortId])) $target = intval($map[$shortId]);
+		}
+		if($target>0 && !isset($localTypes[$target])) $target = 0;
+		$finalMap[$remoteKey] = $target;
+		if($target>0) $bound++; else $unmatched++;
+	}
+
+	$affected = array();
+	foreach($finalMap as $remoteKey=>$target)
+	{
+		if($target>0) $affected[$target] = true;
+	}
+	$changed = 0;
+	foreach($affected as $tid=>$tmp)
+	{
+		$kept = array();
+		$oldUnionid = isset($unionidByTid[$tid]) ? $unionidByTid[$tid] : '';
+		foreach(explode(',',$oldUnionid) as $one)
+		{
+			$one = trim($one);
+			if($one!=='' && !isset($finalMap[$one])) $kept[] = $one;
+		}
+		foreach($finalMap as $remoteKey=>$target)
+		{
+			if($target==$tid && !in_array($remoteKey,$kept)) $kept[] = $remoteKey;
+		}
+		$newUnionid = implode(',',$kept);
+		if($newUnionid !== trim($oldUnionid))
+		{
+			$dsql->ExecuteNoneQuery("UPDATE sea_type SET unionid='".addslashes($newUnionid)."' WHERE tid=".intval($tid));
+			$changed++;
+		}
+	}
+
+	echo json_encode(array(
+		'ok'=>true,
+		'total'=>count($remoteTypes),
+		'bound'=>$bound,
+		'unmatched'=>$unmatched,
+		'skipped'=>$skipped,
+		'changed'=>$changed
+	), JSON_UNESCAPED_UNICODE);
+	exit;
 }
 elseif($action=="select")
 {

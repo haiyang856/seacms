@@ -8,6 +8,14 @@ require_once(sea_INC.'/inc/mysql.php' );
 require_once(sea_INC."/filter.inc.php");
 $starttime = microtime();
 require_once(sea_INC.'/common.func.php');
+// 三级分销：记录推广链接邀请码（30 天，以最后一次有效点击为准）
+if (!empty($_GET['ref']) && is_string($_GET['ref'])) {
+    $__seaRef = preg_replace('/[^A-Za-z0-9]/', '', $_GET['ref']);
+    if ($__seaRef !== '' && strlen($__seaRef) <= 16 && (!isset($_COOKIE['sea_dist_ref']) || $_COOKIE['sea_dist_ref'] !== $__seaRef)) {
+        setcookie('sea_dist_ref', $__seaRef, time() + 2592000, '/');
+        $_COOKIE['sea_dist_ref'] = $__seaRef;
+    }
+}
 //检查和注册外部提交的变量
 $jpurl='//'.$_SERVER['SERVER_NAME'];
 foreach($_REQUEST as $_k=>$_v)

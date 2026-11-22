@@ -267,14 +267,14 @@ function netpay_wechat_create($order)
 
 function netpay_wechat_qr_page($order, $codeUrl)
 {
-    $qrImg = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=' . urlencode($codeUrl);
+    $libUrl = netpay_base_url() . '/pic/member/qrcode.min.js';
     $queryUrl = netpay_base_url() . '/include/netpay/query.php?orderno=' . urlencode($order['orderno']);
     $returnUrl = netpay_base_url() . '/member/index.php?action=buy3&paydone=1';
     $amount = number_format(floatval($order['amount']), 2, '.', '');
     $points = intval($order['points']);
     $orderno = netpay_html($order['orderno']);
     $codeUrlEsc = netpay_html($codeUrl);
-    $qrImgEsc = netpay_html($qrImg);
+    $libEsc = netpay_html($libUrl);
     $queryEsc = netpay_html($queryUrl);
     $returnEsc = netpay_html($returnUrl);
     return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">'
@@ -284,7 +284,8 @@ function netpay_wechat_qr_page($order, $codeUrl)
         . '.np-wrap{max-width:460px;margin:40px auto;background:#fff;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.08);padding:28px 24px;text-align:center}'
         . '.np-title{font-size:20px;font-weight:600;margin:0 0 6px}.np-sub{color:#6b7280;font-size:13px;margin-bottom:18px}'
         . '.np-amount{font-size:30px;font-weight:700;color:#e11d48;margin:10px 0 4px}.np-points{color:#059669;font-size:14px;margin-bottom:18px}'
-        . '.np-qr{width:240px;height:240px;border:1px solid #e5e7eb;border-radius:10px;padding:8px;background:#fff}'
+        . '.np-qr{width:256px;height:256px;box-sizing:border-box;margin:0 auto;border:1px solid #e5e7eb;border-radius:10px;padding:8px;background:#fff}'
+        . '.np-qr img,.np-qr canvas{display:block;width:240px;height:240px}'
         . '.np-code{word-break:break-all;color:#9ca3af;font-size:11px;margin-top:12px}'
         . '.np-link{display:inline-block;margin-top:18px;color:#2563eb;text-decoration:none;font-size:14px}'
         . '.np-status{margin-top:14px;color:#6b7280;font-size:13px}'
@@ -292,12 +293,16 @@ function netpay_wechat_qr_page($order, $codeUrl)
         . '<h1 class="np-title">微信扫码支付</h1><div class="np-sub">请使用微信扫一扫完成支付</div>'
         . '<div class="np-amount">￥' . $amount . '</div>'
         . '<div class="np-points">到账积分：' . $points . '</div>'
-        . '<img class="np-qr" src="' . $qrImgEsc . '" alt="微信支付二维码">'
+        . '<div class="np-qr" id="npQr" data-link="' . $codeUrlEsc . '"></div>'
         . '<div class="np-code">' . $codeUrlEsc . '</div>'
         . '<div class="np-status" id="npStatus">等待支付结果...</div>'
         . '<a class="np-link" href="' . $returnEsc . '">支付完成后返回充值记录</a>'
         . '<div class="np-code">订单号：' . $orderno . '</div>'
-        . '</div><script>(function(){var t=0;var timer=setInterval(function(){'
+        . '</div><script src="' . $libEsc . '"></script>'
+        . '<script>(function(){var el=document.getElementById("npQr");if(!el)return;var link=el.getAttribute("data-link")||"";'
+        . 'if(!window.QRCode||link===""){el.innerHTML="<div style=\'padding:12px;font-size:12px;color:#6b7280;line-height:1.7\'>二维码组件未加载，请复制下方支付链接在微信中打开</div>";return;}'
+        . 'new QRCode(el,{text:link,width:240,height:240,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});})();</script>'
+        . '<script>(function(){var t=0;var timer=setInterval(function(){'
         . 'if(++t>200){clearInterval(timer);return;}'
         . 'fetch("' . $queryEsc . '",{credentials:"same-origin"}).then(function(r){return r.json()}).then(function(d){'
         . 'if(d&&d.status===1){clearInterval(timer);document.getElementById("npStatus").textContent="支付成功，正在跳转...";location.href="' . $returnEsc . '";}'

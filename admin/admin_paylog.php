@@ -30,7 +30,7 @@ if (isset($_POST['do']) && $_POST['do'] === 'setstatus') {
             'message' => (string)$result['message'],
             'status' => $newStatus,
             'statusname' => netpay_status_name($newStatus),
-            'statusclass' => in_array($newStatus, array(0, 1, 4), true) ? 'paylog-s' . $newStatus : 'paylog-s-unknown',
+            'statusclass' => in_array($newStatus, array(0, 1, 2, 4), true) ? 'paylog-s' . $newStatus : 'paylog-s-unknown',
         ), JSON_UNESCAPED_UNICODE);
         exit();
     }
@@ -56,7 +56,7 @@ if (!in_array($rtype, array(0, 1, 2, 3, 4, 5, 6), true)) {
     $rtype = 0;
 }
 $status = isset($_GET['status']) ? trim((string)$_GET['status']) : '';
-if (!in_array($status, array('', '0', '1', '4', '9'), true)) {
+if (!in_array($status, array('', '0', '1', '2', '4', '9'), true)) {
     $status = '';
 }
 $channel = isset($_GET['channel']) ? strtolower(trim((string)$_GET['channel'])) : '';
@@ -105,7 +105,6 @@ if ($status === '9') {
 }
 
 $overall = netpay_summary(0);
-$filtered = netpay_summary(0, $filterWhere);
 
 $numPerPage = 20;
 $page = isset($page) ? intval($page) : 1;

@@ -510,8 +510,14 @@ function netpay_status_name($status)
     if ($status === 1) {
         return '已完成';
     }
+    if ($status === 2) {
+        return '已关闭';
+    }
     if ($status === 4) {
         return '已退款';
+    }
+    if ($status === 9) {
+        return '未知';
     }
     return '未知';
 }

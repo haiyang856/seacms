@@ -33,6 +33,9 @@ if ($cfg_vipoff_12 == 0 OR $cfg_vipoff_12 == "" OR empty($cfg_vipoff_12)) {
     $cfg_vipoff_12 = 1;
 }
 
+//分销总开关：关闭时隐藏前台分销入口
+require_once(sea_ROOT . '/include/dist/config.php');
+
 //初始化用户中心模板
 $memberStyle = isset($GLOBALS['cfg_member_style']) ? $GLOBALS['cfg_member_style'] : 'default';
 $memberTpl = new MemberClass_Template($memberStyle);
@@ -56,6 +59,7 @@ $memberBaseVars = array(
     'exiturl' => 'exit.php',
     'homeurl' => '../index.php',
     'curr' => $member_action,
+    'fx_enabled' => dist_enabled() ? '1' : '0',
     'loggedin' => '0',
     'year' => $year,
     'sitename' => member_e($cfg_webname ?? ''),
@@ -176,6 +180,7 @@ $memberRoutes = array(
     'hyz' => 'membership.php',
     'buy3' => 'recharge.php',
     'cz' => 'recharge.php',
+    'fx' => 'distribution.php',
     'netpay' => 'netpay.php',
     'gb' => 'guestbook.php',
     'del_gb' => 'guestbook.php',

@@ -1,0 +1,59 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>我的团队</h2>
+        <span class="card-sub">共 {member:fx_team_total} 人 · 仅展示脱敏信息</span>
+      </div>
+      <div class="card-body">
+        <div class="fx-tabs">
+          <a href="?action=fx" class="fx-tab">概览</a>
+          <a href="?action=fx&do=team" class="fx-tab {if:{member:fx_tab}==team}active{end if}">我的团队</a>
+          <a href="?action=fx&do=commission" class="fx-tab">佣金明细</a>
+          <a href="?action=fx&do=withdraw" class="fx-tab">提现 / 兑换</a>
+          <a href="?action=fx&do=material" class="fx-tab">推广素材</a>
+        </div>
+
+        <div class="fx-subtabs">
+          <a href="?action=fx&do=team&level=1" class="{if:{member:fx_level}==1}active{end if}">一级团队（{member:fx_team1}）</a>
+          <a href="?action=fx&do=team&level=2" class="{if:{member:fx_level}==2}active{end if}">二级团队（{member:fx_team2}）</a>
+          <a href="?action=fx&do=team&level=3" class="{if:{member:fx_level}==3}active{end if}">三级团队（{member:fx_team3}）</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table member-table">
+            <thead>
+              <tr>
+                <th>用户</th>
+                <th>层级</th>
+                <th>注册时间</th>
+                <th class="hidden-xs">绑定时间</th>
+                <th>消费状态</th>
+                <th>贡献佣金（元）</th>
+              </tr>
+            </thead>
+            <tbody>
+              {member:fx_team}
+              <tr>
+                <td>[fx_team:name]</td>
+                <td>L[fx_team:level]</td>
+                <td>[fx_team:regtime]</td>
+                <td class="hidden-xs">[fx_team:bindtime]</td>
+                <td><span class="fx-badge [fx_team:activeclass]">[fx_team:active]</span></td>
+                <td>[fx_team:contribute]</td>
+              </tr>
+              {/member:fx_team}
+              {member:fx_team-empty}
+              <tr><td colspan="6" class="text-center text-muted">暂无团队成员</td></tr>
+              {/member:fx_team-empty}
+            </tbody>
+          </table>
+        </div>
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

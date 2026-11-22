@@ -62,6 +62,10 @@ if ($member_action == 'hyz') {
     $vipendtime = $ntime + 2678400 * $mon;
     $dsql->ExecuteNoneQuery("UPDATE sea_member SET points=points-$hyzjf,gid=$gidBuy,vipendtime=$vipendtime where username='$uname'");
     $dsql->ExecuteNoneQuery("insert into sea_hyzbuy values('','$uname','$gidBuy','$hyzjf','$mon','" . time() . "')");
+    // 三级分销：会员开通计佣
+    require_once(sea_ROOT . '/include/dist/bootstrap.php');
+    dist_commission_on_consume($uid, intval($hyzjf), 2, intval($gidBuy), dist_new_no('H'));
+    dist_try_activate($uid);
     ShowMsg("恭喜！购买会员组成功！", "index.php?action=cc");
     exit;
 }

@@ -74,6 +74,10 @@ if($action=="pay")
 			$sqlpay="Update sea_member set points = points-$vmoneypay where id=$uid";
 			$dsql->ExecuteNoneQuery("$sqlpay");
 			$dsql->ExecuteNoneQuery("insert into sea_buy values('','$uid','$vid','$from2','$vmoneypay','".time()."')");
+			// 三级分销：视频消费计佣（T0 生成待结算佣金）
+			require_once(sea_ROOT . '/include/dist/bootstrap.php');
+			dist_commission_on_consume($uid, intval($vmoneypay), 1, intval($vid), dist_new_no('V'));
+			dist_try_activate($uid);
 			echo "<script>alert('购买成功');top.location.href='".$turl."';</script>";
 			exit;
 		}

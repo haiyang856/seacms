@@ -64,6 +64,32 @@ $row2=is_array($row2)?$row2:array(); if(isset($row2['email']) && $row2['email']=
 		exit();
 }
 
+// 三级分销：注册前校验邀请码，避免无效码被静默忽略
+$distRef = '';
+if (!empty($_POST['ref']) && is_string($_POST['ref'])) {
+	$distRef = $_POST['ref'];
+} elseif (!empty($_GET['ref']) && is_string($_GET['ref'])) {
+	$distRef = $_GET['ref'];
+} elseif (!empty($_COOKIE['sea_dist_ref']) && is_string($_COOKIE['sea_dist_ref'])) {
+	$distRef = $_COOKIE['sea_dist_ref'];
+}
+$distRef = preg_replace('/[^A-Za-z0-9]/', '', (string)$distRef);
+if ($distRef !== '') {
+	require_once(sea_ROOT . '/include/dist/bootstrap.php');
+	if (!dist_enabled()) {
+		$distRef = '';
+	} elseif (!preg_match('/^[A-Za-z0-9]{4,16}$/', $distRef)) {
+		ShowMsg('邀请码格式不正确','-1');
+		exit();
+	} else {
+		$distInv = $dsql->GetOne("SELECT u.uid,u.status,m.state AS mstate FROM sea_dist_user u LEFT JOIN sea_member m ON m.id=u.uid WHERE u.invite_code='" . addslashes($distRef) . "' limit 1");
+		if (!is_array($distInv) || intval($distInv['status']) !== 1 || intval($distInv['mstate']) !== 1) {
+			ShowMsg('邀请码不存在，请核对或留空','-1');
+			exit();
+		}
+	}
+}
+
 	$pwd = substr(md5($m_pwd),5,20);
 	$ip = GetIP();
 	$randtime=uniqid();
@@ -75,11 +101,17 @@ $row2=is_array($row2)?$row2:array(); if(isset($row2['email']) && $row2['email']=
 		$dsql->ExecuteNoneQuery("INSERT INTO `sea_member`(id,username,password,email,regtime,regip,state,gid,points,logincount,stime,vipendtime,acode,repswcode,msgstate,pic)
                   VALUES ('','$username','$pwd','$email','$dtime','$ip','1','2','$regpoints','1','1533686888','$dtime','$acode','y','y','uploads/user/a.png')");
 
-		if ($regpoints > 0) {
-			$newRow = $dsql->GetOne("select id from sea_member where username='$username'");
-			$newUid = is_array($newRow) ? intval($newRow['id']) : 0;
-			if ($newUid > 0) {
+		$newRow = $dsql->GetOne("select id from sea_member where username='$username'");
+		$newUid = is_array($newRow) ? intval($newRow['id']) : 0;
+		if ($newUid > 0) {
+			if ($regpoints > 0) {
 				netpay_log_points($newUid, 6, 'reg', $regpoints, '注册赠送积分');
+			}
+			// 三级分销：注册携带邀请码自动绑定（邀请码已在注册前校验）
+			if ($distRef !== '') {
+				require_once(sea_ROOT . '/include/dist/bootstrap.php');
+				dist_bind($newUid, $distRef, 1, (isset($GLOBALS['isMobile']) && intval($GLOBALS['isMobile']) === 1) ? 'h5' : 'pc');
+				setcookie('sea_dist_ref', '', time() - 86400, '/');
 			}
 		}
 
@@ -202,6 +234,7 @@ function viewRegister()
 "<li><input type=\"password\" name=\"m_pwd\" class=\"form-control\" placeholder=\"密码\" /></li>".
 "<li><input type=\"password\" name=\"m_pwd2\" class=\"form-control\" placeholder=\"确认密码\" /></li>".
 "<li><input type=\"text\" name=\"email\" class=\"form-control\" placeholder=\"邮箱地址\" /></li>".
+reg_ref_field().
 "<li><img id=\"vdimgck\" src=\"../include/vdimgck.php\" alt=\"看不清？点击更换\" align=\"absmiddle\" class=\"pull-right\" style='width:70px; height:32px;' onClick=\"this.src=this.src+'?'\"/><input type=\"text\" name=\"validate\" id=\"vdcode\" placeholder=\"验证码\" style='width:50%;text-transform:uppercase;' class=\"form-control\" /> </li>".
 "<li><input type=\"submit\" value=\"注册\" class=\"btn btn-block btn-warning\"/></li>".
 "<li class=\"text-center\"><a class=\"text-muted\" href=\"./login.php\">已有账号，直接登录？</a></li>".
@@ -219,9 +252,30 @@ function viewRegister2()
 "<li><input type=\"password\" name=\"m_pwd\" class=\"form-control\" placeholder=\"密码\" /></li>".
 "<li><input type=\"password\" name=\"m_pwd2\" class=\"form-control\" placeholder=\"确认密码\" /></li>".
 "<li><input type=\"text\" name=\"email\" class=\"form-control\" placeholder=\"邮箱地址\" /></li>".
+reg_ref_field().
 "<li><input type=\"submit\" value=\"注册\" class=\"btn btn-block btn-warning\"/></li>".
 "<li class=\"text-center\"><a class=\"text-muted\" href=\"./login.php\">已有账号，直接登录？</a></li>".
 "</form>".
 "</ul>";
 	return $mystr;
+}
+
+/**
+ * 注册页邀请码输入框：仅分销启用时展示，自动回填链接/COOKIE 中的邀请码
+ */
+function reg_ref_field()
+{
+	require_once(sea_ROOT . '/include/dist/config.php');
+	if (!dist_enabled()) {
+		return '';
+	}
+	$ref = '';
+	if (!empty($_GET['ref']) && is_string($_GET['ref'])) {
+		$ref = $_GET['ref'];
+	} elseif (!empty($_COOKIE['sea_dist_ref']) && is_string($_COOKIE['sea_dist_ref'])) {
+		$ref = $_COOKIE['sea_dist_ref'];
+	}
+	$ref = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string)$ref));
+	$ref = substr($ref, 0, 16);
+	return "<li><input type=\"text\" name=\"ref\" id=\"ref\" maxlength=\"16\" autocomplete=\"off\" class=\"form-control\" placeholder=\"邀请码（选填）\" style=\"text-transform:uppercase;\" value=\"" . htmlspecialchars($ref, ENT_QUOTES, 'UTF-8') . "\" /></li>";
 }
