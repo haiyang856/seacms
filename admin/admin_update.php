@@ -369,14 +369,7 @@ function upd_should_skip($rel)
 	if (preg_match('#(^|/)(\.git|\.github|\.workbuddy)(/|$)#', $rel)) return true;
 	if (strpos($rel, '.DS_Store') !== false) return true;
 	if (preg_match('#^templets/default(/|$)#i', $rel)) return true;
-	if (preg_match('#^data/(cache|sessions|update|mark)/#', $rel)) return true;
-	if ($rel === 'data/common.inc.php') return true;
-	if (preg_match('#^data/config(\.[^/]*)?\.php$#', $rel)) return true;
-	if (preg_match('#^data/admin_#', $rel)) return true;
-	if ($rel === 'data/admin/ver.json') return false;
-	if (preg_match('#^data/admin/#', $rel)) return true;
 	if ($rel === 'install/install_lock.txt') return true;
-	if ($rel === 'data/cron.cache.php') return true;
 	return false;
 }
 
@@ -768,10 +761,19 @@ function upd_action_upgrade()
 		RecursiveIteratorIterator::SELF_FIRST
 	);
 	foreach ($it as $file) {
-		if (!$file->isFile()) continue;
 		$rel = str_replace('\\', '/', substr($file->getPathname(), strlen($root) + 1));
-		if (upd_should_skip($rel)) { $skipped++; continue; }
-		$fileMap[$rel] = sea_ROOT.'/'.upd_map_rel($rel);
+		$isFile = $file->isFile();
+		if (upd_should_skip($rel)) { if ($isFile) $skipped++; continue; }
+		$dest = sea_ROOT.'/'.upd_map_rel($rel);
+		/* data 目录及其子目录只新增本地不存在的内容，已有文件/目录不修改不替换 */
+		if (strpos($rel, 'data/') === 0) {
+			if (file_exists($dest)) { if ($isFile) $skipped++; continue; }
+			if (!$isFile) { @mkdir($dest, 0755, true); continue; }
+			$fileMap[$rel] = $dest;
+			continue;
+		}
+		if (!$isFile) continue;
+		$fileMap[$rel] = $dest;
 	}
 	$fixed = 0;
 	$broken = array();
@@ -802,7 +804,7 @@ function upd_action_upgrade()
 	upd_emit('success', '权限校验完成'.($fixed > 0 ? '，自动修正 '.$fixed.' 个文件权限' : '，无需修正'));
 
 	/* 3. 覆盖文件（templets/default 已排除，admin 目录已映射） */
-	upd_emit('info', '开始覆盖升级文件（templets/default 目录已排除，后台目录映射为 '.$updAdminDir.'）...');
+	upd_emit('info', '开始覆盖升级文件（templets/default 已排除，data 目录仅新增不覆盖，后台目录映射为 '.$updAdminDir.'）...');
 	$copied = 0;
 	$failed = 0;
 	$failFiles = array();
@@ -829,7 +831,7 @@ function upd_action_upgrade()
 		foreach (array_slice($failFiles, 0, 8) as $f) upd_emit('error', $f);
 		exit();
 	}
-	upd_emit('success', '文件覆盖完成：更新 '.$copied.' 个文件，跳过 '.$skipped.' 个（templets/default/缓存/配置）');
+	upd_emit('success', '文件覆盖完成：更新 '.$copied.' 个文件，跳过 '.$skipped.' 个（templets/default/已存在的 data 文件）');
 
 	/* 4. 数据库结构升级 */
 	upd_emit('info', '开始比对并升级数据库结构...');
