@@ -111,10 +111,12 @@ member_set('totalcount', $total);
 
 //验证码
 if ($cfg_feedback_ck == '1') {
-    $memberTpl->setVar('vimg', '<input type="text" name="validate" id="vdcode" placeholder="验证码" class="form-control member-vcode" autocomplete="off"> <img id="vdimgck" src="./include/vdimgck.php" class="member-vimg" alt="验证码" onclick="this.src=\'./include/vdimgck.php?\'+(new Date().getTime());">');
+    $vimgHtml = '<input type="text" name="validate" id="vdcode" placeholder="验证码" class="form-control member-vcode" autocomplete="off"> <img id="vdimgck" src="../include/vdimgck.php" class="member-vimg" alt="验证码" onclick="this.src=\'../include/vdimgck.php?\'+(new Date().getTime());">';
 } else {
-    $memberTpl->setVar('vimg', '');
+    $vimgHtml = '';
 }
+$memberTpl->setVar('vimg', $vimgHtml);
+$memberTpl->setVar('vimg_js', json_encode($vimgHtml));
 $memberTpl->setVar('gbookstart', $cfg_gbookstart);
 
 member_render('reply.html');

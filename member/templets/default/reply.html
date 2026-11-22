@@ -30,6 +30,7 @@
   </div>
 </div>
 <script>
+var replyCaptchaHtml = {member:vimg_js};
 function check() {
   var vd = document.getElementById('vdcode');
   if (vd && vd.value.length < 1) { alert('验证码必须填写'); return false; }
@@ -39,6 +40,7 @@ function check() {
   return true;
 }
 function showR(rid, rvid, rmtype) {
+  if (window.layer) { layer.closeAll(); }
   layer.open({
     type: 1,
     anim: 'up',
@@ -51,7 +53,7 @@ function showR(rid, rvid, rmtype) {
       + '<input type="hidden" name="rvid" value="' + rvid + '">'
       + '<input type="hidden" name="rmtype" value="' + rmtype + '">'
       + '<textarea name="msg" id="msg" class="form-control" rows="4" maxlength="200" placeholder="输入200以内回复内容"></textarea>'
-      + '<div class="member-captcha">{member:vimg}</div>'
+      + '<div class="member-captcha">' + replyCaptchaHtml + '</div>'
       + '<button type="submit" class="btn btn-primary btn-block">提交回复</button>'
       + '<a href="javascript:;" class="member-sheet-cancel" onclick="layer.closeAll()">取消</a>'
       + '</form></div>'
