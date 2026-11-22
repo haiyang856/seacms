@@ -3181,7 +3181,84 @@ class MainClass_Template {
 			return $content;
 		}
 	}
+	/**
+	 * 解析 {playpage:playlistmax} 增强播放列表标签
+	 * 在原有播放列表标签基础上，支持通过 {playlistmax:list} 对每个播放来源下的每一集单独循环输出
+	 */
+	function parsePlayListMax($content, $dataId, $typeid, $sdate, $enname, $playorDownData) {
+		$labelRule = buildregx ( "{playpage:playlistmax}(.*?){/playpage:playlistmax}", "is" );
+		preg_match_all ( $labelRule, $content, $ar );
+		$arlen = count ( $ar [1] );
+		if ($arlen == 0) {
+			return $content;
+		}
+		$PlayerIntroArray = getPlayerIntroArray ();
+		$playerDic = getPlayerKindsArray ();
+		$playDataArray = getPlayurlArray ( $playorDownData );
+		$vnum1 = substr_count ( $playorDownData, '$$' );
+		$vnum = ($vnum1 == 0) ? 0 : count ( $playDataArray );
+		$listRule = buildregx ( "{playlistmax:list}(.*?){/playlistmax:list}", "is" );
+		for($m = 0; $m < $arlen; $m ++) {
+			$loopstrPlaylist = $ar [1] [$m];
+			$loopstrTotal = array ();
+			$k = 0;
+			for($i = 0; $i <= $vnum; $i ++) {
+				if (!isset ( $playDataArray [$i] )) {
+					continue;
+				}
+				$singlePlayData = explode ( "$$", $playDataArray [$i] );
+				$fromFlag = isset ( $singlePlayData [0] ) ? $singlePlayData [0] : '';
+				$videoUrl = isset ( $singlePlayData [1] ) ? $singlePlayData [1] : '';
+				$playerSingleInfoArray = isset ( $playerDic [$fromFlag] ) ? $playerDic [$fromFlag] : array ();
+				if (!isset ( $playerSingleInfoArray ['open'] ) || $playerSingleInfoArray ['open'] != 1) {
+					continue;
+				}
+				$k = $k + 1;
+				$loopstrPlaylistNew = $loopstrPlaylist;
+				// 分集单独循环输出
+				if (preg_match ( $listRule, $loopstrPlaylistNew, $listMatch )) {
+					$listTpl = $listMatch [1];
+					$episodeArray = explode ( "#", $videoUrl );
+					$listHtml = '';
+					foreach ( $episodeArray as $idx => $episode ) {
+						if ($episode === '') {
+							continue;
+						}
+						$singleUrlArray = explode ( "$", $episode );
+						$episodeName = isset ( $singleUrlArray [0] ) ? $singleUrlArray [0] : '';
+						$episodeLink = getPlayLink2 ( $typeid, $dataId, $sdate, $enname, $i, $idx );
+						$listHtmlNew = str_replace ( "[list:name]", $episodeName, $listTpl );
+						$listHtmlNew = str_replace ( "[list:link]", $episodeLink, $listHtmlNew );
+						$listHtml .= $listHtmlNew;
+					}
+					$loopstrPlaylistNew = str_replace ( $listMatch [0], $listHtml, $loopstrPlaylistNew );
+				}
+				// 播放来源级标签
+				$loopstrPlaylistNew = str_replace ( "[playlist:i]", $k, $loopstrPlaylistNew );
+				$loopstrPlaylistNew = str_replace ( "[playlist:s]", isset ( $playerSingleInfoArray ['sort'] ) ? $playerSingleInfoArray ['sort'] : '', $loopstrPlaylistNew );
+				$loopstrPlaylistNew = str_replace ( "[playlist:from]", $fromFlag, $loopstrPlaylistNew );
+				$loopstrPlaylistNew = str_replace ( "[playlist:num]", count ( explode ( "#", $videoUrl ) ), $loopstrPlaylistNew );
+				$loopstrPlaylistNew = str_replace ( "[playlist:ename]", isset ( $playerSingleInfoArray ['postfix'] ) ? $playerSingleInfoArray ['postfix'] : '', $loopstrPlaylistNew );
+				$loopstrPlaylistNew = str_replace ( "[playlist:intro]", isset ( $playerSingleInfoArray ['intro'] ) ? $playerSingleInfoArray ['intro'] : '', $loopstrPlaylistNew );
+				$j = getArrayElementID ( $PlayerIntroArray, "flag", $fromFlag );
+				if ($j === false || $j === null) {
+					$j = '';
+				}
+				if (!isset ( $loopstrTotal [$j] )) {
+					$loopstrTotal [$j] = '';
+				}
+				$loopstrTotal [$j] .= $loopstrPlaylistNew;
+			}
+			krsort ( $loopstrTotal );
+			$loopstrTotal = join ( "\n", $loopstrTotal );
+			$content = str_replace ( $ar [0] [$m], $loopstrTotal, $content );
+		}
+		return $content;
+	}
 	function parsePlayList($content, $dataId, $typeid, $sdate, $enname, $playorDownData, $str = 'play') {
+		if (strpos ( $content, '{playpage:playlistmax}' ) !== false) {
+			$content = $this->parsePlayListMax ( $content, $dataId, $typeid, $sdate, $enname, $playorDownData );
+		}
 		if (strpos ( $content, '{playpage:playlist' ) === false && strpos ( $content, '{playpage:downlist' ) === false) {
 			return $content;
 		} else {
