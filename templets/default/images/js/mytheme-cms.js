@@ -47,7 +47,7 @@ var Myui = {
 			var keywords = $(this).val();
 			if (keywords=='') { $('#word').hide(); return };
 			$.ajax({
-				url: '/ass.php?wd=' + keywords,
+				url: '/include/ass.php?wd=' + keywords,
 				dataType: 'jsonp',
 				jsonp: 'cb', 
 				beforeSend:function(){

@@ -42,7 +42,7 @@ function echoContent($vId)
 	if (strpos(" ,".getHideTypeIDS().",",",".$vType.",")>0){ShowMsg("该内容已被删除或者隐藏","../index.php",0,10000);exit();}
 	if ($row['v_recycled']==1){ShowMsg("该内容已被删除或者隐藏","../index.php",0,10000);exit();};
 	if ($cfg_user == 1){
-        if (!getUserAuth($vType, "detail")){ShowMsg("您当前的会员级别没有权限浏览此内容！","../member.php",0,20000);exit();}
+        if (!getUserAuth($vType, "detail")){ShowMsg("您当前的会员级别没有权限浏览此内容！","../member/index.php",0,20000);exit();}
 	}
 	$contentLink=getContentLink($vType,$vId,"link",date('Y-n',$row['v_addtime']),$row['v_enname']);
 	$typeText = getTypeText($vType);

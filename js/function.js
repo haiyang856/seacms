@@ -8,7 +8,7 @@ function AddFav(vid,uid)
 		function(obj) {
 			if (obj.responseText=="err"){
 				alert("请先登录!");
-				location.href="/"+sitePath+"login.php";
+				location.href="/"+sitePath+"member/login.php";
 			}else{
 				alert("收藏成功!");
 			}

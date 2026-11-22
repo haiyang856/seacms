@@ -10,15 +10,15 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-<link href="pic/member/bootstrap.min.css" rel="stylesheet" type="text/css" />				
-<link href="pic/member/swiper.min.css" rel="stylesheet" type="text/css" >		
-<link href="pic/member/iconfont.css" rel="stylesheet" type="text/css" />
-<link href="pic/member/color.css" rel="stylesheet" type="text/css" />
-<link href="pic/member/style.min.css" rel="stylesheet" type="text/css" />
-<script src="pic/member/jquery.min.js"></script>
-<script type="text/javascript" src="pic/member/bootstrap.min.js"></script>
-<script type="text/javascript" src="pic/member/layer.js"></script>
+<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+<link href="../pic/member/bootstrap.min.css" rel="stylesheet" type="text/css" />				
+<link href="../pic/member/swiper.min.css" rel="stylesheet" type="text/css" >		
+<link href="../pic/member/iconfont.css" rel="stylesheet" type="text/css" />
+<link href="../pic/member/color.css" rel="stylesheet" type="text/css" />
+<link href="../pic/member/style.min.css" rel="stylesheet" type="text/css" />
+<script src="../pic/member/jquery.min.js"></script>
+<script type="text/javascript" src="../pic/member/bootstrap.min.js"></script>
+<script type="text/javascript" src="../pic/member/layer.js"></script>
 <style>
 .sc{padding:6px 6px 6px 6px;text-align: center;}
 .sc input{margin-top:5px;margin-button:5px;width:120px;}
@@ -35,11 +35,11 @@
 </head>
 <?php
 session_start();
-require_once("include/common.php");
+require_once(dirname(__DIR__)."/include/common.php");
 require_once(sea_INC.'/main.class.php');
 if($cfg_user==0)
 {
-	ShowMsg('系统已关闭会员功能!','index.php');
+	ShowMsg('系统已关闭会员功能!','../index.php');
 	exit();
 }
 
@@ -69,16 +69,16 @@ $uid = intval($uid);
 $year=date('Y');
 //邮件激活
 if($mod=='activate'){
-	require_once('data/admin/smtp.php');
-	if($smtpreg=='off'){showMsg("抱歉，系统已关闭邮件激活功能！","index.php",0,100000);exit();}
+	require_once(dirname(__DIR__).'/data/admin/smtp.php');
+	if($smtpreg=='off'){showMsg("抱歉，系统已关闭邮件激活功能！","../index.php",0,100000);exit();}
 	$dsql->ExecuteNoneQuery("update `sea_member` set acode = 'y' where acode='$acode'");
 	showMsg("恭喜，账户激活成功！","login.php",0,3000);exit();
 }
 
 //找回密码
 if($mod=='repsw'){
-	require_once('data/admin/smtp.php');
-	if($smtppsw=='off'){showMsg("抱歉，系统已关闭密码找回功能！","index.php",0,100000);exit();}
+	require_once(dirname(__DIR__).'/data/admin/smtp.php');
+	if($smtppsw=='off'){showMsg("抱歉，系统已关闭密码找回功能！","../index.php",0,100000);exit();}
 	echo <<<EOT
 	        
 <body>
@@ -87,11 +87,11 @@ if($mod=='repsw'){
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -143,8 +143,8 @@ EOT;
 
 if($mod=='repsw2'){
 	
-	require_once('data/admin/smtp.php');
-	if($smtppsw=='off'){showMsg("抱歉，系统已关闭密码找回功能！","index.php",0,100000);exit();}
+	require_once(dirname(__DIR__).'/data/admin/smtp.php');
+	if($smtppsw=='off'){showMsg("抱歉，系统已关闭密码找回功能！","../index.php",0,100000);exit();}
 	
 	if(empty($repswname)){{showMsg("请输入账户名称！","-1",0,3000);exit();}}
 	
@@ -158,13 +158,13 @@ if($mod=='repsw2'){
 	$repswcode=md5($cfg_dbpwd.$cfg_dbname.$cfg_dbuser.$randtime); //构造唯一码
 	$dsql->ExecuteNoneQuery("update `sea_member` set repswcode = '$repswcode' where username= '$repswname'");
 	
-	require_once('data/admin/smtp.php');
+	require_once(dirname(__DIR__).'/data/admin/smtp.php');
 
 	$smtprmail = $repswemail;
 	$smtprtitle = '【'.$cfg_webname.'】Email 找回密码操作邮件';
-$smtprbody = '<strong>Email 找回密码操作邮件</strong><br><br>尊敬的：'.$repswname.'<br>这封信是由 '.$cfg_webname.' 发送的。<br>您收到这封邮件，是由于在 '.$cfg_webname.' 进行了找回密码操作。如果您并没有访问过 '.$cfg_webname.'，或没有进行上述操作，请忽略这封邮件。您不需要退订或进行其他进一步的操作。<br><br>如果您是 '.$cfg_webname. '的用户并且正在进行找回密码操作，我们需要对您的信息的有效性进行验证以避免密码被盗用。<br>您只需点击下面的链接即可重置您的密码：<br><a target="_blank" href="'.$cfg_basehost.'/member.php?mod=repsw3&repswcode='.$repswcode.'&repswname='.$repswname.'">'.$cfg_basehost.'/member.php?mod=repsw3&repswcode='.$repswcode.'&repswname='.$repswname.'</a><br>(如果上面不是链接形式，请将该地址手工粘贴到浏览器地址栏再访问)<br>此链接只允许访问一次！<br><br>感谢您的访问，祝您使用愉快！<br><br>此致<br>'.$cfg_webname.'管理团队.<br>'.$cfg_basehost.'<br>';
+$smtprbody = '<strong>Email 找回密码操作邮件</strong><br><br>尊敬的：'.$repswname.'<br>这封信是由 '.$cfg_webname.' 发送的。<br>您收到这封邮件，是由于在 '.$cfg_webname.' 进行了找回密码操作。如果您并没有访问过 '.$cfg_webname.'，或没有进行上述操作，请忽略这封邮件。您不需要退订或进行其他进一步的操作。<br><br>如果您是 '.$cfg_webname. '的用户并且正在进行找回密码操作，我们需要对您的信息的有效性进行验证以避免密码被盗用。<br>您只需点击下面的链接即可重置您的密码：<br><a target="_blank" href="'.$cfg_basehost.'/member/index.php?mod=repsw3&repswcode='.$repswcode.'&repswname='.$repswname.'">'.$cfg_basehost.'/member/index.php?mod=repsw3&repswcode='.$repswcode.'&repswname='.$repswname.'</a><br>(如果上面不是链接形式，请将该地址手工粘贴到浏览器地址栏再访问)<br>此链接只允许访问一次！<br><br>感谢您的访问，祝您使用愉快！<br><br>此致<br>'.$cfg_webname.'管理团队.<br>'.$cfg_basehost.'<br>';
 
-	require_once("include/class.phpmailer.php");
+	require_once(dirname(__DIR__)."/include/class.phpmailer.php");
 	$mail = new PHPMailer();
 	$mail->SMTPDebug = 0;//是否启用smtp的debug进行调试
 	$mail->isSMTP();
@@ -198,8 +198,8 @@ $smtprbody = '<strong>Email 找回密码操作邮件</strong><br><br>尊敬的�
 }
 
 if($mod=='repsw3'){
-	require_once('data/admin/smtp.php');
-	if($smtppsw=='off'){showMsg("抱歉，系统已关闭密码找回功能！","index.php",0,100000);exit();}
+	require_once(dirname(__DIR__).'/data/admin/smtp.php');
+	if($smtppsw=='off'){showMsg("抱歉，系统已关闭密码找回功能！","../index.php",0,100000);exit();}
 	
 	$repswname=$_GET['repswname'];
 	$repswcode=$_GET['repswcode'];
@@ -210,13 +210,13 @@ if($mod=='repsw3'){
 	$repswcode = RemoveXSS(stripslashes($repswcode));
 	$repswcode = addslashes(cn_substr($repswcode,60));
 	
-	if(empty($repswname) OR $repswname==""){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
-	if(empty($repswcode) OR $repswcode=="" OR $repswcode=="y"){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
+	if(empty($repswname) OR $repswname==""){showMsg("授权码错误或已过期！","../index.php",0,100000);exit();}
+	if(empty($repswcode) OR $repswcode=="" OR $repswcode=="y"){showMsg("授权码错误或已过期！","../index.php",0,100000);exit();}
 	
 	$row=$dsql->GetOne("select * from sea_member where username='$repswname'");
 	$row=is_array($row)?$row:array(); $repswcode2=$row['repswcode'];
 
-	if($repswcode != $repswcode2){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
+	if($repswcode != $repswcode2){showMsg("授权码错误或已过期！","../index.php",0,100000);exit();}
 	echo <<<EOT
 	        
 <body>
@@ -225,11 +225,11 @@ if($mod=='repsw3'){
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -297,16 +297,16 @@ if($mod=='repsw4'){
 	$repswnew2 = RemoveXSS(stripslashes($repswnew2));
 	$repswnew2 = addslashes(cn_substr($repswnew2,60));
 	
-	require_once('data/admin/smtp.php');
-	if($smtppsw=='off'){showMsg("抱歉，系统已关闭密码找回功能！","index.php",0,100000);exit();}
+	require_once(dirname(__DIR__).'/data/admin/smtp.php');
+	if($smtppsw=='off'){showMsg("抱歉，系统已关闭密码找回功能！","../index.php",0,100000);exit();}
 	if($repswnew1 != $repswnew2){showMsg("两次输入密码不一致！","-1",0,3000);exit();}
-	if(empty($repswname) OR $repswname==""){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
-	if(empty($repswcode) OR $repswcode=="" OR $repswcode=="y"){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
+	if(empty($repswname) OR $repswname==""){showMsg("授权码错误或已过期！","../index.php",0,100000);exit();}
+	if(empty($repswcode) OR $repswcode=="" OR $repswcode=="y"){showMsg("授权码错误或已过期！","../index.php",0,100000);exit();}
 
 	$row=$dsql->GetOne("select * from sea_member where username='$repswname'");
 	$row=is_array($row)?$row:array(); $repswcode2=$row['repswcode'];
 
-	if($repswcode != $repswcode2){showMsg("授权码错误或已过期！","index.php",0,100000);exit();}
+	if($repswcode != $repswcode2){showMsg("授权码错误或已过期！","../index.php",0,100000);exit();}
 	
 	$pwd = substr(md5($repswnew1),5,20);
 
@@ -448,13 +448,15 @@ function ImageResize2($srcFile,$toW,$toH,$toFile="")
 		$is_img = getimagesize($_FILES["image"]["tmp_name"]);
 		if(!$is_img){$errors="头像文件必须是图片";ShowMsg($errors,'-1');exit;}
        
-       /* 把图片从临时文件夹内的文件移动到当前脚本所在的目录 */
-		$path="uploads/user/".date('Y-n',time())."/";
-		$path2=$path.$_SESSION['sea_user_id']."_".time().".".$file_ext;
-		mkdir($path);
-		$picok=move_uploaded_file($file_tmp,$path2);
+       /* 把图片从临时文件夹内的文件移动到网站根目录 */
+		$ym=date('Y-n',time());
+		$dir="uploads/user/".$ym."/";
+		$path2=$dir.$_SESSION['sea_user_id']."_".time().".".$file_ext;
+		$updir=sea_ROOT."/".$dir;
+		if(!is_dir($updir)){@mkdir($updir,0777,true);}
+		$picok=move_uploaded_file($file_tmp,sea_ROOT."/".$path2);
 		if($picok==false){$path2 ="";}
-		if($picok AND $oldpic !='uploads/user/a.png'){unlink($oldpic);}
+		if($picok AND $oldpic !='uploads/user/a.png'){@unlink(sea_ROOT."/".$oldpic);}
 	}
 	if($path2 !=""){
 	$filePath = sea_ROOT.'/'.$path2;
@@ -510,7 +512,7 @@ elseif($action=='cz')
 		$points=$row1['climit'];
         $dsql->executeNoneQuery("UPDATE sea_cck SET usetime=NOW(),uname='$uname',status='1' WHERE ckey='$key'");
 		$dsql->executeNoneQuery("UPDATE sea_member SET points=points+$points WHERE username='$uname'");
-		showMsg("恭喜！充值成功！","member.php?action=cc");exit;
+		showMsg("恭喜！充值成功！","index.php?action=cc");exit;
     }
 }
 elseif($action=='hyz')
@@ -520,10 +522,10 @@ elseif($action=='hyz')
 	//获取会员组基本信息
 	$gid = intval($gid);
 	if(empty($gid))
-	{showMsg("请选择要购买的会员组","member.php?action=cc");exit;}
+	{showMsg("请选择要购买的会员组","index.php?action=cc");exit;}
 	$mon = intval($mon);
 	if(empty($mon))
-	{showMsg("请选择要购买的时长","member.php?action=cc");exit;}
+	{showMsg("请选择要购买的时长","index.php?action=cc");exit;}
 	$sqlhyz1="SELECT * FROM sea_member_group where gid='$gid'";
 	$rowhyz1 = $dsql->GetOne($sqlhyz1);
     if(!is_array($rowhyz1)){
@@ -561,7 +563,7 @@ elseif($action=='hyz')
 		$sql="UPDATE sea_member SET points=points-$hyzjf,gid=$gid,vipendtime=$vipendtime where username='$uname'";
 		$dsql->executeNoneQuery($sql);
 		$dsql->ExecuteNoneQuery("insert into sea_hyzbuy values('','$uname','$gid','$hyzjf','$mon','".time()."')");
-		showMsg("恭喜！购买会员组成功！","member.php");exit;
+		showMsg("恭喜！购买会员组成功！","index.php");exit;
 	}
 	
 }
@@ -582,7 +584,7 @@ elseif($action=='cc')
 		$_SESSION['sea_user_group'] = 2;
 		$dsql->ExecuteNoneQuery("update `sea_member` set gid=2 where id=$ccuid");
 		if($ccgid !=2){
-			ShowMsg("您购买的会员组已到期，请注意续费!","member.php",0,5000);exit;
+			ShowMsg("您购买的会员组已到期，请注意续费!","index.php",0,5000);exit;
 		}
 	}
 	if($ccgid==2){$ccvipendtime='无限期';}else{$ccvipendtime=date('Y-m-d H:i:s',$ccvipendtime);}
@@ -605,13 +607,14 @@ elseif($action=='cc')
 		{$stxt= '<button class="btn"  type="button"><strong>今日已经签到</strong></button>';}
 		
 	 }
-require_once("data/admin/notify.php");
+require_once(dirname(__DIR__)."/data/admin/notify.php");
 if(empty($notify1) OR $notify1 ==""){$notify1css='display:none';}
 if(empty($notify2) OR $notify2 ==""){$notify2css='display:none';}
 if(empty($notify3) OR $notify3 ==""){$notify3css='display:none';}
 if(empty($msgbody) OR $msgbody =="" OR $msgstate=='y'){$notify4css='display:none';$msgbody='';}
 $upic=$cc2['pic'];
 if($upic ==""){$upic='uploads/user/a.png';}
+if(!preg_match('#^(https?:)?//#',$upic)){$upic='/'.ltrim($upic,'/');}
 	echo <<<EOT
 	        
 <body>
@@ -620,11 +623,11 @@ if($upic ==""){$upic='uploads/user/a.png';}
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-					<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  		<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png"/></a>											  
+					<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  		<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png"/></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -672,7 +675,7 @@ if($upic ==""){$upic='uploads/user/a.png';}
 					<ul class="nav nav-tabs">
 						
 						<a class="text-muted pull-right hidden-xs" href="exit.php"><i class="icon iconfont icon-setting"></i> 退出账户</a> 
-						<a class="text-muted pull-right hidden-xs" style="margin-right:10px;" href="index.php"><i class="icon iconfont icon-home"></i> 网站首页</a> 
+						<a class="text-muted pull-right hidden-xs" style="margin-right:10px;" href="../index.php"><i class="icon iconfont icon-home"></i> 网站首页</a> 
 						
 						<li class="active"><a href="?action=cc" title="基本资料">基本资料</a></li>							
 						<li><a href="?action=favorite"title="收藏">收藏</a></li>							
@@ -705,7 +708,7 @@ EOT;
 								if($cfg_kami==""){$kamistyle='style="display:none;"';}
 								echo
 			                     "<li><span class=\"text-muted\">{$cfg_pointsname}数量：</span>{$ccjifen} {$cfg_pointsname}</li>".
-			                     "<li><span class=\"text-muted\">推广链接：</span>{$_SERVER['HTTP_HOST']}/i.php?uid={$_SESSION['sea_user_id']}</li>".
+			                     "<li><span class=\"text-muted\">推广链接：</span>{$_SERVER['HTTP_HOST']}/member/i.php?uid={$_SESSION['sea_user_id']}</li>".
 			                    "<form action=\"?action=cz\" method=\"post\"><li class=\"cckkey\"><span class=\"text-muted\">充值积分：</span><input type=text name=cckkey class=\"form-control\" id=cckkey placeholder=\"输入充值卡卡号\" > <input type=submit name=cckb id=cckb value='{$cfg_pointsname}充值' class=\"btn btn-primary\">&nbsp;&nbsp;<a target=\"_blank\" class=\"btn btn-danger\" ".$kamistyle." href=\"".$cfg_kami."\">购买充值卡</a></li></form></div>";
 			echo <<<EOT
 												
@@ -787,11 +790,11 @@ elseif($action=='favorite')
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -923,11 +926,11 @@ elseif($action=='buy')
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -1069,11 +1072,11 @@ elseif($action=='buy2')
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -1197,11 +1200,11 @@ elseif($action=='buy3')
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -1321,11 +1324,11 @@ elseif($action=='gb')
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -1365,7 +1368,7 @@ EOT;
 	//$gname=$rs['gname'];
 	
 	echo '<div class="panel panel-info"><div class="panel-heading" style="padding-top:7px;height:30px;font-size: 12px;">';
-	echo '<span style="float:right;">'.MyDate('',$row['dtime']).' <a title="删除" href=javascript:if(confirm("确定要删除吗?"))location="?action=del_gb&id='.$row['id'].'"><i class="icon iconfont icon-delete" style="color:#688faf;font-size:12px;">删除</i></a></span><span style="float:left;"><a target="_blank" style="color: #31708f;" href="gbook.php">'.$row['title'].'</a></span>';
+	echo '<span style="float:right;">'.MyDate('',$row['dtime']).' <a title="删除" href=javascript:if(confirm("确定要删除吗?"))location="?action=del_gb&id='.$row['id'].'"><i class="icon iconfont icon-delete" style="color:#688faf;font-size:12px;">删除</i></a></span><span style="float:left;"><a target="_blank" style="color: #31708f;" href="../gbook.php">'.$row['title'].'</a></span>';
 	echo '</div><div class="panel-body pspan">';
     echo $row['msg'];
 	echo '</div></div>';
@@ -1427,11 +1430,11 @@ elseif($action=='VNc')
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -1562,11 +1565,11 @@ elseif($action=='Rc')
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -1688,7 +1691,7 @@ EOT;
 elseif($action=='savereply')
 {
 	if($cfg_gbookstart=='0'){exit;}
-	if($msg ==''){ShowMsg('请输入回复内容！','member.php?action=Rc',0,3000);exit();}
+	if($msg ==''){ShowMsg('请输入回复内容！','index.php?action=Rc',0,3000);exit();}
 	if($cfg_gbcheck==1){$ischeck =0;}else{$ischeck =1;}
 	if($cfg_feedback_ck=='1')
 	{
@@ -1698,7 +1701,7 @@ elseif($action=='savereply')
 			ResetVdValue();
 			if($validate!=$svali)
 			{
-				ShowMsg('验证码错误！','member.php?action=Rc',0,3000);
+				ShowMsg('验证码错误！','index.php?action=Rc',0,3000);
 				exit();
 			}
 		}
@@ -1712,7 +1715,7 @@ elseif($action=='savereply')
 		$row = $dsql->GetOne("SELECT dtime FROM `sea_comment` WHERE `ip` = '$ip' ORDER BY `id` desc ");
 		$row=is_array($row)?$row:array(); if($dtime - $row['dtime'] < $cfg_comment_times)
 		{
-			ShowMsg('评论太快，请休息一下再来评论！','member.php?action=Rc',0,3000);
+			ShowMsg('评论太快，请休息一下再来评论！','index.php?action=Rc',0,3000);
 			exit();
 		}
 	}
@@ -1727,7 +1730,7 @@ elseif($action=='savereply')
 			$msgisok = strpos($msg, $myarr[$i]);
 			if(is_int($msgisok))
 			{
-			ShowMsg('您发表的评论中有禁用词语！','member.php?action=Rc',0,3000);
+			ShowMsg('您发表的评论中有禁用词语！','index.php?action=Rc',0,3000);
 			exit();
 			}
 		}
@@ -1757,7 +1760,7 @@ elseif($action=='savereply')
 		}
 	}
 	delfile("data/cache/review/$itype/$rvid.js");
-	ShowMsg('恭喜，成功回复一条评论！','member.php?action=Rc',0,3000);
+	ShowMsg('恭喜，成功回复一条评论！','index.php?action=Rc',0,3000);
 	exit();
 }
 elseif($action=='err')
@@ -1787,11 +1790,11 @@ elseif($action=='err')
 		    <div class="row">
 			  	<div class="item">
 				    <div class="logo hidden-xs">
-						<a class="hidden-sm hidden-xs" href="index.php"><img src="pic/member/logo.png" /></a>
-			  			<a class="visible-sm visible-xs" href="index.php"><img src="pic/member/logo_min.png" /></a>											  
+						<a class="hidden-sm hidden-xs" href="../index.php"><img src="../pic/member/logo.png" /></a>
+			  			<a class="visible-sm visible-xs" href="../index.php"><img src="../pic/member/logo_min.png" /></a>											  
 					</div>						
 					<div class="search hidden-xs"> 
-				        <form name="formsearch" id="formsearch" action='search.php' method="post" autocomplete="off">																			
+				        <form name="formsearch" id="formsearch" action='../search.php' method="post" autocomplete="off">																			
 							<input class="form-control" placeholder="输入影片关键词..." name="searchword" type="text" id="keyword" required="">
 							<input type="submit" id="searchbutton" value="" class="hide">
 							<a href="javascript:" class="btns" title="搜索" onClick="$('#formsearch').submit();"><i class="icon iconfont icon-search"></i></a>
@@ -1872,7 +1875,7 @@ elseif($action=='del_gb'){
 	$name = addslashes(cn_substr($name,20));
 	$id = intval($id);
 	$dsql->executeNoneQuery("delete from sea_guestbook where uname='$name' and  id=".$id);
-	ShowMsg('恭喜，成功删除一条留言！','member.php?action=gb',0,3000);
+	ShowMsg('恭喜，成功删除一条留言！','index.php?action=gb',0,3000);
 }
 elseif($action=='del_pl'){
 	$name=$_SESSION['sea_user_name'];
@@ -1881,7 +1884,7 @@ elseif($action=='del_pl'){
 	$id = intval($id);
 	$dsql->executeNoneQuery("delete from sea_comment where username='$name' and  id=".$id);
 	delfile("data/cache/review/$itype/$vid.js");
-	ShowMsg('恭喜，成功删除一条评论！','member.php?action=VNc',0,3000);
+	ShowMsg('恭喜，成功删除一条评论！','index.php?action=VNc',0,3000);
 }
 elseif($action=='del_err'){
 	$name=$_SESSION['sea_user_name'];
@@ -1889,7 +1892,7 @@ elseif($action=='del_err'){
 	$name = addslashes(cn_substr($name,20));
 	$id = intval($id);
 	$dsql->executeNoneQuery("delete from sea_erradd where author='$name' and id=".$id);
-	ShowMsg('恭喜，成功删除一条报错！','member.php?action=err',0,3000);
+	ShowMsg('恭喜，成功删除一条报错！','index.php?action=err',0,3000);
 }
 
 else

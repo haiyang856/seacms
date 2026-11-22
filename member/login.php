@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("include/common.php");
+require_once(dirname(__DIR__)."/include/common.php");
 //前置跳转start
 $cs=$_SERVER["REQUEST_URI"];
 if($GLOBALS['cfg_mskin']==3 AND $GLOBALS['isMobile']==1){header("location:$cfg_mhost$cs");}
@@ -9,7 +9,7 @@ if($GLOBALS['cfg_mskin']==4 AND $GLOBALS['isMobile']==1){header("location:$cfg_m
 require_once(sea_INC."/main.class.php");
 if($cfg_user==0)
 {
-	ShowMsg('系统已关闭会员功能!','index.php');
+	ShowMsg('系统已关闭会员功能!','../index.php');
 	exit();
 }
 $front='front';
@@ -43,19 +43,19 @@ $userid = addslashes(cn_substr($userid,60));
 
 //登录后跳转地址
 $member_to=$cfg_member_to;
-if($member_to==""){$member_to='member.php';}
+if($member_to=="" || $member_to=='member.php'){$member_to='index.php';}
 
 $pwd = substr(md5($pwd),5,20);
 $row1=$dsql->GetOne("select * from sea_member where state=1 and username='$userid'");
 if(is_array($row1) AND $row1['username']==$userid AND $row1['password']==$pwd)
 		{
 					//验证是否激活邮箱
-					require_once('data/admin/smtp.php');
+					require_once(dirname(__DIR__).'/data/admin/smtp.php');
 					if($smtpreg=='on'){
 						$sql="SELECT acode FROM sea_member where username= '$userid'";
 						$row = $dsql->GetOne($sql);
 						$row=is_array($row)?$row:array(); if($row['acode']!='y'){
-							showMsg("您的账户尚未激活，请激活后登陆！","index.php",0,10000);
+							showMsg("您的账户尚未激活，请激活后登陆！","../index.php",0,10000);
 							exit;
 						}
 					}
@@ -128,13 +128,13 @@ function viewMain(){
 function viewLogin(){
 	$mystr=
 "<ul>".
-"<form id=\"f_login\"   action=\"/".$GLOBALS['cfg_cmspath']."login.php\" method=\"post\">".
+"<form id=\"f_login\"   action=\"/".$GLOBALS['cfg_cmspath']."member/login.php\" method=\"post\">".
 "<input type=\"hidden\" value=\"login\" name=\"dopost\" />".
 "<li><input type=\"input\" name=\"userid\" autofocus class=\"form-control\" placeholder=\"用户名\" /></li>".
 "<li><input type=\"password\" name=\"pwd\" class=\"form-control\" placeholder=\"密码\" /></li>".
-"<li><img id=\"vdimgck\" src=\"./include/vdimgck.php\" alt=\"看不清？点击更换\" align=\"absmiddle\" class=\"pull-right\" style='width:70px; height:32px;' onClick=\"this.src=this.src+'?'\"/><input name=\"validate\" id=\"vdcode\" type=\"text\" placeholder=\"验证码\" style='width:50%;text-transform:uppercase;' class=\"form-control\" /> </li>".
+"<li><img id=\"vdimgck\" src=\"../include/vdimgck.php\" alt=\"看不清？点击更换\" align=\"absmiddle\" class=\"pull-right\" style='width:70px; height:32px;' onClick=\"this.src=this.src+'?'\"/><input name=\"validate\" id=\"vdcode\" type=\"text\" placeholder=\"验证码\" style='width:50%;text-transform:uppercase;' class=\"form-control\" /> </li>".
 "<li><input type=\"submit\" value=\"登录\" class=\"btn btn-block btn-warning\"/></li>".
-"<li class=\"text-center\"><a class=\"text-muted\" href=\"./reg.php\">注册用户</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class=\"text-muted\" href=\"./member.php?mod=repsw\">找回密码</a></li>".
+"<li class=\"text-center\"><a class=\"text-muted\" href=\"./reg.php\">注册用户</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class=\"text-muted\" href=\"./index.php?mod=repsw\">找回密码</a></li>".
 "</ul>";
 	return $mystr;
 }
@@ -142,12 +142,12 @@ function viewLogin(){
 function viewLogin2(){
 	$mystr=
 	"<ul>".
-"<form id=\"f_login\"   action=\"/".$GLOBALS['cfg_cmspath']."login.php\" method=\"post\">".
+"<form id=\"f_login\"   action=\"/".$GLOBALS['cfg_cmspath']."member/login.php\" method=\"post\">".
 "<input type=\"hidden\" value=\"login\" name=\"dopost\" />".
 "<li><input type=\"input\" name=\"userid\" autofocus class=\"form-control\" placeholder=\"用户名\" /></li>".
 "<li><input type=\"password\" name=\"pwd\" class=\"form-control\" placeholder=\"密码\" /></li>".
 "<li><input type=\"submit\" value=\"登录\" class=\"btn btn-block btn-warning\"/></li>".
-"<li class=\"text-center\"><a class=\"text-muted\" href=\"./reg.php\">注册用户</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class=\"text-muted\" href=\"./member.php?mod=repsw\">找回密码</a></li>".
+"<li class=\"text-center\"><a class=\"text-muted\" href=\"./reg.php\">注册用户</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class=\"text-muted\" href=\"./index.php?mod=repsw\">找回密码</a></li>".
 "</form>".
 "</ul>";
 	return $mystr;

@@ -44,7 +44,7 @@ function echoChannel($typeId)
 	{$channelTemplatePath = "/templets/".$GLOBALS['cfg_df_mstyle']."/".$GLOBALS['cfg_df_html']."/".$channelTmpName;}
 	if (strpos(" ,".getHideTypeIDS().",",",".$typeId.",")>0) exit("<font color='red'>视频列表为空或被隐藏</font><br>");
 	if ($cfg_user == 1){
-        if (!getUserAuth($typeId, "list")){ShowMsg("您当前的会员级别没有权限浏览此内容！","../member.php",0,20000);exit();}
+        if (!getUserAuth($typeId, "list")){ShowMsg("您当前的会员级别没有权限浏览此内容！","../member/index.php",0,20000);exit();}
     }
 	$pSize = getPageSizeOnCache($channelTemplatePath,"channel",$channelTmpName);
 	if (empty($pSize)) $pSize=12;

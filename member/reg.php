@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("include/common.php");
+require_once(dirname(__DIR__)."/include/common.php");
 //前置跳转start
 $cs=$_SERVER["REQUEST_URI"];
 if($GLOBALS['cfg_mskin']==3 AND $GLOBALS['isMobile']==1){header("location:$cfg_mhost$cs");}
@@ -9,7 +9,7 @@ if($GLOBALS['cfg_mskin']==4 AND $GLOBALS['isMobile']==1){header("location:$cfg_m
 require_once(sea_INC.'/main.class.php');
 if($cfg_user==0)
 {
-	ShowMsg('系统已关闭会员功能!','index.php');
+	ShowMsg('系统已关闭会员功能!','../index.php');
 	exit();
 }
 
@@ -74,15 +74,15 @@ $row2=is_array($row2)?$row2:array(); if(isset($row2['email']) && $row2['email']=
 		$dsql->ExecuteNoneQuery("INSERT INTO `sea_member`(id,username,password,email,regtime,regip,state,gid,points,logincount,stime,vipendtime,acode,repswcode,msgstate,pic)
                   VALUES ('','$username','$pwd','$email','$dtime','$ip','1','2','$regpoints','1','1533686888','$dtime','$acode','y','y','uploads/user/a.png')");
 
-		require_once('data/admin/smtp.php');
+		require_once(dirname(__DIR__).'/data/admin/smtp.php');
 		if($smtpreg=='on')
 		{
 				$smtprmail= $email;
 
 				$smtprtitle = '【'.$cfg_webname.'】Email 地址验证，账号激活邮件';
-$smtprbody = '<strong>Email 地址验证 账户激活</strong><br><br>尊敬的：'.$username.'<br>这封信是由 '.$cfg_webname.' 发送的。<br>您收到这封邮件，是由于在 '.$cfg_webname.' 进行了新用户注册。如果您并没有访问过 '.$cfg_webname.'，或没有进行上述操作，请忽略这封邮件。您不需要退订或进行其他进一步的操作。<br><br>如果您是 '.$cfg_webname. '的新用户，我们需要对您的地址有效性进行验证以避免垃圾邮件或地址被滥用。<br>您只需点击下面的链接即可激活您的帐号：<br><a target="_blank" href="'.$cfg_basehost.'/member.php?mod=activate&acode='.$acode.'">'.$cfg_basehost.'/member.php?mod=activate&acode='.$acode.'</a><br>(如果上面不是链接形式，请将该地址手工粘贴到浏览器地址栏再访问)<br><br>感谢您的访问，祝您使用愉快！<br><br>此致<br>'.$cfg_webname.'管理团队.<br>'.$cfg_basehost.'<br>';
-				require_once("include/class.phpmailer.php");
-				require_once("data/admin/smtp.php");
+$smtprbody = '<strong>Email 地址验证 账户激活</strong><br><br>尊敬的：'.$username.'<br>这封信是由 '.$cfg_webname.' 发送的。<br>您收到这封邮件，是由于在 '.$cfg_webname.' 进行了新用户注册。如果您并没有访问过 '.$cfg_webname.'，或没有进行上述操作，请忽略这封邮件。您不需要退订或进行其他进一步的操作。<br><br>如果您是 '.$cfg_webname. '的新用户，我们需要对您的地址有效性进行验证以避免垃圾邮件或地址被滥用。<br>您只需点击下面的链接即可激活您的帐号：<br><a target="_blank" href="'.$cfg_basehost.'/member/index.php?mod=activate&acode='.$acode.'">'.$cfg_basehost.'/member/index.php?mod=activate&acode='.$acode.'</a><br>(如果上面不是链接形式，请将该地址手工粘贴到浏览器地址栏再访问)<br><br>感谢您的访问，祝您使用愉快！<br><br>此致<br>'.$cfg_webname.'管理团队.<br>'.$cfg_basehost.'<br>';
+				require_once(dirname(__DIR__)."/include/class.phpmailer.php");
+				require_once(dirname(__DIR__)."/data/admin/smtp.php");
 				$mail = new PHPMailer();
 				$mail->SMTPDebug = 0;//是否启用smtp的debug进行调试
 				$mail->isSMTP();
@@ -126,7 +126,7 @@ $smtprbody = '<strong>Email 地址验证 账户激活</strong><br><br>尊敬的�
 			$hashstr=md5($cfg_dbpwd.$cfg_dbname.$cfg_dbuser.$front);//构造session安全码
 			$_SESSION['hashstr']=$hashstr;
 			$dsql->ExecuteNoneQuery("UPDATE `sea_member` set logincount=logincount+1 where id='$uid'");
-			ShowMsg("注册成功，正在转向会员中心！","member.php",0,3000);exit;
+			ShowMsg("注册成功，正在转向会员中心！","index.php",0,3000);exit;
 			
 			}
 		exit;
@@ -171,7 +171,7 @@ function viewMain(){
 
 function viewActivation($activeuser,$activepwd){
 	$mystr="<div id=\"register\">".
-"<form id=\"f_register\" action=\"/".$GLOBALS['cfg_cmspath']."reg.php?action=activationsubmit\" method=\"post\">".
+"<form id=\"f_register\" action=\"/".$GLOBALS['cfg_cmspath']."member/reg.php?action=activationsubmit\" method=\"post\">".
 "<input type=\"hidden\" name=\"activeuser\" value=\"$activeuser\">".
 "<input type=\"hidden\" name=\"activepwd\" value=\"$activepwd\">".
 "<table align=\"center\" style=\"margin:0 auto\">".
@@ -188,12 +188,12 @@ function viewRegister()
 {
 	$mystr=
 "<ul>".
-"<form id=\"f_Activation\"   action=\"/".$GLOBALS['cfg_cmspath']."reg.php?action=reg\" method=\"post\">".
+"<form id=\"f_Activation\"   action=\"/".$GLOBALS['cfg_cmspath']."member/reg.php?action=reg\" method=\"post\">".
 "<li><input type=\"input\" name=\"m_user\" id=\"m_user\" autofocus class=\"form-control\" placeholder=\"用户名\" /></li>".
 "<li><input type=\"password\" name=\"m_pwd\" class=\"form-control\" placeholder=\"密码\" /></li>".
 "<li><input type=\"password\" name=\"m_pwd2\" class=\"form-control\" placeholder=\"确认密码\" /></li>".
 "<li><input type=\"text\" name=\"email\" class=\"form-control\" placeholder=\"邮箱地址\" /></li>".
-"<li><img id=\"vdimgck\" src=\"./include/vdimgck.php\" alt=\"看不清？点击更换\" align=\"absmiddle\" class=\"pull-right\" style='width:70px; height:32px;' onClick=\"this.src=this.src+'?'\"/><input type=\"text\" name=\"validate\" id=\"vdcode\" placeholder=\"验证码\" style='width:50%;text-transform:uppercase;' class=\"form-control\" /> </li>".
+"<li><img id=\"vdimgck\" src=\"../include/vdimgck.php\" alt=\"看不清？点击更换\" align=\"absmiddle\" class=\"pull-right\" style='width:70px; height:32px;' onClick=\"this.src=this.src+'?'\"/><input type=\"text\" name=\"validate\" id=\"vdcode\" placeholder=\"验证码\" style='width:50%;text-transform:uppercase;' class=\"form-control\" /> </li>".
 "<li><input type=\"submit\" value=\"注册\" class=\"btn btn-block btn-warning\"/></li>".
 "<li class=\"text-center\"><a class=\"text-muted\" href=\"./login.php\">已有账号，直接登录？</a></li>".
 "</form>".
@@ -205,7 +205,7 @@ function viewRegister2()
 {
 	$mystr=
 "<ul>".
-"<form id=\"f_Activation\"   action=\"/".$GLOBALS['cfg_cmspath']."reg.php?action=reg\" method=\"post\">".
+"<form id=\"f_Activation\"   action=\"/".$GLOBALS['cfg_cmspath']."member/reg.php?action=reg\" method=\"post\">".
 "<li><input type=\"input\" name=\"m_user\" id=\"m_user\" autofocus class=\"form-control\" placeholder=\"用户名\" /></li>".
 "<li><input type=\"password\" name=\"m_pwd\" class=\"form-control\" placeholder=\"密码\" /></li>".
 "<li><input type=\"password\" name=\"m_pwd2\" class=\"form-control\" placeholder=\"确认密码\" /></li>".

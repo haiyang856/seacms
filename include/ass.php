@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once("include/common.php");
+require_once(__DIR__."/common.php");
 require_once(sea_INC."/main.class.php");
 
 //参数过滤(FILTER_SANITIZE_STRING 已在 PHP 8 中移除,改用显式校验)
