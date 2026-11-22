@@ -1,0 +1,106 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card netpay-page">
+      <div class="card-head">
+        <h2>在线充值</h2>
+        <span class="card-sub">当前{member:pointsname}：<strong>{member:points}</strong></span>
+      </div>
+      <div class="card-body">
+
+        <div class="netpay-empty" style="{member:pay_empty_style}">
+          <p class="text-muted">管理员暂未开启任何在线支付方式，请使用充值卡充值。</p>
+          <a class="btn btn-primary" href="?action=buy3">查看充值记录</a>
+        </div>
+
+        <form action="?action=netpay&do=create" method="post" class="netpay-form" style="{member:pay_form_style}" onsubmit="return netpaySubmitCheck();">
+          <input type="hidden" name="csrf_token" value="{member:csrftoken}" />
+
+          <div class="netpay-block">
+            <div class="netpay-label">充值金额</div>
+            <div class="netpay-presets">
+              {member:pay_presets}
+              <input type="text" name="amount" id="netpayAmount" class="form-control netpay-amount" placeholder="自定义金额" autocomplete="off" />
+            </div>
+            <div class="netpay-help">单笔限额 {member:pay_min_money} - {member:pay_max_money}（人民币按元，USDT 按枚）。</div>
+          </div>
+
+          <div class="netpay-block">
+            <div class="netpay-label">支付方式</div>
+            <div class="netpay-channels">
+              {member:pay_channels}
+            </div>
+          </div>
+
+          <div class="netpay-preview">
+            预计到账：<strong id="netpayPoints">0</strong> {member:pointsname}
+            <span class="netpay-rate">（人民币 1 元 = {member:pay_cny_points} {member:pointsname}；USDT 1 枚 = {member:pay_usdt_points} {member:pointsname}）</span>
+          </div>
+
+          <div class="netpay-actions">
+            <button type="submit" class="btn btn-primary btn-lg" {member:pay_disabled}>立即支付</button>
+            <a class="btn btn-default btn-lg" href="?action=buy3">充值记录</a>
+          </div>
+        </form>
+
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+var npCnyRate = {member:pay_cny_points};
+var npUsdtRate = {member:pay_usdt_points};
+var npMin = parseFloat('{member:pay_min_money}');
+var npMax = parseFloat('{member:pay_max_money}');
+
+function npSelectedCurrency() {
+  var radios = document.getElementsByName('payment');
+  for (var i = 0; i < radios.length; i++) {
+    if (radios[i].checked) {
+      return radios[i].getAttribute('data-currency') || 'CNY';
+    }
+  }
+  return 'CNY';
+}
+function npRefreshPoints() {
+  var amount = parseFloat(document.getElementById('netpayAmount').value);
+  var rate = npSelectedCurrency() === 'USDT' ? npUsdtRate : npCnyRate;
+  var points = (!isNaN(amount) && amount > 0) ? Math.floor(amount * rate) : 0;
+  var el = document.getElementById('netpayPoints');
+  if (el) { el.innerHTML = points; }
+}
+function netpaySubmitCheck() {
+  var amount = parseFloat(document.getElementById('netpayAmount').value);
+  if (isNaN(amount) || amount <= 0) {
+    alert('请输入充值金额');
+    return false;
+  }
+  if (!isNaN(npMin) && amount < npMin) {
+    alert('单笔金额不能低于 ' + npMin);
+    return false;
+  }
+  if (!isNaN(npMax) && amount > npMax) {
+    alert('单笔金额不能高于 ' + npMax);
+    return false;
+  }
+  return true;
+}
+(function () {
+  var presets = document.querySelectorAll('.netpay-preset');
+  for (var i = 0; i < presets.length; i++) {
+    presets[i].onclick = function () {
+      document.getElementById('netpayAmount').value = this.getAttribute('data-amount');
+      var all = document.querySelectorAll('.netpay-preset');
+      for (var j = 0; j < all.length; j++) { all[j].className = 'netpay-preset'; }
+      this.className = 'netpay-preset active';
+      npRefreshPoints();
+    };
+  }
+  var input = document.getElementById('netpayAmount');
+  if (input) { input.oninput = npRefreshPoints; }
+  var radios = document.getElementsByName('payment');
+  for (var k = 0; k < radios.length; k++) { radios[k].onchange = npRefreshPoints; }
+})();
+</script>
+{seacms:foot}

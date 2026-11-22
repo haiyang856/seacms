@@ -7,6 +7,7 @@ if($GLOBALS['cfg_mskin']==3 AND $GLOBALS['isMobile']==1){header("location:$cfg_m
 if($GLOBALS['cfg_mskin']==4 AND $GLOBALS['isMobile']==1){header("location:$cfg_mhost");}
 //前置跳转end
 require_once(sea_INC.'/main.class.php');
+require_once(sea_INC.'/netpay/order.php');
 if($cfg_user==0)
 {
 	ShowMsg('系统已关闭会员功能!','../index.php');
@@ -73,6 +74,14 @@ $row2=is_array($row2)?$row2:array(); if(isset($row2['email']) && $row2['email']=
 	if($username) {
 		$dsql->ExecuteNoneQuery("INSERT INTO `sea_member`(id,username,password,email,regtime,regip,state,gid,points,logincount,stime,vipendtime,acode,repswcode,msgstate,pic)
                   VALUES ('','$username','$pwd','$email','$dtime','$ip','1','2','$regpoints','1','1533686888','$dtime','$acode','y','y','uploads/user/a.png')");
+
+		if ($regpoints > 0) {
+			$newRow = $dsql->GetOne("select id from sea_member where username='$username'");
+			$newUid = is_array($newRow) ? intval($newRow['id']) : 0;
+			if ($newUid > 0) {
+				netpay_log_points($newUid, 6, 'reg', $regpoints, '注册赠送积分');
+			}
+		}
 
 		require_once(dirname(__DIR__).'/data/admin/smtp.php');
 		if($smtpreg=='on')

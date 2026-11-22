@@ -67,6 +67,7 @@ $memberBaseVars = array(
     'notice3style' => 'display:none;',
     'membermsg' => '',
     'membermsgstyle' => 'display:none;',
+    'csrftoken' => member_csrf_token(),
     'upgradelist' => ''
 );
 $memberTpl->setVars($memberBaseVars);
@@ -175,6 +176,7 @@ $memberRoutes = array(
     'hyz' => 'membership.php',
     'buy3' => 'recharge.php',
     'cz' => 'recharge.php',
+    'netpay' => 'netpay.php',
     'gb' => 'guestbook.php',
     'del_gb' => 'guestbook.php',
     'VNc' => 'comment.php',

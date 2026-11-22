@@ -186,6 +186,7 @@ $menu=array (
 		15=>"<a target='I2' href='admin_weixin.php'>微信公众号设置</a>",
 		16=>"<a target='I2' href='admin_smtp.php'>邮件服务器设置</a>",
 		17=>"<a target='I2' href='admin_ai.php'>AI 智能扩展</a>",
+		18=>"<a target='I2' href='admin_netpay.php'>充值接口配置</a>",
 	),
 );
 $menuedit=array(

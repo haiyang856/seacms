@@ -8,25 +8,73 @@
         <span class="card-sub">共 {member:total} 条记录</span>
       </div>
       <div class="card-body">
+
+        <div class="recharge-stats">
+          <div class="recharge-stat rtype-1">
+            <div class="label">充值卡充值总额</div>
+            <div class="value">{member:sum_card_points} <em>{member:pointsname}</em></div>
+          </div>
+          <div class="recharge-stat rtype-2">
+            <div class="label">在线充值总额</div>
+            <div class="value">￥{member:sum_online_cny}</div>
+            <div class="sub">{member:sum_online_usdt} USDT</div>
+          </div>
+          <div class="recharge-stat rtype-3">
+            <div class="label">分销提成总额</div>
+            <div class="value">{member:sum_dist_points} <em>{member:pointsname}</em></div>
+          </div>
+        </div>
+
+        <div class="recharge-stats secondary">
+          <div class="recharge-stat rtype-4">
+            <div class="label">签到奖励总额</div>
+            <div class="value">{member:sum_sign_points} <em>{member:pointsname}</em></div>
+          </div>
+          <div class="recharge-stat rtype-5">
+            <div class="label">推广链接奖励总额</div>
+            <div class="value">{member:sum_promo_points} <em>{member:pointsname}</em></div>
+          </div>
+          <div class="recharge-stat rtype-6">
+            <div class="label">注册赠送积分总额</div>
+            <div class="value">{member:sum_reg_points} <em>{member:pointsname}</em></div>
+          </div>
+        </div>
+
+        <div class="recharge-tabs">
+          <a href="?action=buy3" class="recharge-tab {if:{member:currt}==0}active{end if}">全部</a>
+          <a href="?action=buy3&t=1" class="recharge-tab {if:{member:currt}==1}active{end if}">充值卡</a>
+          <a href="?action=buy3&t=2" class="recharge-tab {if:{member:currt}==2}active{end if}">在线支付</a>
+          <a href="?action=buy3&t=3" class="recharge-tab {if:{member:currt}==3}active{end if}">分销</a>
+          <a href="?action=buy3&t=7" class="recharge-tab {if:{member:currt}==7}active{end if}">其它</a>
+        </div>
+
         <div class="table-responsive">
-          <table class="table member-table">
+          <table class="table member-table recharge-table">
             <thead>
               <tr>
-                <th>充值时间</th>
-                <th>{member:pointsname}数量</th>
-                <th class="hidden-xs">充值卡号</th>
+                <th>时间</th>
+                <th>类型</th>
+                <th class="hidden-xs">渠道</th>
+                <th>金额</th>
+                <th>{member:pointsname}</th>
+                <th>状态</th>
+                <th class="hidden-xs">订单号</th>
               </tr>
             </thead>
             <tbody>
               {member:recharge}
               <tr>
                 <td>[recharge:time]</td>
+                <td><span class="recharge-badge [recharge:typeclass]">[recharge:type]</span></td>
+                <td class="hidden-xs">[recharge:channel]</td>
+                <td>[recharge:amount]</td>
                 <td>[recharge:points]</td>
-                <td class="hidden-xs">[recharge:ckey]</td>
+                <td><span class="recharge-status [recharge:statusclass]">[recharge:status]</span></td>
+                <td class="hidden-xs recharge-order">[recharge:orderno]</td>
               </tr>
               {/member:recharge}
               {member:recharge-empty}
-              <tr><td colspan="3" class="text-center text-muted">暂无充值记录</td></tr>
+              <tr><td colspan="7" class="text-center text-muted">暂无充值记录</td></tr>
               {/member:recharge-empty}
             </tbody>
           </table>

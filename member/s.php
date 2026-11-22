@@ -6,6 +6,7 @@ require_once(dirname(__DIR__).'/include/gpc.filter.php');
   
 require_once(dirname(__DIR__)."/include/common.php");
 require_once(sea_INC."/main.class.php");
+require_once(sea_INC."/netpay/order.php");
 
 if($cfg_spoints==0){showmsg('未开启签到功能', 'index.php');exit;}
 
@@ -23,6 +24,7 @@ if($nowtime-$lasttime > 86400 )
 	$dsql->ExecuteNoneQuery("Update sea_member set stime = $nowtime  where id='$u'");
 	$sql="Update sea_member set points = points+$cfg_spoints where id=$u";
 	$dsql->ExecuteNoneQuery("$sql");
+	netpay_log_points($u, 4, 'sign', intval($cfg_spoints), '每日签到奖励');
 	showmsg('签到成功！', 'index.php');exit;
 }
 else

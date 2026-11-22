@@ -560,8 +560,45 @@ CREATE TABLE IF NOT EXISTS `sea_cck` (
   `usetime` timestamp NULL DEFAULT NULL,
   `uname` varchar(20) DEFAULT NULL,
   `status` varchar(1) NOT NULL,
+  `rtype` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '充值类型：1充值卡 2在线充值 3分销提成 4签到 5推广链接 6注册赠送',
+  `uid` int unsigned NOT NULL DEFAULT 0 COMMENT '使用会员ID',
+  `paylog_id` bigint unsigned NOT NULL DEFAULT 0 COMMENT '统一充值记录ID',
   PRIMARY KEY (`id`),
-  KEY `id` (`id`)
+  KEY `id` (`id`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+DROP TABLE IF EXISTS `sea_paylog`;
+CREATE TABLE IF NOT EXISTS `sea_paylog` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `orderno` varchar(64) NOT NULL DEFAULT '' COMMENT '商户订单号',
+  `uid` int unsigned NOT NULL DEFAULT 0 COMMENT '会员ID',
+  `uname` varchar(50) NOT NULL DEFAULT '' COMMENT '会员用户名',
+  `rtype` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '1充值卡充值 2在线充值 3分销提成',
+  `channel` varchar(20) NOT NULL DEFAULT '' COMMENT 'card/alipay/wechat/mazfu/usdt',
+  `amount` decimal(12,2) NOT NULL DEFAULT 0.00 COMMENT '支付金额或卡面值',
+  `currency` varchar(10) NOT NULL DEFAULT 'CNY' COMMENT 'CNY/USDT/POINTS',
+  `points` int NOT NULL DEFAULT 0 COMMENT '到账积分',
+  `ratio` decimal(12,4) NOT NULL DEFAULT 0.0000 COMMENT '兑换比例快照',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '0待支付 1已支付 2已关闭 3失败',
+  `trade_no` varchar(80) NOT NULL DEFAULT '' COMMENT '第三方交易号',
+  `card_id` int NOT NULL DEFAULT 0 COMMENT '充值卡记录ID',
+  `card_key` varchar(80) NOT NULL DEFAULT '' COMMENT '充值卡号',
+  `parent_uid` int unsigned NOT NULL DEFAULT 0 COMMENT '上级会员ID（三级分销预留）',
+  `dist_level` tinyint unsigned NOT NULL DEFAULT 0 COMMENT '分销层级1/2/3（预留）',
+  `dist_rate` decimal(6,4) NOT NULL DEFAULT 0.0000 COMMENT '分销比例（预留）',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `ip` varchar(45) NOT NULL DEFAULT '' COMMENT '下单IP',
+  `user_agent` varchar(255) NOT NULL DEFAULT '' COMMENT '客户端标识',
+  `ext` text NULL COMMENT '扩展数据JSON',
+  `addtime` int NOT NULL DEFAULT 0 COMMENT '下单时间',
+  `paytime` int NOT NULL DEFAULT 0 COMMENT '支付/到账时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_orderno` (`orderno`),
+  KEY `idx_uid` (`uid`),
+  KEY `idx_rtype_status` (`rtype`,`status`),
+  KEY `idx_status_addtime` (`status`,`addtime`),
+  KEY `idx_channel` (`channel`),
+  KEY `idx_parent` (`parent_uid`,`dist_level`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `sea_ie`;
 CREATE TABLE IF NOT EXISTS `sea_ie` (

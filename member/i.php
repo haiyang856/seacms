@@ -2,6 +2,7 @@
 session_start();
 require_once(dirname(__DIR__)."/include/common.php");
 require_once(sea_INC."/main.class.php");
+require_once(sea_INC."/netpay/order.php");
 
 $i=$cfg_ipoints;
 if($i==0){showmsg('系统已经关闭积分推广系统', '../index.php');exit;}
@@ -39,6 +40,7 @@ if(!is_array($row))
 	$dsql->ExecuteNoneQuery("insert into sea_ie values('','$bip',NOW())");
 	$sql="Update sea_member set points = points+$i where id=$u";
 	$dsql->ExecuteNoneQuery("$sql");
+	netpay_log_points($u, 5, 'promo', $i, '推广链接奖励');
 	showmsg('感谢您的支持，现在将自动跳转到首页', '../index.php');exit;
 }
 
@@ -49,6 +51,7 @@ if($btime-$stime > 86400)
 	$dsql->ExecuteNoneQuery("Update sea_ie set addtime = NOW() where ip='$bip'");
 	$sql="Update sea_member set points = points+$i where id=$u";
 	$dsql->ExecuteNoneQuery("$sql");
+	netpay_log_points($u, 5, 'promo', $i, '推广链接奖励');
 	showmsg('感谢您的支持，现在将自动跳转到首页', '../index.php');exit;
 }
 else

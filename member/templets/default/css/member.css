@@ -523,3 +523,213 @@ a:hover, a:focus { color: var(--mc-primary-dark); text-decoration: none; }
     .member-table > tbody > tr > td { font-size: 11px; }
     .member-table td a.text-danger { padding: 4px 6px; }
 }
+
+/* ============ 在线充值 ============ */
+.netpay-block { margin-bottom: 18px; }
+.netpay-label {
+    font-size: 13px;
+    color: var(--mc-muted);
+    margin-bottom: 8px;
+}
+.netpay-presets {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+.netpay-preset {
+    min-width: 62px;
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid var(--mc-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--mc-text);
+    font-size: 14px;
+    cursor: pointer;
+}
+.netpay-preset.active {
+    border-color: var(--mc-primary);
+    background: #fff4ef;
+    color: var(--mc-primary);
+}
+.netpay-presets .netpay-amount {
+    width: 150px;
+    flex: 0 1 150px;
+    height: 38px;
+    margin: 0;
+    border-radius: 8px;
+    border-color: var(--mc-border);
+    box-shadow: none;
+    font-size: 14px;
+}
+.netpay-presets .netpay-amount:focus {
+    border-color: var(--mc-primary);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, .1);
+}
+.netpay-help {
+    color: var(--mc-muted);
+    font-size: 12px;
+    margin-top: 8px;
+    line-height: 18px;
+}
+.netpay-channels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.netpay-channel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    padding: 12px;
+    border: 1px solid var(--mc-border);
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    min-width: 0;
+    transition: all .18s;
+}
+.netpay-channel input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex: none;
+    accent-color: var(--mc-primary);
+}
+.netpay-channel .np-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mc-text);
+}
+.netpay-channel .np-desc {
+    flex: 0 0 100%;
+    padding-left: 24px;
+    font-size: 11px;
+    color: var(--mc-muted);
+}
+.netpay-channel:has(input:checked) {
+    border-color: var(--mc-primary);
+    background: #fff8f4;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, .1);
+}
+.netpay-channel input:checked ~ .np-name { color: var(--mc-primary); }
+.netpay-preview {
+    background: #f7f9fc;
+    border: 1px dashed var(--mc-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--mc-text);
+    margin-bottom: 16px;
+    line-height: 20px;
+}
+.netpay-preview strong { color: var(--mc-primary); font-size: 18px; }
+.netpay-rate {
+    display: block;
+    color: var(--mc-muted);
+    font-size: 12px;
+    margin-top: 4px;
+}
+.netpay-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.netpay-actions .btn { flex: 1 1 140px; border-radius: 8px; }
+.netpay-empty { text-align: center; padding: 30px 12px; }
+.netpay-empty p { margin-bottom: 14px; }
+
+/* ============ 充值记录 ============ */
+.recharge-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+.recharge-stat {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--mc-border);
+    min-width: 0;
+}
+.recharge-stat.rtype-1 { border-left-color: #f59e0b; }
+.recharge-stat.rtype-2 { border-left-color: #2563eb; }
+.recharge-stat.rtype-3 { border-left-color: #10b981; }
+.recharge-stat.rtype-4 { border-left-color: #8b5cf6; }
+.recharge-stat.rtype-5 { border-left-color: #0ea5e9; }
+.recharge-stat.rtype-6 { border-left-color: #f43f5e; }
+.recharge-stats.secondary { margin-top: -4px; }
+.recharge-stats.secondary .value { font-size: 16px; }
+.recharge-stat .label {
+    color: var(--mc-muted);
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+.recharge-stat .value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--mc-text);
+    line-height: 1.3;
+    word-break: break-all;
+}
+.recharge-stat .value em {
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--mc-muted);
+}
+.recharge-stat .sub {
+    font-size: 11px;
+    color: var(--mc-muted);
+    margin-top: 3px;
+}
+.recharge-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.recharge-tab {
+    padding: 6px 14px;
+    border-radius: 16px;
+    background: #f4f6fa;
+    color: var(--mc-text);
+    font-size: 13px;
+    line-height: 20px;
+}
+.recharge-tab.active {
+    background: var(--mc-primary);
+    color: #fff;
+}
+.recharge-badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+.recharge-badge.rtype-1 { background: #fff7e6; color: #ad6800; }
+.recharge-badge.rtype-2 { background: #e6f4ff; color: #0958d9; }
+.recharge-badge.rtype-3 { background: #e8fffb; color: #087f5b; }
+.recharge-badge.rtype-4 { background: #f3e8ff; color: #6b21a8; }
+.recharge-badge.rtype-5 { background: #e0f2fe; color: #0369a1; }
+.recharge-badge.rtype-6 { background: #ffe4e6; color: #be123c; }
+.recharge-status { font-size: 12px; white-space: nowrap; }
+.recharge-status.pstatus-1 { color: #0a7d32; }
+.recharge-status.pstatus-0 { color: #ad6800; }
+.recharge-status.pstatus-4 { color: #cf1322; }
+.recharge-status.pstatus-2,
+.recharge-status.pstatus-3,
+.recharge-status.pstatus-unknown { color: #111; }
+.recharge-order {
+    font-size: 11px;
+    color: var(--mc-muted);
+    word-break: break-all;
+    max-width: 150px;
+}
+
+@media (min-width: 768px) {
+    .netpay-channels { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .recharge-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .recharge-stat .value { font-size: 20px; }
+}
+

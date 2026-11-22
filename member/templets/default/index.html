@@ -43,9 +43,11 @@
       <div class="card-head"><h2>充值积分</h2><span class="card-sub">输入充值卡卡号即可到账</span></div>
       <div class="card-body">
         <form action="?action=cz" method="post" class="form-inline recharge-form">
+          <input type="hidden" name="csrf_token" value="{member:csrftoken}" />
           <input type="text" name="cckkey" id="cckkey" class="form-control" placeholder="输入充值卡卡号">
           <button type="submit" class="btn btn-primary">{member:pointsname}充值</button>
           <a target="_blank" class="btn btn-danger" style="{member:kamistyle}" href="{member:kamiurl}">购买充值卡</a>
+          <a class="btn btn-success" href="?action=netpay">在线充值</a>
         </form>
       </div>
     </section>

@@ -15,6 +15,31 @@ function member_e($str)
 }
 
 /**
+ * 用户中心 CSRF 令牌
+ */
+function member_csrf_token()
+{
+    if (empty($_SESSION['member_csrf_token']) || !is_string($_SESSION['member_csrf_token'])) {
+        $_SESSION['member_csrf_token'] = bin2hex(random_bytes(16));
+    }
+    return $_SESSION['member_csrf_token'];
+}
+
+function member_csrf_field()
+{
+    return '<input type="hidden" name="csrf_token" value="' . member_e(member_csrf_token()) . '" />';
+}
+
+function member_csrf_check()
+{
+    $token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+    if (empty($_SESSION['member_csrf_token']) || !is_string($token) || !hash_equals($_SESSION['member_csrf_token'], $token)) {
+        ShowMsg('请求已过期或非法提交，请刷新页面后重试！', 'index.php');
+        exit();
+    }
+}
+
+/**
  * 生成用户中心操作链接
  */
 function member_url($action = '', $extra = '')
