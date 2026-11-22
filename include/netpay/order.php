@@ -91,7 +91,6 @@ function netpay_create_order($uid, $uname, $amount, $currency, $channel, $extra 
         VALUES
         ('" . addslashes($orderno) . "',{$uid},'{$unameEsc}',2,'{$channelEsc}'," . number_format($amount, 2, '.', '') . ",'{$currency}',{$points}," . number_format($ratio, 4, '.', '') . ",0,'',0,'',0,0,0,'','{$ip}','{$uaEsc}','{$extEsc}',{$now},0)";
     if (!$dsql->ExecuteNoneQuery($sql)) {
-        netpay_log('创建订单失败', array('uid' => $uid, 'error' => $dsql->GetError()));
         return array('ok' => false, 'error' => '创建订单失败，请稍后再试');
     }
     $order = netpay_get_order($orderno);
@@ -139,7 +138,6 @@ function netpay_log_points($uid, $rtype, $channel, $points, $remark = '', $uname
         VALUES
         ('" . addslashes($orderno) . "',{$uid},'{$unameEsc}',{$rtype},'{$channelEsc}',0,'POINTS',{$points},0,1,'',0,'',0,0,0,'{$remarkEsc}','{$ip}','{$ua}','',{$now},{$now})";
     if (!$dsql->ExecuteNoneQuery($sql)) {
-        netpay_log('积分记录写入失败', array('uid' => $uid, 'rtype' => $rtype, 'channel' => $channel, 'error' => $dsql->GetError()));
         return false;
     }
     return true;
@@ -194,14 +192,6 @@ function netpay_set_order_status($id, $newStatus, $operator = '')
         }
     }
     mysqli_commit($dsql->linkID);
-    netpay_log('管理员修改订单状态', array(
-        'id' => $id,
-        'orderno' => $order['orderno'],
-        'from' => $old,
-        'to' => $newStatus,
-        'points_delta' => $delta,
-        'operator' => (string)$operator,
-    ));
     return array('ok' => true, 'message' => '状态已更新为「' . netpay_status_name($newStatus) . '」' . ($delta !== 0 ? '，积分已同步调整' : ''));
 }
 
@@ -248,14 +238,12 @@ function netpay_credit_order($orderno, $tradeNo = '', $paidAmount = null, $payCh
     global $dsql;
     $order = netpay_get_order($orderno);
     if (empty($order)) {
-        netpay_log('回调订单不存在', array('orderno' => $orderno));
         return array('ok' => false, 'already' => false, 'message' => '订单不存在');
     }
     if (intval($order['status']) === 1) {
         return array('ok' => true, 'already' => true, 'message' => '订单已处理', 'order' => $order);
     }
     if (intval($order['status']) !== 0) {
-        netpay_log('回调订单状态异常', array('orderno' => $orderno, 'status' => $order['status']));
         return array('ok' => false, 'already' => false, 'message' => '订单状态异常', 'order' => $order);
     }
     // 金额校验：第三方回调金额不得小于订单金额
@@ -263,7 +251,6 @@ function netpay_credit_order($orderno, $tradeNo = '', $paidAmount = null, $payCh
         $paid = round(floatval($paidAmount), 2);
         $expect = round(floatval($order['amount']), 2);
         if ($paid + 0.02 < $expect) {
-            netpay_log('回调金额不匹配', array('orderno' => $orderno, 'expect' => $expect, 'paid' => $paid, 'channel' => $payChannel));
             return array('ok' => false, 'already' => false, 'message' => '支付金额不匹配', 'order' => $order);
         }
     }
@@ -288,7 +275,6 @@ function netpay_credit_order($orderno, $tradeNo = '', $paidAmount = null, $payCh
         if (!empty($fresh) && intval($fresh['status']) === 1) {
             return array('ok' => true, 'already' => true, 'message' => '订单已处理', 'order' => $fresh);
         }
-        netpay_log('订单入账失败：状态更新未生效', array('orderno' => $orderno));
         return array('ok' => false, 'already' => false, 'message' => '订单状态更新失败');
     }
     if ($uid > 0 && $points > 0) {
@@ -297,14 +283,12 @@ function netpay_credit_order($orderno, $tradeNo = '', $paidAmount = null, $payCh
             if ($inTransaction) {
                 @mysqli_rollback($dsql->linkID);
             }
-            netpay_log('订单入账失败：积分更新失败', array('orderno' => $orderno, 'uid' => $uid, 'error' => $dsql->GetError()));
             return array('ok' => false, 'already' => false, 'message' => '积分入账失败');
         }
     }
     if ($inTransaction) {
         @mysqli_commit($dsql->linkID);
     }
-    netpay_log('订单支付成功', array('orderno' => $orderno, 'uid' => $uid, 'points' => $points, 'channel' => $payChannel, 'trade_no' => $tradeNo));
     $order['status'] = 1;
     $order['paytime'] = $now;
     return array('ok' => true, 'already' => false, 'message' => '入账成功', 'order' => $order);

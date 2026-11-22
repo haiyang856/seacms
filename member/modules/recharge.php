@@ -61,7 +61,6 @@ if ($member_action == 'cz') {
         if ($inTransaction) {
             @mysqli_rollback($dsql->linkID);
         }
-        netpay_log('充值卡入账失败', array('uid' => $uid, 'card_id' => $cardId, 'error' => $dsql->GetError()));
         ShowMsg('充值失败，请稍后再试', 'index.php?action=buy3');
         exit;
     }

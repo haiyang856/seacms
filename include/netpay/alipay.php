@@ -135,7 +135,6 @@ function netpay_alipay_create($order)
     );
     $sign = netpay_alipay_sign(netpay_alipay_sign_content($params), $config['alipay_private_key']);
     if ($sign === false) {
-        netpay_log('支付宝签名失败', array('orderno' => $order['orderno']));
         return array('ok' => false, 'error' => '支付宝私钥格式不正确，签名失败');
     }
     $params['sign'] = $sign;

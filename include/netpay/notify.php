@@ -26,13 +26,11 @@ function netpay_notify_handle($result, $channel)
         if ($credit['ok']) {
             return true;
         }
-        netpay_log('回调入账失败', array('channel' => $channel, 'orderno' => $result['orderno'], 'message' => $credit['message']));
         return false;
     }
     if (!empty($result['ignore'])) {
         return true;
     }
-    netpay_log('回调验签失败', array('channel' => $channel, 'error' => $result['error']));
     return false;
 }
 
@@ -68,7 +66,6 @@ if ($channel === 'usdt') {
     $raw = file_get_contents('php://input');
     $data = json_decode($raw, true);
     if (!is_array($data)) {
-        netpay_log('USDT 回调 JSON 解析失败');
         echo 'fail';
         exit;
     }

@@ -229,12 +229,10 @@ function netpay_wechat_create($order)
         20
     );
     if (!$resp['ok']) {
-        netpay_log('微信下单请求失败', array('orderno' => $order['orderno'], 'error' => $resp['error']));
         return array('ok' => false, 'error' => '微信支付下单请求失败：' . $resp['error']);
     }
     $data = netpay_wechat_parse_xml($resp['body']);
     if (!is_array($data)) {
-        netpay_log('微信下单返回解析失败', array('orderno' => $order['orderno']));
         return array('ok' => false, 'error' => '微信支付返回数据异常');
     }
     if (empty($data['return_code']) || $data['return_code'] !== 'SUCCESS') {

@@ -62,12 +62,9 @@ $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?' . http_build_query(a
 $resp = netpay_http_request($url, null, array('Accept: application/json'), 10);
 $data = $resp['ok'] ? json_decode($resp['body'], true) : false;
 if (!is_array($data) || empty($data['openid'])) {
-    $errmsg = is_array($data) && isset($data['errmsg']) ? (string)$data['errmsg'] : (isset($resp['error']) ? (string)$resp['error'] : '未知错误');
-    netpay_log('微信网页授权获取 openid 失败', array('orderno' => $orderno, 'error' => $errmsg));
     netpay_wx_oauth_fail('微信授权失败，请重新发起支付。', $fallback);
 }
 if (!preg_match('/^[0-9A-Za-z_\-]{10,64}$/', (string)$data['openid'])) {
-    netpay_log('微信网页授权返回的 openid 格式异常', array('orderno' => $orderno));
     netpay_wx_oauth_fail('微信授权数据异常，请重新发起支付。', $fallback);
 }
 

@@ -85,12 +85,10 @@ function netpay_usdt_create($order)
         20
     );
     if (!$resp['ok']) {
-        netpay_log('USDT 下单请求失败', array('orderno' => $order['orderno'], 'error' => $resp['error']));
         return array('ok' => false, 'error' => 'USDT 下单请求失败：' . $resp['error']);
     }
     $data = json_decode($resp['body'], true);
     if (!is_array($data)) {
-        netpay_log('USDT 下单返回解析失败', array('orderno' => $order['orderno']));
         return array('ok' => false, 'error' => 'USDT 返回数据异常');
     }
     $statusCode = isset($data['status_code']) ? intval($data['status_code']) : (isset($data['code']) ? intval($data['code']) : 0);
@@ -105,7 +103,6 @@ function netpay_usdt_create($order)
         $paymentUrl = (string)$data['payment_url'];
     }
     if (!netpay_url_is_valid($paymentUrl)) {
-        netpay_log('USDT 未返回有效收银台地址', array('orderno' => $order['orderno']));
         return array('ok' => false, 'error' => 'USDT 未返回有效收银台地址');
     }
     return array('ok' => true, 'type' => 'redirect', 'url' => $paymentUrl);

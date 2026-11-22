@@ -391,31 +391,6 @@ function netpay_html($str)
 }
 
 /**
- * 写支付日志（不记录密钥、签名等敏感信息）
- */
-function netpay_log($message, $context = array())
-{
-    $file = sea_DATA . '/netpay.log';
-    if (is_array($context) && !empty($context)) {
-        foreach (array('key', 'token', 'sign', 'signature', 'private', 'password', 'authorization') as $sensitive) {
-            foreach ($context as $k => $v) {
-                if (stripos((string)$k, $sensitive) !== false) {
-                    unset($context[$k]);
-                }
-            }
-        }
-    }
-    $line = '[' . date('Y-m-d H:i:s') . '] ' . $message;
-    if (!empty($context)) {
-        $json = json_encode($context, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        if ($json !== false) {
-            $line .= ' ' . (strlen($json) > 2000 ? substr($json, 0, 2000) . '...' : $json);
-        }
-    }
-    @file_put_contents($file, $line . "\n", FILE_APPEND | LOCK_EX);
-}
-
-/**
  * HTTP 请求
  * @return array ok/body/code/error
  */
