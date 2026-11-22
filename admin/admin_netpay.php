@@ -321,12 +321,6 @@ $baseUrl = netpay_base_url();
                 </div>
             </div>
             <div class="np-field">
-                <label>支付场景</label>
-                <div class="np-control">
-                    <div class="np-note" style="margin-top:2px;">移动端自动使用 H5 支付（需在商户平台配置 H5 支付域名），桌面端自动使用扫码支付。</div>
-                </div>
-            </div>
-            <div class="np-field">
                 <label>下单地址</label>
                 <div class="np-control"><?php echo netpay_admin_input('wechat_gateway', $config['wechat_gateway'], 'text', 'maxlength="200"'); ?></div>
             </div>
@@ -396,6 +390,7 @@ $baseUrl = netpay_base_url();
                 <div class="np-control">
                     <?php echo netpay_admin_input('usdt_gateway', $config['usdt_gateway'], 'text', 'placeholder="https://pay.example.com" maxlength="200"'); ?>
                     <div class="np-note">BEpusdt 服务根地址，不带末尾斜杠。</div>
+                    <div class="np-note">需自行安装 BEpusdt 服务，教程：<a href="https://github.com/v03413/BEpusdt/blob/main/docs/docker/docker.md" target="_blank" rel="noopener" style="color:#1677ff;">Docker 部署文档</a></div>
                 </div>
             </div>
             <div class="np-field">
