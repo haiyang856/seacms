@@ -19,9 +19,10 @@ function netpay_default_config()
         'alipay_private_key'  => '',
         'alipay_public_key'   => '',
         'alipay_gateway'      => 'https://openapi.alipay.com/gateway.do',
-        // 微信支付（移动端优先 H5，桌面端回退 Native 扫码，APIv2）
+        // 微信支付（微信内 JSAPI，移动端 H5，桌面端 Native 扫码，APIv2）
         'wechat_enable'       => 'off',
         'wechat_appid'        => '',
+        'wechat_secret'       => '',
         'wechat_mchid'        => '',
         'wechat_key'          => '',
         'wechat_gateway'      => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
@@ -165,7 +166,7 @@ function netpay_validate_config($input)
     if (strlen($config['alipay_private_key']) > 8192 || strlen($config['alipay_public_key']) > 8192) {
         $errors[] = '支付宝密钥长度超出限制';
     }
-    if (strlen($config['wechat_key']) > 128 || strlen($config['mazfu_key']) > 128 || strlen($config['usdt_token']) > 256) {
+    if (strlen($config['wechat_key']) > 128 || strlen($config['wechat_secret']) > 128 || strlen($config['mazfu_key']) > 128 || strlen($config['usdt_token']) > 256) {
         $errors[] = '支付密钥长度超出限制';
     }
 

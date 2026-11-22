@@ -109,17 +109,21 @@ function netpay_alipay_create($order)
         return array('ok' => false, 'error' => '支付宝配置不完整');
     }
     $expireMinutes = max(1, intval(ceil(intval($config['pay_order_expire']) / 60)));
+    $mobile = netpay_is_mobile();
     $bizContent = array(
         'out_trade_no'    => $order['orderno'],
         'total_amount'    => number_format(floatval($order['amount']), 2, '.', ''),
         'subject'         => mb_substr($config['pay_subject'], 0, 60, 'UTF-8') . '-' . $order['orderno'],
-        'product_code'    => 'QUICK_WAP_WAY',
-        'quit_url'        => netpay_return_url('alipay'),
+        'product_code'    => $mobile ? 'QUICK_WAP_WAY' : 'FAST_INSTANT_TRADE_PAY',
         'timeout_express' => $expireMinutes . 'm',
     );
+    if ($mobile) {
+        $bizContent['quit_url'] = netpay_return_url('alipay');
+    }
     $params = array(
         'app_id'      => $config['alipay_appid'],
-        'method'      => 'alipay.trade.wap.pay',
+        // 移动端使用手机网站支付，桌面端使用电脑网站支付（收银台展示扫码）
+        'method'      => $mobile ? 'alipay.trade.wap.pay' : 'alipay.trade.page.pay',
         'format'      => 'JSON',
         'charset'     => 'utf-8',
         'sign_type'   => 'RSA2',

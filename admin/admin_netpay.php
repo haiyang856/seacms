@@ -300,7 +300,7 @@ $baseUrl = netpay_base_url();
         <div class="np-card-head">
             <div class="np-card-title">
                 <span class="np-ico np-ico-wechat">微</span>
-                <div><h2>标准微信支付</h2><p>移动端 H5 / 桌面端扫码</p></div>
+                <div><h2>标准微信支付</h2><p>微信内 JSAPI / 移动端 H5 / 桌面端扫码</p></div>
             </div>
             <?php echo netpay_admin_switch('wechat_enable', $config['wechat_enable']); ?>
         </div>
@@ -312,6 +312,13 @@ $baseUrl = netpay_base_url();
             <div class="np-field">
                 <label>商户号</label>
                 <div class="np-control"><?php echo netpay_admin_input('wechat_mchid', $config['wechat_mchid'], 'text', 'maxlength="32"'); ?></div>
+            </div>
+            <div class="np-field">
+                <label>网页授权密钥</label>
+                <div class="np-control">
+                    <?php echo netpay_admin_secret('wechat_secret', $config['wechat_secret'], '公众号 AppSecret（32 位）'); ?>
+                    <div class="np-note">微信内置浏览器使用 JSAPI 支付时，需通过网页授权获取 openid，请同时配置公众号「网页授权域名」与商户平台「JSAPI 支付授权目录」（本站充值页目录）。</div>
+                </div>
             </div>
             <div class="np-field">
                 <label>API 密钥</label>

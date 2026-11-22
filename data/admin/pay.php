@@ -9,6 +9,7 @@ return array (
   'alipay_gateway' => 'https://openapi.alipay.com/gateway.do',
   'wechat_enable' => 'off',
   'wechat_appid' => '',
+  'wechat_secret' => '',
   'wechat_mchid' => '',
   'wechat_key' => '',
   'wechat_gateway' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
