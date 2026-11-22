@@ -19,7 +19,7 @@ CREATE TABLE `sea_arcrank` (
   `adminrank` smallint(6) NOT NULL default '0',
   `money` smallint(8) unsigned NOT NULL default '500',
   `scores` mediumint(8) NOT NULL default '0',
-  `purviews` mediumtext,
+  `purviews` longtext,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -33,7 +33,7 @@ CREATE TABLE `sea_comment` (
   `ip` char(15) NOT NULL default '',
   `ischeck` smallint(6) NOT NULL default '0',
   `dtime` int(10) unsigned NOT NULL default '0',
-  `msg` text,
+  `msg` mediumtext,
   `m_type` int(6) unsigned NOT NULL default '0',
   `reply` int(6) unsigned NOT NULL default '0',
   `agree` int(6) unsigned NOT NULL default '0',
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS `sea_content`;
 CREATE TABLE `sea_content` (
   `v_id` mediumint(8) NOT NULL default '0',
   `tid` smallint(8) unsigned NOT NULL default '0',
-  `body` mediumtext,
+  `body` longtext,
   PRIMARY KEY  (`v_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -114,11 +114,11 @@ CREATE TABLE `sea_co_data` (
   `v_letter` char(3) NOT NULL default '',
   `v_from` char(255) NOT NULL default '',
   `v_inbase` enum('0','1') NOT NULL default '0',
-  `v_des` text,
-  `v_playdata` text,
-  `v_downdata` text,
-  `v_jq` text,
-  `v_longtxt` TEXT,
+  `v_des` mediumtext,
+  `v_playdata` mediumtext,
+  `v_downdata` mediumtext,
+  `v_jq` mediumtext,
+  `v_longtxt` mediumtext,
   PRIMARY KEY  (`v_id`),
   KEY `tid` (`v_rank`,`tid`,`v_commend`,`v_hit`),
   KEY `v_addtime` (`v_addtime`,`v_digg`,`v_tread`,`v_inbase`)
@@ -135,7 +135,7 @@ CREATE TABLE `sea_co_news` (
   `n_author` varchar(80) default NULL,
   `n_addtime` int(10) NOT NULL default '0',
   `n_letter` char(3) NOT NULL default '',
-  `n_content` mediumtext,
+  `n_content` longtext,
   `n_outline` char(255) default NULL,
   `tname` char(60) NOT NULL default '',
   `n_from` char(50) NOT NULL default '',
@@ -175,8 +175,8 @@ CREATE TABLE `sea_co_type` (
   `sock` enum('0','1') NOT NULL default '0',
   `addtime` int(10) unsigned NOT NULL default '0',
   `cjtime` int(10) unsigned NOT NULL default '0',
-  `listconfig` text,
-  `itemconfig` text,
+  `listconfig` mediumtext,
+  `itemconfig` mediumtext,
   `isok` tinyint(1) unsigned NOT NULL default '0',
   `cotype` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`tid`),
@@ -250,8 +250,8 @@ CREATE TABLE `sea_data` (
   `v_lang` varchar(200) default NULL,
   `v_score` int(10) NULL default '0',
   `v_scorenum` int(10) default '1',
-  `v_extratype` text,
-  `v_jq` text,
+  `v_extratype` mediumtext,
+  `v_jq` mediumtext,
   `v_nickname` varchar(60) NULL ,
   `v_reweek` varchar(60) NULL ,
   `v_douban` FLOAT NULL default '0',
@@ -269,7 +269,7 @@ CREATE TABLE `sea_data` (
   `v_total` VARCHAR( 6 ) NULL ,
   `v_ver` VARCHAR( 20 ) NULL ,
   `v_psd` VARCHAR( 30 ) NULL ,
-  `v_longtxt` text ,
+  `v_longtxt` mediumtext ,
   `v_push` INT(1) NOT NULL DEFAULT '0',
   `v_try` INT(5) NOT NULL DEFAULT '0',
   `v_ai` INT(1) NOT NULL DEFAULT '0',
@@ -303,7 +303,7 @@ CREATE TABLE `sea_erradd` (
   `vid` mediumint(8) unsigned NOT NULL,
   `author` char(60) NOT NULL default '',
   `ip` char(15) NOT NULL default '',
-  `errtxt` mediumtext,
+  `errtxt` longtext,
   `sendtime` int(10) unsigned NOT NULL default '0',
   `ischeck` INT(1) NOT NULL,
   KEY `id` (`id`)
@@ -334,7 +334,7 @@ CREATE TABLE `sea_guestbook` (
   `ip` varchar(20) NOT NULL default '',
   `dtime` int(10) unsigned NOT NULL default '0',
   `ischeck` smallint(6) NOT NULL default '1',
-  `msg` text,
+  `msg` mediumtext,
   PRIMARY KEY  (`id`),
   KEY `ischeck` (`ischeck`),
   KEY `idx_ischeck_id` (`ischeck`,`id`)
@@ -347,7 +347,7 @@ CREATE TABLE `sea_myad` (
   `adenname` varchar(60) NOT NULL default '',
   `timeset` int(10) unsigned NOT NULL default '0',
   `intro` char(255) NOT NULL default '',
-  `adsbody` text,
+  `adsbody` mediumtext,
   PRIMARY KEY  (`aid`),
   KEY `timeset` (`timeset`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -358,7 +358,7 @@ CREATE TABLE `sea_mytag` (
   `tagname` varchar(30) NOT NULL default '',
   `tagdes` varchar(50) NOT NULL default '0',
   `addtime` int(10) unsigned NOT NULL default '0',
-  `tagcontent` text,
+  `tagcontent` mediumtext,
   PRIMARY KEY  (`aid`),
   KEY `tagname` (`tagname`,`addtime`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -390,7 +390,7 @@ CREATE TABLE `sea_news` (
   `n_from` varchar(50) default NULL,
   `n_score` bigint(10) default '0',
   `n_scorenum` int(10) default '0',
-  `n_content` mediumtext,
+  `n_content` longtext,
   `n_push` INT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY  (`n_id`),
   KEY `tid` (`n_rank`,`tid`,`n_commend`,`n_hit`),
@@ -401,8 +401,8 @@ DROP TABLE IF EXISTS `sea_playdata`;
 CREATE TABLE `sea_playdata` (
   `v_id` mediumint(8) NOT NULL default '0',
   `tid` smallint(8) unsigned NOT NULL default '0',
-  `body` mediumtext,
-  `body1` mediumtext,
+  `body` longtext,
+  `body1` longtext,
   PRIMARY KEY  (`v_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -425,7 +425,7 @@ CREATE TABLE `sea_tags` (
   `tagid` int(11) unsigned NOT NULL auto_increment,
   `tag` char(30) NOT NULL default '',
   `usenum` mediumint(6) unsigned NOT NULL default '0',
-  `vids` text NOT NULL,
+  `vids` mediumtext NOT NULL,
   PRIMARY KEY  (`tagid`),
   KEY `usenum` (`usenum`),
   KEY `tag` (`tag`)
@@ -444,8 +444,8 @@ CREATE TABLE `sea_temp` (
   `v_addtime` int(10) unsigned NOT NULL default '0',
   `v_note` char(30) NOT NULL default '',
   `v_letter` char(3) NOT NULL default '',
-  `v_playdata` mediumtext,
-  `v_des` mediumtext,
+  `v_playdata` longtext,
+  `v_des` longtext,
   `v_director` varchar(200) default NULL,
   `v_enname` varchar(200) default NULL,
   `v_lang` varchar(200) default NULL,
@@ -464,11 +464,11 @@ CREATE TABLE `sea_topic` (
   `pic` char(255) NOT NULL default '',
   `spic` char(255) NOT NULL default '',
   `gpic` char(255) NOT NULL default '',
-  `des` text,
-  `vod` text NOT NULL,
-  `news` text NOT NULL,
-  `keyword` TEXT NULL,
-  `content` TEXT NULL,
+  `des` mediumtext,
+  `vod` mediumtext NOT NULL,
+  `news` mediumtext NOT NULL,
+  `keyword` mediumtext NULL,
+  `content` mediumtext NULL,
   `addtime` INT(10) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `sort` (`sort`)
@@ -488,7 +488,7 @@ CREATE TABLE `sea_type` (
   `keyword` char(50) NOT NULL default '',
   `description` char(50) NOT NULL default '',
   `ishidden` smallint(6) NOT NULL default '0',
-  `unionid` mediumtext,
+  `unionid` longtext,
   `tptype` smallint(1) NOT NULL default '0',
   PRIMARY KEY  (`tid`),
   KEY `upid` (`upid`,`ishidden`),
@@ -521,7 +521,7 @@ CREATE TABLE `sea_member` (
   `vipendtime` VARCHAR(15) NOT NULL, 
   `acode` VARCHAR(35) NOT NULL,
   `repswcode` VARCHAR(35) NOT NULL, 
-  `msgbody` TEXT NULL, 
+  `msgbody` mediumtext NULL, 
   `msgstate` VARCHAR(2) NOT NULL,
   `pic` VARCHAR(255) NOT NULL,
   PRIMARY KEY  (`id`),
@@ -533,7 +533,7 @@ DROP TABLE IF EXISTS `sea_member_group`;
 CREATE TABLE `sea_member_group` (
   `gid` int(11) unsigned NOT NULL auto_increment,
   `gname` varchar(32) NOT NULL default '',
-  `gtype` TEXT NOT NULL default '',
+  `gtype` mediumtext NOT NULL,
   `g_auth` varchar(32) NOT NULL default '',
   `g_upgrade` int(11) NOT NULL default '0',
   `g_authvalue` int(11) NOT NULL default '0',
@@ -615,8 +615,8 @@ CREATE TABLE IF NOT EXISTS `sea_zyk` (
   `zapi` varchar(255) NOT NULL,
   `zinfo` varchar(255) NOT NULL default '暂无',
   `ztype` varchar(1) NOT NULL default '1',
-  `filter_config` TEXT COMMENT '过滤配置(JSON格式)',
-  `replace_config` TEXT COMMENT '替换配置(JSON格式)',
+  `filter_config` mediumtext COMMENT '过滤配置(JSON格式)',
+  `replace_config` mediumtext COMMENT '替换配置(JSON格式)',
   PRIMARY KEY (`zid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
