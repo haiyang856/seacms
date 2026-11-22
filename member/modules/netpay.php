@@ -7,8 +7,9 @@ if (!defined('sea_INC')) {
 }
 require_once(sea_INC . '/netpay/order.php');
 
-//发起支付
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do']) && $_POST['do'] === 'create') {
+//发起支付（do 参数位于表单 action 的查询串中）
+$netpay_do = isset($_POST['do']) ? $_POST['do'] : (isset($_GET['do']) ? $_GET['do'] : '');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $netpay_do === 'create') {
     member_csrf_check();
     $payment = isset($_POST['payment']) ? strtolower(trim((string)$_POST['payment'])) : '';
     $allowed = array();

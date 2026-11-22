@@ -32,6 +32,10 @@ function netpay_default_config()
         'mazfu_gateway'       => 'https://www.mazfu.com/xpay/epay/submit.php',
         'mazfu_alipay'        => 'on',
         'mazfu_wxpay'         => 'on',
+        'mazfu_qqpay'         => 'off',
+        'mazfu_bank'          => 'off',
+        'mazfu_jdpay'         => 'off',
+        'mazfu_paypal'        => 'off',
         // USDT 收款（BEpusdt）
         'usdt_enable'         => 'off',
         'usdt_gateway'        => '',
@@ -131,7 +135,11 @@ function netpay_validate_config($input)
         $config[$key] = $value;
     }
 
-    foreach (array('alipay_enable', 'wechat_enable', 'mazfu_enable', 'usdt_enable', 'mazfu_alipay', 'mazfu_wxpay') as $k) {
+    $onoffKeys = array('alipay_enable', 'wechat_enable', 'mazfu_enable', 'usdt_enable');
+    foreach (array_keys(netpay_mazfu_type_map()) as $type) {
+        $onoffKeys[] = 'mazfu_' . $type;
+    }
+    foreach ($onoffKeys as $k) {
         $config[$k] = netpay_onoff($config[$k]);
     }
 
@@ -200,7 +208,14 @@ function netpay_validate_config($input)
         if ($config['mazfu_pid'] === '' || $config['mazfu_key'] === '') {
             $errors[] = '启用码支付时必须填写商户 ID 和商户密钥';
         }
-        if ($config['mazfu_alipay'] !== 'on' && $config['mazfu_wxpay'] !== 'on') {
+        $mazfuTypeOn = false;
+        foreach (array_keys(netpay_mazfu_type_map()) as $type) {
+            if ($config['mazfu_' . $type] === 'on') {
+                $mazfuTypeOn = true;
+                break;
+            }
+        }
+        if (!$mazfuTypeOn) {
             $errors[] = '码支付至少需要开启一种支付方式';
         }
     }
@@ -533,6 +548,23 @@ function netpay_currency_name($currency)
 }
 
 /**
+ * 码支付（易支付协议）支持的支付方式
+ * key 同时作为配置项后缀（mazfu_xxx）与提交给平台的 type 值
+ * @return array
+ */
+function netpay_mazfu_type_map()
+{
+    return array(
+        'alipay' => array('name' => '支付宝', 'desc' => '码支付-支付宝'),
+        'wxpay'  => array('name' => '微信支付', 'desc' => '码支付-微信支付'),
+        'qqpay'  => array('name' => 'QQ钱包', 'desc' => '码支付-QQ钱包'),
+        'bank'   => array('name' => '网银支付', 'desc' => '码支付-网银支付'),
+        'jdpay'  => array('name' => '京东支付', 'desc' => '码支付-京东支付'),
+        'paypal' => array('name' => 'PayPal', 'desc' => '码支付-PayPal'),
+    );
+}
+
+/**
  * 当前可用支付方式
  * @return array
  */
@@ -547,11 +579,16 @@ function netpay_available_channels()
         $list[] = array('channel' => 'wechat', 'name' => '微信支付', 'currency' => 'CNY', 'desc' => $mobile ? 'H5 支付' : '扫码支付');
     }
     if (netpay_cfg('mazfu_enable') === 'on') {
-        if (netpay_cfg('mazfu_alipay') === 'on') {
-            $list[] = array('channel' => 'mazfu', 'sub' => 'alipay', 'name' => '码支付-支付宝', 'currency' => 'CNY', 'desc' => $mobile ? 'H5 聚合支付' : '第三方聚合支付');
-        }
-        if (netpay_cfg('mazfu_wxpay') === 'on') {
-            $list[] = array('channel' => 'mazfu', 'sub' => 'wxpay', 'name' => '码支付-微信', 'currency' => 'CNY', 'desc' => $mobile ? 'H5 聚合支付' : '第三方聚合支付');
+        foreach (netpay_mazfu_type_map() as $type => $meta) {
+            if (netpay_cfg('mazfu_' . $type) === 'on') {
+                $list[] = array(
+                    'channel'  => 'mazfu',
+                    'sub'      => $type,
+                    'name'     => $meta['desc'],
+                    'currency' => 'CNY',
+                    'desc'     => $mobile ? 'H5 聚合支付' : '第三方聚合支付',
+                );
+            }
         }
     }
     if (netpay_cfg('usdt_enable') === 'on') {

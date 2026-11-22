@@ -42,14 +42,12 @@ function netpay_mazfu_create($order)
         }
     }
     $type = isset($ext['mazfu_type']) ? strtolower($ext['mazfu_type']) : '';
-    if (!in_array($type, array('alipay', 'wxpay'), true)) {
+    $typeMap = netpay_mazfu_type_map();
+    if (!isset($typeMap[$type])) {
         return array('ok' => false, 'error' => '码支付方式无效');
     }
-    if ($type === 'alipay' && $config['mazfu_alipay'] !== 'on') {
-        return array('ok' => false, 'error' => '码支付支付宝通道未开启');
-    }
-    if ($type === 'wxpay' && $config['mazfu_wxpay'] !== 'on') {
-        return array('ok' => false, 'error' => '码支付微信通道未开启');
+    if ($config['mazfu_' . $type] !== 'on') {
+        return array('ok' => false, 'error' => $typeMap[$type]['desc'] . '通道未开启');
     }
     $siteName = isset($GLOBALS['cfg_webname']) ? strip_tags((string)$GLOBALS['cfg_webname']) : '积分充值';
     if ($siteName === '') {

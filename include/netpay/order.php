@@ -61,7 +61,7 @@ function netpay_create_order($uid, $uname, $amount, $currency, $channel, $extra 
     }
 
     $sub = isset($extra['sub']) ? strtolower((string)$extra['sub']) : '';
-    if ($channel === 'mazfu' && !in_array($sub, array('alipay', 'wxpay'), true)) {
+    if ($channel === 'mazfu' && !isset(netpay_mazfu_type_map()[$sub])) {
         return array('ok' => false, 'error' => '请选择码支付的支付方式');
     }
     $ext = array();
