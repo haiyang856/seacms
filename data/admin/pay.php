@@ -1,0 +1,32 @@
+<?php
+// 在线充值配置（由后台自动生成，请勿手工修改为可执行代码）
+if (!defined('sea_INC')) { exit('Request Error!'); }
+return array (
+  'alipay_enable' => 'off',
+  'alipay_appid' => '',
+  'alipay_private_key' => '',
+  'alipay_public_key' => '',
+  'alipay_gateway' => 'https://openapi.alipay.com/gateway.do',
+  'wechat_enable' => 'off',
+  'wechat_appid' => '',
+  'wechat_mchid' => '',
+  'wechat_key' => '',
+  'wechat_gateway' => 'https://api.mch.weixin.qq.com/pay/unifiedorder',
+  'mazfu_enable' => 'off',
+  'mazfu_pid' => '',
+  'mazfu_key' => '',
+  'mazfu_gateway' => 'https://www.mazfu.com/xpay/epay/submit.php',
+  'mazfu_alipay' => 'on',
+  'mazfu_wxpay' => 'on',
+  'usdt_enable' => 'off',
+  'usdt_gateway' => '',
+  'usdt_token' => '',
+  'usdt_trade_type' => 'usdt.trc20',
+  'pay_cny_points' => '100',
+  'pay_usdt_points' => '700',
+  'pay_min_money' => '1',
+  'pay_max_money' => '5000',
+  'pay_order_expire' => '900',
+  'pay_notify_base' => '',
+  'pay_subject' => '站内积分充值',
+);

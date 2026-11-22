@@ -34,8 +34,5 @@ Thumbs.db
 # 后台入口生成的路径文件
 data/admin_*.php
 
-# 在线充值运行配置（后台生成，可能含支付密钥）
-data/admin/pay.php
-
 # 本地后台目录（生产环境使用 zzz，仓库统一为 admin）
 /zzz/
