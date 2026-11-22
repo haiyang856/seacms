@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow" />
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<title>会员中心 - {seacms:sitename}</title>
+<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
+<link href="../pic/member/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="../pic/member/iconfont.css" rel="stylesheet" type="text/css" />
+<link href="{member:tplurl}css/member.css" rel="stylesheet" type="text/css" />
+<script src="../pic/member/jquery.min.js"></script>
+<script src="../pic/member/bootstrap.min.js"></script>
+<script src="../pic/member/layer.js"></script>
+</head>
+<body>
+<header class="member-header">
+  <div class="container header-inner">
+    <a class="member-brand" href="/"><i class="icon iconfont icon-fdvideo"></i> {seacms:sitename}</a>
+    <form class="member-search" action="/search.php" method="post" autocomplete="off">
+      <input type="text" name="searchword" placeholder="输入影片关键词..." required>
+      <button type="submit"><i class="icon iconfont icon-search"></i></button>
+    </form>
+    <div class="member-header-links">
+      <a href="/"><i class="icon iconfont icon-home"></i> 网站首页</a>
+      {if:{member:loggedin}==1}<a href="exit.php"><i class="icon iconfont icon-setting"></i> 退出账户</a>{end if}
+      {if:{member:loggedin}==0}<a href="login.php"><i class="icon iconfont icon-member1"></i> 会员登录</a>{end if}
+    </div>
+  </div>
+</header>
+<main class="member-main">
+  <div class="container">

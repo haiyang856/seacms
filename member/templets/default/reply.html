@@ -1,0 +1,61 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>回复我的</h2>
+        <span class="card-sub">共 {member:total} 条回复</span>
+      </div>
+      <div class="card-body">
+        {member:reply}
+        <div class="panel panel-info member-panel">
+          <div class="panel-heading">
+            <a target="_blank" href="[reply:link]">[reply:title]</a>
+            <span class="panel-time">[reply:time]</span>
+          </div>
+          <div class="panel-body">
+            <div class="reply-origin">[reply:origin]</div>
+            <div class="reply-action" onclick="[reply:replyurl]">
+              <i class="icon iconfont icon-comment"></i> 回复TA
+            </div>
+          </div>
+          <div class="panel-footer"><span class="reply-user">@[reply:username]</span>：[reply:msg]</div>
+        </div>
+        {/member:reply}
+        {member:reply-empty}<p class="text-center text-muted">暂无回复</p>{/member:reply-empty}
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+function check() {
+  var vd = document.getElementById('vdcode');
+  if (vd && vd.value.length < 1) { alert('验证码必须填写'); return false; }
+  var el = document.getElementById('msg');
+  if (!el || el.value.length < 1) { alert('评论内容必须填写'); return false; }
+  if (!/.*[\u4e00-\u9fa5]+.*$/.test(el.value)) { alert('评论内容请包含中文！'); return false; }
+  return true;
+}
+function showR(rid, rvid, rmtype) {
+  layer.open({
+    type: 1,
+    anim: 'up',
+    title: '回复',
+    className: 'member-sheet',
+    shadeClose: true,
+    content: '<div class="member-sheet-form">'
+      + '<form onsubmit="return check()" action="?action=savereply" method="post">'
+      + '<input type="hidden" name="rid" value="' + rid + '">'
+      + '<input type="hidden" name="rvid" value="' + rvid + '">'
+      + '<input type="hidden" name="rmtype" value="' + rmtype + '">'
+      + '<textarea name="msg" id="msg" class="form-control" rows="4" maxlength="200" placeholder="输入200以内回复内容"></textarea>'
+      + '<div class="member-captcha">{member:vimg}</div>'
+      + '<button type="submit" class="btn btn-primary btn-block">提交回复</button>'
+      + '<a href="javascript:;" class="member-sheet-cancel" onclick="layer.closeAll()">取消</a>'
+      + '</form></div>'
+  });
+}
+</script>
+{seacms:foot}

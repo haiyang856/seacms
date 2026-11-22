@@ -1,0 +1,45 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>视频购买</h2>
+        <span class="card-sub">共 {member:total} 条记录</span>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table member-table">
+            <thead>
+              <tr>
+                <th>视频</th>
+                <th>购买时间</th>
+                <th class="hidden-xs">播放数</th>
+                <th class="hidden-xs">连载集数</th>
+                <th class="hidden-xs">状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {member:buy}
+              <tr>
+                <td><a href="[buy:link]" target="_blank">[buy:name]</a></td>
+                <td>[buy:time]</td>
+                <td class="hidden-xs">[buy:hit]</td>
+                <td class="hidden-xs">[buy:note]</td>
+                <td class="hidden-xs">[buy:state]</td>
+                <td>已购买</td>
+              </tr>
+              {/member:buy}
+              {member:buy-empty}
+              <tr><td colspan="6" class="text-center text-muted">暂无购买记录</td></tr>
+              {/member:buy-empty}
+            </tbody>
+          </table>
+        </div>
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

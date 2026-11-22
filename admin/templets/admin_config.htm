@@ -563,6 +563,22 @@ $(function() {
           </select> 将模板文件放入templets文件夹下</td>
       </tr>
 	  <tr>
+        <td>用户中心模板选择:</td>
+        <td><select name="edit___cfg_member_style" style="width:150 ">
+            <?php
+            $mdh = dir($cfg_basedir.'/member/templets');
+            while($mdirname=$mdh->read())
+            {
+            if(!m_ereg("\.",$mdirname)){
+            ?>
+            <option value='<?php echo htmlspecialchars($mdirname, ENT_QUOTES);?>' <?php if ($mdirname==$cfg_member_style) echo "selected";?>><?php echo htmlspecialchars($mdirname, ENT_QUOTES);?></option>
+            <?php
+            }
+            }
+            ?>
+          </select> 将用户中心模板文件放入member/templets文件夹下</td>
+      </tr>
+	  <tr>
         <td>移动端网址:</td>
         <td><input type="text" name="edit___cfg_mhost" size="30" value="<?php echo htmlspecialchars($cfg_mhost, ENT_QUOTES);?>">
           如填写:http://m.seacms.net,注意地址最后不要加'/'</td>

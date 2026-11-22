@@ -1,0 +1,28 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>我的评论</h2>
+        <span class="card-sub">共 {member:total} 条评论</span>
+      </div>
+      <div class="card-body">
+        {member:comment}
+        <div class="panel panel-info member-panel">
+          <div class="panel-heading">
+            <a target="_blank" href="[comment:link]">[comment:title]</a>
+            <span class="panel-time">[comment:time]
+              <a class="text-danger" onclick="return confirm('确定要删除吗?')" href="[comment:delurl]"><i class="icon iconfont icon-delete"></i> 删除</a>
+            </span>
+          </div>
+          <div class="panel-body">[comment:msg]</div>
+        </div>
+        {/member:comment}
+        {member:comment-empty}<p class="text-center text-muted">暂无评论</p>{/member:comment-empty}
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

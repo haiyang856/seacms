@@ -1,0 +1,56 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>我的收藏</h2>
+        <span class="card-sub">共 {member:total} 条收藏</span>
+      </div>
+      <div class="card-body">
+        <form action="?action=cancelfavs" method="post" onsubmit="return confirm('确定取消选中的收藏吗？');">
+          <div class="table-responsive">
+            <table class="table member-table">
+              <thead>
+                <tr>
+                  <th style="width:36px;"><input type="checkbox" id="checkall"></th>
+                  <th>视频</th>
+                  <th>收藏时间</th>
+                  <th class="hidden-xs">播放数</th>
+                  <th class="hidden-xs">连载集数</th>
+                  <th class="hidden-xs">状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {member:favorite}
+                <tr>
+                  <td><input type="checkbox" name="fid[]" value="[favorite:id]"></td>
+                  <td><a href="[favorite:link]" target="_blank">[favorite:name]</a></td>
+                  <td>[favorite:time]</td>
+                  <td class="hidden-xs">[favorite:hit]</td>
+                  <td class="hidden-xs">[favorite:note]</td>
+                  <td class="hidden-xs">[favorite:state]</td>
+                  <td><a class="text-danger" onclick="return confirm('确定取消收藏该影片？')" href="[favorite:delurl]">取消</a></td>
+                </tr>
+                {/member:favorite}
+                {member:favorite-empty}
+                <tr><td colspan="7" class="text-center text-muted">暂无收藏记录</td></tr>
+                {/member:favorite-empty}
+              </tbody>
+            </table>
+          </div>
+          <button type="submit" class="btn btn-danger btn-sm fav-clear-btn">取消选中收藏</button>
+        </form>
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+document.getElementById('checkall') && document.getElementById('checkall').addEventListener('change', function () {
+  var boxes = document.querySelectorAll('input[name="fid[]"]');
+  for (var i = 0; i < boxes.length; i++) { boxes[i].checked = this.checked; }
+});
+</script>
+{seacms:foot}

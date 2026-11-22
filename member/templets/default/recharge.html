@@ -1,0 +1,39 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>充值记录</h2>
+        <span class="card-sub">共 {member:total} 条记录</span>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table member-table">
+            <thead>
+              <tr>
+                <th>充值时间</th>
+                <th>{member:pointsname}数量</th>
+                <th class="hidden-xs">充值卡号</th>
+              </tr>
+            </thead>
+            <tbody>
+              {member:recharge}
+              <tr>
+                <td>[recharge:time]</td>
+                <td>[recharge:points]</td>
+                <td class="hidden-xs">[recharge:ckey]</td>
+              </tr>
+              {/member:recharge}
+              {member:recharge-empty}
+              <tr><td colspan="3" class="text-center text-muted">暂无充值记录</td></tr>
+              {/member:recharge-empty}
+            </tbody>
+          </table>
+        </div>
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

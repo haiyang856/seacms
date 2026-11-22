@@ -1,0 +1,27 @@
+<aside class="member-sidebar">
+  <div class="user-card">
+    <div class="user-avatar"><img src="{member:pic}" alt="{member:username}"></div>
+    <div class="user-meta">
+      <h3 class="user-name">{member:username}</h3>
+      <span class="user-group">{member:group}</span>
+      <div class="user-points"><em>{member:pointsname}</em><strong>{member:points}</strong></div>
+    </div>
+    <div class="user-sign">{member:signhtml}</div>
+  </div>
+  <nav class="member-nav">
+    <a href="?action=cc" class="{if:{member:curr}==cc}active{end if}"><i class="icon iconfont icon-member1"></i> 基本资料</a>
+    <a href="?action=settings" class="{if:{member:curr}==settings}active{end if}"><i class="icon iconfont icon-setting"></i> 修改资料</a>
+    <a href="?action=favorite" class="{if:{member:curr}==favorite}active{end if}"><i class="icon iconfont icon-collect"></i> 我的收藏</a>
+    <a href="?action=buy" class="{if:{member:curr}==buy}active{end if}"><i class="icon iconfont icon-film"></i> 视频购买</a>
+    <a href="?action=buy2" class="{if:{member:curr}==buy2}active{end if}"><i class="icon iconfont icon-mallanimation"></i> 会员购买</a>
+    <a href="?action=buy3" class="{if:{member:curr}==buy3}active{end if}"><i class="icon iconfont icon-record1"></i> 充值记录</a>
+    <a href="?action=Rc" class="{if:{member:curr}==Rc}active{end if}"><i class="icon iconfont icon-comment"></i> 回复我的</a>
+    <a href="?action=VNc" class="{if:{member:curr}==VNc}active{end if}"><i class="icon iconfont icon-comment"></i> 我的评论</a>
+    <a href="?action=gb" class="{if:{member:curr}==gb}active{end if}"><i class="icon iconfont icon-notice"></i> 我的留言</a>
+    <a href="?action=err" class="{if:{member:curr}==err}active{end if}"><i class="icon iconfont icon-flag"></i> 我的报错</a>
+  </nav>
+  <div class="sidebar-tip">
+    <p>推广链接</p>
+    <input type="text" readonly value="{member:promolink}" onclick="this.select();">
+  </div>
+</aside>

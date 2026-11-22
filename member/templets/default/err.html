@@ -1,0 +1,30 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>我的报错</h2>
+        <span class="card-sub">共 {member:total} 条报错</span>
+      </div>
+      <div class="card-body">
+        {member:err}
+        <div class="panel panel-info member-panel">
+          <div class="panel-heading">
+            <a target="_blank" href="[err:link]">[err:title]</a>
+            <span class="panel-time">[err:time]
+              <a class="text-danger" onclick="return confirm('确定要删除吗?')" href="[err:delurl]"><i class="icon iconfont icon-delete"></i> 删除</a>
+            </span>
+          </div>
+          <div class="panel-body">[err:msg]
+            <div class="err-reply">[err:replytext]</div>
+          </div>
+        </div>
+        {/member:err}
+        {member:err-empty}<p class="text-center text-muted">暂无报错记录</p>{/member:err-empty}
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

@@ -55,7 +55,7 @@ if($dopost=="save")
 			exit();
 		}
 	}
-	if(!m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_df_style) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_df_html) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_ads_dir) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_upload_dir) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_backup_dir)){
+	if(!m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_df_style) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_df_html) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_ads_dir) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_upload_dir) || !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_backup_dir) || (isset($edit___cfg_member_style) && $edit___cfg_member_style!='' && !m_ereg("^[0-9a-zA-Z_\-]+$",$edit___cfg_member_style))){
 		ShowMsg("请检查模板与路径设置里的文件夹路径设置是否含有非法字符！","-1");
 		exit;
 	}

@@ -1,0 +1,41 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>会员购买</h2>
+        <span class="card-sub">共 {member:total} 条记录</span>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table member-table">
+            <thead>
+              <tr>
+                <th>购买时间</th>
+                <th>购买时长</th>
+                <th>消耗{member:pointsname}</th>
+                <th>会员组</th>
+              </tr>
+            </thead>
+            <tbody>
+              {member:membership}
+              <tr>
+                <td>[membership:time]</td>
+                <td>[membership:mon] 个月</td>
+                <td>[membership:points]</td>
+                <td>[membership:gname]</td>
+              </tr>
+              {/member:membership}
+              {member:membership-empty}
+              <tr><td colspan="4" class="text-center text-muted">暂无会员购买记录</td></tr>
+              {/member:membership-empty}
+            </tbody>
+          </table>
+        </div>
+        {member:pager}
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}

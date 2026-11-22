@@ -1,0 +1,72 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <div class="member-alert alert alert-info" style="margin-bottom:10px;{member:notice1style}">{member:notice1}</div>
+    <div class="member-alert alert alert-info" style="margin-bottom:10px;{member:notice2style}">{member:notice2}</div>
+    <div class="member-alert alert alert-info" style="margin-bottom:10px;{member:notice3style}">{member:notice3}</div>
+    <div class="member-alert alert alert-success" style="margin-bottom:10px;{member:membermsgstyle}">
+      {member:membermsg}
+      <a class="alert-del" href="?action=delmsg"><i class="icon iconfont icon-delete"></i> 删除</a>
+    </div>
+
+    <section class="member-card">
+      <div class="card-head">
+        <h2>基本资料</h2>
+        <span class="card-sub">会员编号：{member:userid}</span>
+      </div>
+      <div class="card-body">
+        <ul class="info-list">
+          <li><span>您的账户</span><strong>{member:username}</strong></li>
+          <li><span>您的邮箱</span><strong>{member:email}</strong></li>
+          <li><span>联系方式</span><strong>{member:nickname}</strong></li>
+          <li><span>登陆次数</span><strong>{member:logincount}</strong></li>
+          <li><span>会员时限</span><strong>{member:vipendtime}</strong></li>
+          <li><span>用户级别</span><strong>{member:group}</strong></li>
+          <li><span>{member:pointsname}数量</span><strong class="text-warning">{member:points} {member:pointsname}</strong></li>
+          <li class="full"><span>推广链接</span><strong>{member:promolink}</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="member-card">
+      <div class="card-head"><h2>升级会员</h2><span class="card-sub">{member:pointsname}可直接升级会员组</span></div>
+      <div class="card-body upgrade-list">
+        {member:grouplist}
+        <button type="button" class="btn btn-info btn-sm" onclick="show([grouplist:gid],[grouplist:upgrade],'{member:pointsname}');">[grouplist:label][grouplist:gname]</button>
+        {/member:grouplist}
+        {member:grouplist-empty}<p class="text-muted">暂无可升级的会员组</p>{/member:grouplist-empty}
+      </div>
+    </section>
+
+    <section class="member-card">
+      <div class="card-head"><h2>充值积分</h2><span class="card-sub">输入充值卡卡号即可到账</span></div>
+      <div class="card-body">
+        <form action="?action=cz" method="post" class="form-inline recharge-form">
+          <input type="text" name="cckkey" id="cckkey" class="form-control" placeholder="输入充值卡卡号">
+          <button type="submit" class="btn btn-primary">{member:pointsname}充值</button>
+          <a target="_blank" class="btn btn-danger" style="{member:kamistyle}" href="{member:kamiurl}">购买充值卡</a>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+function show(id, points, pname) {
+  layer.open({
+    type: 1,
+    anim: 'up',
+    title: '选择时长',
+    className: 'member-sheet',
+    shadeClose: true,
+    content: '<div class="member-sheet-form member-sheet-btns">'
+      + '<input type="submit" class="btn btn-info btn-lg btn-block" value="单月 ' + (points * 1 * {member:vipoff1}) + pname + '" onclick="self.location=\'?action=hyz&gid=' + id + '&mon=1\'">'
+      + '<input type="submit" class="btn btn-success btn-lg btn-block" value="三月 ' + (points * 3 * {member:vipoff3}) + pname + '" onclick="self.location=\'?action=hyz&gid=' + id + '&mon=3\'">'
+      + '<input type="submit" class="btn btn-primary btn-lg btn-block" value="半年 ' + (points * 6 * {member:vipoff6}) + pname + '" onclick="self.location=\'?action=hyz&gid=' + id + '&mon=6\'">'
+      + '<input type="submit" class="btn btn-danger btn-lg btn-block" value="一年 ' + (points * 12 * {member:vipoff12}) + pname + '" onclick="self.location=\'?action=hyz&gid=' + id + '&mon=12\'">'
+      + '<a href="javascript:;" class="member-sheet-cancel" onclick="layer.closeAll()">取消</a>'
+      + '</div>'
+  });
+}
+</script>
+{seacms:foot}

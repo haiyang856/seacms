@@ -1,0 +1,47 @@
+{seacms:top}
+<div class="row member-layout">
+  <div class="col-md-3 col-sm-12">{seacms:load menu.html}</div>
+  <div class="col-md-9 col-sm-12">
+    <section class="member-card">
+      <div class="card-head">
+        <h2>修改个人信息</h2>
+        <span class="card-sub">修改后请使用新密码登录</span>
+      </div>
+      <div class="card-body">
+        <form id="f_Activation" action="?action=chgpwdsubmit" method="post" enctype="multipart/form-data" class="profile-form">
+          <div class="form-group">
+            <label>当前头像</label>
+            <div><img src="{member:pic}" alt="{member:username}" class="profile-avatar"></div>
+          </div>
+          <div class="form-group">
+            <label>旧密码</label>
+            <input type="password" name="oldpwd" class="form-control" placeholder="输入旧密码" required>
+          </div>
+          <div class="form-group">
+            <label>新密码</label>
+            <input type="password" name="newpwd" class="form-control" placeholder="输入新密码（留空则不修改）">
+          </div>
+          <div class="form-group">
+            <label>确认新密码</label>
+            <input type="password" name="newpwd2" class="form-control" placeholder="再次确认新密码">
+          </div>
+          <div class="form-group">
+            <label>邮箱地址</label>
+            <input type="text" name="email" value="{member:email}" class="form-control" placeholder="邮箱地址" required>
+          </div>
+          <div class="form-group">
+            <label>联系方式</label>
+            <input type="text" name="nickname" value="{member:nickname}" class="form-control" placeholder="联系方式">
+          </div>
+          <div class="form-group" style="{member:upichidden}">
+            <label>上传头像</label>
+            <input type="file" name="image" id="image" class="form-control">
+          </div>
+          <input type="hidden" name="oldpic" value="{member:oldpic}">
+          <button type="submit" class="btn btn-warning btn-block">确认修改</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+{seacms:foot}
