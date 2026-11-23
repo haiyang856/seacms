@@ -4,6 +4,97 @@ require(sea_INC.'/image.func.php');
 require_once("../include/common.php");
 $mysqlver=$dsql->GetOne("select VERSION()");
 
+// ========== 在线升级提示（检测逻辑与 admin_update.php 一致） ==========
+$updTipRepo     = 'haiyang856/seacms';
+$updTipBranch   = 'main';
+$updTipLocal    = sea_ROOT.'/data/admin/ver.json';
+$updTipCache    = sea_ROOT.'/data/admin/ver_check.json';
+$updTipCacheTTL = 86400; // 检测结果缓存 24 小时，避免每次打开首页都请求 GitHub
+
+function index_body_ver_norm($data)
+{
+	if (!is_array($data) || !isset($data['ver'])) return null;
+	return array(
+		'ver'  => (string)$data['ver'],
+		'time' => isset($data['time']) ? (int)$data['time'] : 0,
+		'info' => (isset($data['info']) && is_array($data['info'])) ? $data['info'] : array()
+	);
+}
+
+function index_body_read_ver($file)
+{
+	if (!is_file($file)) return null;
+	return index_body_ver_norm(json_decode(@file_get_contents($file), true));
+}
+
+function index_body_fetch_ver($url, $timeout)
+{
+	if (!function_exists('curl_init')) return null;
+	$ch = curl_init($url);
+	curl_setopt_array($ch, array(
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_FOLLOWLOCATION => true,
+		CURLOPT_MAXREDIRS      => 5,
+		CURLOPT_CONNECTTIMEOUT => $timeout,
+		CURLOPT_TIMEOUT        => $timeout,
+		CURLOPT_SSL_VERIFYPEER => true,
+		CURLOPT_SSL_VERIFYHOST => 2,
+		CURLOPT_USERAGENT      => 'SeaCMS-Updater/1.0'
+	));
+	$body = curl_exec($ch);
+	$code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	curl_close($ch);
+	if ($body === false || $code < 200 || $code >= 400) return null;
+	return index_body_ver_norm(json_decode($body, true));
+}
+
+$updTipLocalVer = index_body_read_ver($updTipLocal);
+if ($updTipLocalVer === null) $updTipLocalVer = array('ver' => '', 'time' => 0, 'info' => array());
+$updTipRemoteVer = null;
+
+// 优先使用未过期的缓存结果
+if (is_file($updTipCache)) {
+	$updTipCached = json_decode(@file_get_contents($updTipCache), true);
+	if (is_array($updTipCached) && isset($updTipCached['ctime'], $updTipCached['data'])) {
+		if (time() - (int)$updTipCached['ctime'] < $updTipCacheTTL) {
+			$updTipRemoteVer = index_body_ver_norm($updTipCached['data']);
+		}
+	}
+}
+
+// 缓存过期或不存在时重新检测（总耗时控制在 5 秒内）
+if ($updTipRemoteVer === null) {
+	$updTipRaw  = 'https://raw.githubusercontent.com/'.$updTipRepo.'/'.$updTipBranch.'/data/admin/ver.json';
+	$updTipUrls = array(
+		$updTipRaw,
+		'https://ghproxy.net/'.$updTipRaw,
+		'https://gh-proxy.com/'.$updTipRaw,
+		'https://ghfast.top/'.$updTipRaw
+	);
+	$updTipStart = microtime(true);
+	foreach ($updTipUrls as $updTipUrl) {
+		if (microtime(true) - $updTipStart > 5) break;
+		$updTipRemoteVer = index_body_fetch_ver($updTipUrl, 3);
+		if ($updTipRemoteVer !== null) break;
+	}
+	if ($updTipRemoteVer !== null) {
+		@file_put_contents($updTipCache, json_encode(array(
+			'ctime' => time(),
+			'data'  => $updTipRemoteVer
+		), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+	} elseif (isset($updTipCached) && is_array($updTipCached) && isset($updTipCached['data'])) {
+		// 检测失败时退回上次的检测结果
+		$updTipRemoteVer = index_body_ver_norm($updTipCached['data']);
+	}
+}
+
+// 判断是否有更新（与 admin_update.php 的 hasUpdate 规则一致）
+$updTipHasNew = false;
+if ($updTipRemoteVer !== null) {
+	$updTipHasNew = ($updTipRemoteVer['time'] > $updTipLocalVer['time'])
+		|| ($updTipRemoteVer['ver'] !== '' && $updTipRemoteVer['ver'] !== $updTipLocalVer['ver']);
+}
+
 // ========== 仪表盘数据采集 ==========
 // 内容统计（与 admin_info.htm 原始查询一致）
 $vodTotal = $dsql->GetOne("select count(*) as dd from sea_data");
