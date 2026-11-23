@@ -118,6 +118,8 @@ if($action=="set")
 	$ai_max_tokens      = trim($_POST['ai_max_tokens']);
 	$ai_search_correct  = isset($_POST['ai_search_correct'])  ? $_POST['ai_search_correct']  : 'off';
 	$ai_recommend       = isset($_POST['ai_recommend'])       ? $_POST['ai_recommend']       : 'off';
+	$ai_limit_daily     = isset($_POST['ai_limit_daily'])     ? max(0, intval($_POST['ai_limit_daily']))     : 0;
+	$ai_limit_minute    = isset($_POST['ai_limit_minute'])    ? max(0, intval($_POST['ai_limit_minute']))    : 0;
 
 	// 提供商预设自动填充
 	if($ai_provider !== 'custom')
@@ -142,20 +144,36 @@ if($action=="set")
 	if($ai_temperature == '') $ai_temperature = '0.7';
 	if($ai_max_tokens  == '') $ai_max_tokens  = '800';
 
-	$open = fopen("../data/admin/ai.php","w");
-	$str = '<?php  ';
-	$str.='$ai_open = "'.addslashes($ai_open).'"; ';
-	$str.='$ai_provider = "'.addslashes($ai_provider).'"; ';
-	$str.='$ai_api_url = "'.addslashes($ai_api_url).'"; ';
-	$str.='$ai_api_key = "'.addslashes($ai_api_key).'"; ';
-	$str.='$ai_model = "'.addslashes($ai_model).'"; ';
-	$str.='$ai_temperature = "'.addslashes($ai_temperature).'"; ';
-	$str.='$ai_max_tokens = "'.addslashes($ai_max_tokens).'"; ';
-	$str.='$ai_search_correct = "'.addslashes($ai_search_correct).'"; ';
-	$str.='$ai_recommend = "'.addslashes($ai_recommend).'"; ';
-	$str.=" ?>";
-	fwrite($open,$str);
-	fclose($open);
+	// 读取旧配置以保留当前用量，再加锁原子写入
+	$__cfg_path = deepseek_ai_config_path();
+	$__lock = deepseek_ai_lock();
+	$__vars = deepseek_ai_read_vars($__cfg_path);
+
+	$__vars['ai_open']           = $ai_open;
+	$__vars['ai_provider']       = $ai_provider;
+	$__vars['ai_api_url']        = $ai_api_url;
+	$__vars['ai_api_key']        = $ai_api_key;
+	$__vars['ai_model']          = $ai_model;
+	$__vars['ai_temperature']    = $ai_temperature;
+	$__vars['ai_max_tokens']     = $ai_max_tokens;
+	$__vars['ai_search_correct'] = $ai_search_correct;
+	$__vars['ai_recommend']      = $ai_recommend;
+	$__vars['ai_limit_daily']    = $ai_limit_daily;
+	$__vars['ai_limit_minute']   = $ai_limit_minute;
+
+	// 当前用量不从表单覆盖，保留文件中的值
+	if(!isset($__vars['ai_usage_date']))       $__vars['ai_usage_date'] = '';
+	if(!isset($__vars['ai_usage_day']))        $__vars['ai_usage_day'] = 0;
+	if(!isset($__vars['ai_usage_minute_key'])) $__vars['ai_usage_minute_key'] = '';
+	if(!isset($__vars['ai_usage_minute']))     $__vars['ai_usage_minute'] = 0;
+
+	$__saved = deepseek_ai_write_vars($__cfg_path, $__vars);
+	if($__lock) { flock($__lock, LOCK_UN); fclose($__lock); }
+	if(!$__saved)
+	{
+		ShowMsg("保存失败，请检查 data/admin/ai.php 是否可写!","admin_ai.php");
+		exit;
+	}
 	ShowMsg("成功保存设置!","admin_ai.php");
 	exit;
 }
@@ -170,6 +188,12 @@ $ai_temperature    = "0.7";
 $ai_max_tokens     = "800";
 $ai_search_correct = "off";
 $ai_recommend      = "off";
+$ai_limit_daily    = 0;
+$ai_limit_minute   = 0;
+$ai_usage_date     = "";
+$ai_usage_day      = 0;
+$ai_usage_minute_key = "";
+$ai_usage_minute   = 0;
 
 // 配置文件：优先 /data/admin/ai.php，兼容旧 deepseek.php
 $__cfg_file = file_exists("../data/admin/ai.php") ? "../data/admin/ai.php" : "../data/admin/deepseek.php";
@@ -189,6 +213,12 @@ if(file_exists($__cfg_file))
 	$__cfg['ai_max_tokens']     = isset($ai_max_tokens)     ? $ai_max_tokens     : '800';
 	$__cfg['ai_search_correct'] = isset($ai_search_correct) ? $ai_search_correct : 'off';
 	$__cfg['ai_recommend']      = isset($ai_recommend)      ? $ai_recommend      : 'off';
+	$__cfg['ai_limit_daily']    = isset($ai_limit_daily)    ? max(0, intval($ai_limit_daily))    : 0;
+	$__cfg['ai_limit_minute']   = isset($ai_limit_minute)   ? max(0, intval($ai_limit_minute))   : 0;
+	$__cfg['ai_usage_date']     = isset($ai_usage_date)     ? $ai_usage_date     : '';
+	$__cfg['ai_usage_day']      = isset($ai_usage_day)      ? max(0, intval($ai_usage_day))      : 0;
+	$__cfg['ai_usage_minute_key'] = isset($ai_usage_minute_key) ? $ai_usage_minute_key : '';
+	$__cfg['ai_usage_minute']   = isset($ai_usage_minute)   ? max(0, intval($ai_usage_minute))   : 0;
 
 	// 旧变量名 fallback
 	if(($__cfg['ai_api_url']=='https://api.deepseek.com/v1' || $__cfg['ai_api_url']=='' ) && isset($deepseek_api_url) && $deepseek_api_url!='')
@@ -204,6 +234,10 @@ if(file_exists($__cfg_file))
 
 	extract($__cfg);
 }
+
+// 当前用量展示（跨天/跨分钟自动视为 0，下次调用时正式重置）
+$__usageDayShow    = ($ai_usage_date === date('Y-m-d')) ? intval($ai_usage_day) : 0;
+$__usageMinuteShow = ($ai_usage_minute_key === date('Y-m-d H:i')) ? intval($ai_usage_minute) : 0;
 
 // 提供商预设 → 判断当前配置属于哪个提供商（用于下拉框选中）
 $__providers = array(
@@ -318,7 +352,7 @@ AI搜索辅助：
 </td>
 </tr>
 <tr class="thead">
-<td colspan="5" class="td_title">AI 影片推荐（前台）</td>
+<td colspan="5" class="td_title">AI 影片推荐</td>
 </tr>
 <tr>
 <td width="80%" align="left" height="32" class="td_border">
@@ -329,6 +363,27 @@ AI 影片推荐：
  &nbsp;* 开启后前台右下角出现 AI 推荐浮标，访客点击即可对话获取影片推荐（需同时开启上方「功能开关」）
 </td>
 </tr>
+<tr class="thead">
+<td colspan="5" class="td_title">前台 AI 调用限额</td>
+</tr>
+<tr>
+<td width="80%" align="left" height="32" class="td_border">
+每日总限额：<input name="ai_limit_daily" value="<?php echo intval($ai_limit_daily);?>" style="width:80px;"> 次
+ &nbsp;* 0 表示不限额；按自然日统计，仅限前台 AI 调用
+</td>
+</tr>
+<tr>
+<td width="80%" align="left" height="32" class="td_border">
+每分钟限额：<input name="ai_limit_minute" value="<?php echo intval($ai_limit_minute);?>" style="width:80px;"> 次
+ &nbsp;* 0 表示不限额；按自然分钟统计，仅限前台 AI 调用
+</td>
+</tr>
+<tr>
+<td width="80%" align="left" height="32" class="td_border">
+当前用量：今日 <b><?php echo $__usageDayShow;?></b> 次；本分钟 <b><?php echo $__usageMinuteShow;?></b> 次
+<br><span style="color:#888;">每次实际 AI 请求计 1 次；命中缓存不计数；管理后台调用不限额、不计数。</span>
+</td>
+</tr>
 <tr>
 <td width="10%" align="left" height="32" class="td_border">
 <input type="submit" value="确 认" class="btn">
@@ -337,8 +392,6 @@ AI 影片推荐：
 <tr>
 <td width="90%" align="left" height="32" class="td_border"><div style="padding: 10px;border: 0;border-radius: 4px;font-size: 13px;background-color: #eef5f4;">
 * 支持所有 OpenAI 兼容接口，不限于 DeepSeek / OpenAI。只需改 Base URL + Model + API Key 即可切换。<br>
-* 开启时：后台出现 AI 帮助按钮（右下角）、视频编辑页 AI 填写按钮、前台搜索自动纠错、前台 AI 影片推荐浮标。<br>
-* API Key 仅保存在服务器端 /data/admin/ai.php，不会在前端暴露。<br>
 * 如果保存无效，请检查 /data/admin/ai.php 文件权限是否可写。
 </div></td>
 </tr>

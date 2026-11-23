@@ -30,6 +30,8 @@ if($v=="1" AND !strstr($ip,$uip)){die('IP address is forbidden access');}
 
 
 define('sea_ADMIN', preg_replace("|[/\\\]{1,}|",'/',dirname(__FILE__) ) );
+// 管理后台 AI 调用不受前台每日/每分钟限额限制，也不计入用量
+if(!defined('AI_LIMIT_BYPASS')) define('AI_LIMIT_BYPASS', true);
 require_once(sea_ADMIN."/../include/common.php");
 require_once(sea_INC."/check.admin.php");
 require_once(sea_ADMIN."/coplugins/Snoopy.class.php");

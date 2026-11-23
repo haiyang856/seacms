@@ -379,6 +379,10 @@ if($action === 'hot')
                 @file_put_contents(ai_rec_hot_file(), $payload, LOCK_EX);
             }
         }
+        elseif(!$res['ok'] && !empty($res['limited']) && (!is_array($items) || count($items) === 0))
+        {
+            ai_rec_out(array('ok'=>false, 'error'=>'AI 服务暂不可用'));
+        }
     }
 
     if(!is_array($items) || count($items) === 0)
@@ -454,6 +458,11 @@ if($exactTitle !== '')
             $movies = $result['movies'];
             if(count($movies) === 0) $movies = array($candidate);
             ai_rec_out(array('ok'=>true, 'reply'=>$result['reply'], 'movies'=>$movies));
+        }
+
+        if(!empty($result['limited']))
+        {
+            ai_rec_out(array('ok'=>false, 'error'=>'AI 服务暂不可用'));
         }
 
         ai_rec_out(array(

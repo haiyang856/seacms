@@ -51,6 +51,12 @@ function deepseek_load_config()
         'max_tokens'      => '800',
         'ai_search_correct' => 'off',
         'ai_recommend'    => 'off',
+        'limit_daily'     => 0,
+        'limit_minute'    => 0,
+        'usage_date'      => '',
+        'usage_day'       => 0,
+        'usage_minute_key'=> '',
+        'usage_minute'    => 0,
     );
 
     // ===== 旧 → 新 变量名映射表 =====
@@ -64,6 +70,7 @@ function deepseek_load_config()
 
     // 1) 先尝试新变量名（config.php 已 extract）
     global $ai_open, $ai_provider, $ai_api_url, $ai_api_key, $ai_model, $ai_temperature, $ai_max_tokens, $ai_search_correct, $ai_recommend;
+    global $ai_limit_daily, $ai_limit_minute, $ai_usage_date, $ai_usage_day, $ai_usage_minute_key, $ai_usage_minute;
     if(isset($ai_open))            $cfg['open']            = $ai_open;
     if(isset($ai_provider))        $cfg['provider']        = $ai_provider;
     if(isset($ai_api_url))         $cfg['api_url']         = $ai_api_url;
@@ -73,6 +80,12 @@ function deepseek_load_config()
     if(isset($ai_max_tokens))      $cfg['max_tokens']      = $ai_max_tokens;
     if(isset($ai_search_correct))  $cfg['ai_search_correct'] = $ai_search_correct;
     if(isset($ai_recommend))       $cfg['ai_recommend']    = $ai_recommend;
+    if(isset($ai_limit_daily))     $cfg['limit_daily']     = intval($ai_limit_daily);
+    if(isset($ai_limit_minute))    $cfg['limit_minute']    = intval($ai_limit_minute);
+    if(isset($ai_usage_date))      $cfg['usage_date']      = $ai_usage_date;
+    if(isset($ai_usage_day))       $cfg['usage_day']       = intval($ai_usage_day);
+    if(isset($ai_usage_minute_key))$cfg['usage_minute_key']= $ai_usage_minute_key;
+    if(isset($ai_usage_minute))    $cfg['usage_minute']    = intval($ai_usage_minute);
 
     // 2) 旧变量名 fallback（兼容老 deepseek.php 配置文件）
     global $deepseek_open, $deepseek_api_url, $deepseek_api_key, $deepseek_model, $deepseek_temperature;
@@ -109,6 +122,12 @@ function deepseek_load_config()
         if(isset($ai_max_tokens))      $cfg['max_tokens']      = $ai_max_tokens;
         if(isset($ai_search_correct))  $cfg['ai_search_correct'] = $ai_search_correct;
         if(isset($ai_recommend))       $cfg['ai_recommend']    = $ai_recommend;
+        if(isset($ai_limit_daily))     $cfg['limit_daily']     = intval($ai_limit_daily);
+        if(isset($ai_limit_minute))    $cfg['limit_minute']    = intval($ai_limit_minute);
+        if(isset($ai_usage_date))      $cfg['usage_date']      = $ai_usage_date;
+        if(isset($ai_usage_day))       $cfg['usage_day']       = intval($ai_usage_day);
+        if(isset($ai_usage_minute_key))$cfg['usage_minute_key']= $ai_usage_minute_key;
+        if(isset($ai_usage_minute))    $cfg['usage_minute']    = intval($ai_usage_minute);
         // 旧变量名兜底
         foreach($legacyMap as $legacy => $modern)
         {
@@ -123,6 +142,158 @@ function deepseek_load_config()
     $cfg['max_tokens'] = max(100, intval($cfg['max_tokens']));
 
     return $cfg;
+}
+
+/**
+ * AI 配置文件路径
+ */
+function deepseek_ai_config_path()
+{
+    return dirname(__FILE__).'/../data/admin/ai.php';
+}
+
+/**
+ * 配置文件读写锁（用于用量计数的原子更新）
+ */
+function deepseek_ai_lock()
+{
+    $lockFile = deepseek_ai_config_path().'.lock';
+    $fp = @fopen($lockFile, 'c');
+    if(!$fp) return false;
+    if(!flock($fp, LOCK_EX))
+    {
+        fclose($fp);
+        return false;
+    }
+    return $fp;
+}
+
+/**
+ * 读取配置文件中的变量（不依赖 deepseek_load_config 的静态缓存）
+ */
+function deepseek_ai_read_vars($path)
+{
+    if(!is_file($path)) return array();
+
+    $__ai_vars = array();
+    $__ai_file = $path;
+    ob_start();
+    include $__ai_file;
+    ob_end_clean();
+
+    $keys = array(
+        'ai_open', 'ai_provider', 'ai_api_url', 'ai_api_key', 'ai_model', 'ai_temperature',
+        'ai_max_tokens', 'ai_search_correct', 'ai_recommend',
+        'ai_limit_daily', 'ai_limit_minute',
+        'ai_usage_date', 'ai_usage_day', 'ai_usage_minute_key', 'ai_usage_minute',
+    );
+    foreach($keys as $k)
+    {
+        if(isset($$k)) $__ai_vars[$k] = $$k;
+    }
+    return $__ai_vars;
+}
+
+/**
+ * 原子写入配置文件
+ */
+function deepseek_ai_write_vars($path, $vars)
+{
+    $order = array(
+        'ai_open', 'ai_provider', 'ai_api_url', 'ai_api_key', 'ai_model', 'ai_temperature',
+        'ai_max_tokens', 'ai_search_correct', 'ai_recommend',
+        'ai_limit_daily', 'ai_limit_minute',
+        'ai_usage_date', 'ai_usage_day', 'ai_usage_minute_key', 'ai_usage_minute',
+    );
+    $intKeys = array('ai_limit_daily', 'ai_limit_minute', 'ai_usage_day', 'ai_usage_minute');
+
+    $str = '<?php  ';
+    foreach($order as $k)
+    {
+        $v = isset($vars[$k]) ? $vars[$k] : (in_array($k, $intKeys, true) ? 0 : '');
+        if(in_array($k, $intKeys, true))
+        {
+            $str .= '$'.$k.' = '.max(0, intval($v)).'; ';
+        }
+        else
+        {
+            $str .= '$'.$k.' = "'.addslashes((string)$v).'"; ';
+        }
+    }
+    $str .= " ?>";
+
+    $tmp = $path.'.tmp.'.getmypid();
+    if(@file_put_contents($tmp, $str, LOCK_EX) === false) return false;
+    if(!@rename($tmp, $path))
+    {
+        @unlink($tmp);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * 前台 AI 调用限额检查
+ *
+ * 返回 true 表示放行并计 1 次；false 表示已超限。
+ * 管理后台定义 AI_LIMIT_BYPASS 常量后不限额、不计数。
+ * 每日/每分钟限额为 0 时表示不限额。
+ */
+function deepseek_limit_allow()
+{
+    if(defined('AI_LIMIT_BYPASS') && AI_LIMIT_BYPASS) return true;
+
+    $path = deepseek_ai_config_path();
+    $lock = deepseek_ai_lock();
+    $vars = deepseek_ai_read_vars($path);
+
+    $dailyLimit  = isset($vars['ai_limit_daily'])  ? max(0, intval($vars['ai_limit_daily']))  : 0;
+    $minuteLimit = isset($vars['ai_limit_minute']) ? max(0, intval($vars['ai_limit_minute'])) : 0;
+
+    if($dailyLimit <= 0 && $minuteLimit <= 0)
+    {
+        if($lock) { flock($lock, LOCK_UN); fclose($lock); }
+        return true;
+    }
+
+    $today     = date('Y-m-d');
+    $minuteKey = date('Y-m-d H:i');
+
+    $usageDate      = isset($vars['ai_usage_date']) ? $vars['ai_usage_date'] : '';
+    $usageDay       = isset($vars['ai_usage_day']) ? max(0, intval($vars['ai_usage_day'])) : 0;
+    $usageMinuteKey = isset($vars['ai_usage_minute_key']) ? $vars['ai_usage_minute_key'] : '';
+    $usageMinute    = isset($vars['ai_usage_minute']) ? max(0, intval($vars['ai_usage_minute'])) : 0;
+
+    if($usageDate !== $today)
+    {
+        $usageDate = $today;
+        $usageDay = 0;
+    }
+    if($usageMinuteKey !== $minuteKey)
+    {
+        $usageMinuteKey = $minuteKey;
+        $usageMinute = 0;
+    }
+
+    $allowed = !(
+        ($dailyLimit > 0 && $usageDay >= $dailyLimit) ||
+        ($minuteLimit > 0 && $usageMinute >= $minuteLimit)
+    );
+
+    if($allowed)
+    {
+        $usageDay++;
+        $usageMinute++;
+    }
+
+    $vars['ai_usage_date'] = $usageDate;
+    $vars['ai_usage_day'] = $usageDay;
+    $vars['ai_usage_minute_key'] = $usageMinuteKey;
+    $vars['ai_usage_minute'] = $usageMinute;
+    deepseek_ai_write_vars($path, $vars);
+
+    if($lock) { flock($lock, LOCK_UN); fclose($lock); }
+    return $allowed;
 }
 
 /**
@@ -219,6 +390,12 @@ function deepseek_chat($messages, $temperature = 0.7, $expectJson = false, $time
     if(empty($cfg['api_key']))
     {
         return array('ok'=>false, 'error'=>'AI API Key 未配置');
+    }
+
+    // 前台 AI 调用限额（管理后台定义 AI_LIMIT_BYPASS 后不限额、不计数）
+    if(!deepseek_limit_allow())
+    {
+        return array('ok'=>false, 'error'=>'AI 服务暂不可用', 'limited'=>true);
     }
 
     // 拼接口地址：兼容用户是否漏了 /chat/completions
@@ -382,6 +559,10 @@ SYS;
     $result = deepseek_chat($messages, 0.0, false, 5);
     if(!$result['ok'])
     {
+        if(!empty($result['limited']))
+        {
+            return array('ok'=>false, 'error'=>'AI 服务暂不可用', 'limited'=>true);
+        }
         return array('ok'=>true, 'original'=>$keyword, 'corrected'=>$keyword, 'changed'=>false);
     }
 

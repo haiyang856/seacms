@@ -225,7 +225,11 @@ if(check_str($page,$key)){ShowMsg('请勿输入危险字符！','index.php','0',
 		{
 			$aiOriginal = stripslashes($searchword);
 			$aiCorrection = deepseek_correct_keyword($aiOriginal);
-			if($aiCorrection['ok'] && $aiCorrection['changed'])
+			if(!$aiCorrection['ok'] && !empty($aiCorrection['limited']))
+			{
+				$GLOBALS['ai_search_tip_html'] = '<div style="max-width:900px;margin:10px auto;padding:10px 16px;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;color:#92400e;font-size:13px;line-height:1.6;">AI 服务暂不可用</div>';
+			}
+			elseif($aiCorrection['ok'] && $aiCorrection['changed'])
 			{
 				$corrected = addslashes(cn_substr($aiCorrection['corrected'], 20));
 				if($corrected !== '' && !check_str($corrected, $key))
