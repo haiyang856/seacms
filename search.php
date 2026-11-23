@@ -101,16 +101,6 @@ function echoSearchPage()
 
 	/* ================ AI 搜索关键词纠正 ================ */
 	$GLOBALS['ai_search_tip_html'] = '';
-	if(intval($searchtype) != 5 && trim($searchword) != '')
-	{
-		$aiCorrection = deepseek_correct_keyword(stripslashes($searchword));
-		if($aiCorrection['ok'] && $aiCorrection['changed'])
-		{
-			// 用纠正后的词替换，重新 addslashes + 截断（防止超 20 字节）
-			$searchword = addslashes(cn_substr($aiCorrection['corrected'], 20));
-			$GLOBALS['ai_search_tip_html'] = '<div style="max-width:900px;margin:10px auto;padding:10px 16px;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:6px;color:#075985;font-size:13px;line-height:1.6;">✅ 您搜索的 <b>'.htmlspecialchars(stripslashes($aiCorrection['original'])).'</b> 可能输入有误，已自动纠正为 <b>'.htmlspecialchars(stripslashes($aiCorrection['corrected'])).'</b> 为您搜索。</div>';
-		}
-	}
 	/* ================== AI 纠正结束 ================== */
 	
 	$orderarr=array('id','idasc','time','timeasc','hit','hitasc','commend','commendasc','score','scoreasc','dayhit','weekhit','monthhit','random','douban','mtime','imdb','dayhitasc','weekhitasc','monthhitasc','mtimeasc','imdbasc');
@@ -219,6 +209,59 @@ if(check_str($page,$key)){ShowMsg('请勿输入危险字符！','index.php','0',
 		$TotalResult = 0;
 	}
 	$pCount = ceil($TotalResult/$pSize);
+
+	/* ================ AI 搜索关键词纠正（仅当搜索结果为空时触发） ================ */
+	if($TotalResult == 0 && intval($searchtype) != 5 && trim($searchword) != '')
+	{
+		// 只响应同源页面发起的搜索，降低被外部页面或脚本批量触发的风险
+		$aiSource = '';
+		if(!empty($_SERVER['HTTP_ORIGIN'])) $aiSource = $_SERVER['HTTP_ORIGIN'];
+		elseif(!empty($_SERVER['HTTP_REFERER'])) $aiSource = $_SERVER['HTTP_REFERER'];
+
+		$aiHost = isset($_SERVER['HTTP_HOST']) ? strtolower(preg_replace('/:\d+$/', '', $_SERVER['HTTP_HOST'])) : '';
+		$aiSrcHost = $aiSource !== '' ? strtolower((string)parse_url($aiSource, PHP_URL_HOST)) : '';
+
+		if($aiHost !== '' && $aiSrcHost === $aiHost)
+		{
+			$aiOriginal = stripslashes($searchword);
+			$aiCorrection = deepseek_correct_keyword($aiOriginal);
+			if($aiCorrection['ok'] && $aiCorrection['changed'])
+			{
+				$corrected = addslashes(cn_substr($aiCorrection['corrected'], 20));
+				if($corrected !== '' && !check_str($corrected, $key))
+				{
+					switch(intval($searchtype))
+					{
+						case -1:
+							$newWhereStr = " where v_recycled=0 and (v_name like '%$corrected%' or v_actor like '%$corrected%' or v_director like '%$corrected%' or v_tags like '%$corrected%' or v_nickname like '%$corrected%')";
+						break;
+						case 1:
+							$newWhereStr = " where v_recycled=0 and v_name like '%$corrected%'";
+						break;
+						default:
+							$newWhereStr = '';
+						break;
+					}
+
+					// 只有纠正后确实能搜到结果，才采用纠正词
+					if($newWhereStr !== '')
+					{
+						$row2 = $dsql->GetOne("select count(*) as dd from sea_data ".$newWhereStr);
+						$newTotal = is_array($row2) ? intval($row2['dd']) : 0;
+						if($newTotal > 0)
+						{
+							$searchword = $corrected;
+							$whereStr = $newWhereStr;
+							$TotalResult = $newTotal;
+							$pCount = ceil($TotalResult/$pSize);
+							$GLOBALS['ai_search_tip_html'] = '<div style="max-width:900px;margin:10px auto;padding:10px 16px;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:6px;color:#075985;font-size:13px;line-height:1.6;">✅ 您搜索的 <b>'.htmlspecialchars($aiOriginal).'</b> 可能输入有误，已自动纠正为 <b>'.htmlspecialchars(stripslashes($corrected)).'</b> 为您搜索。</div>';
+						}
+					}
+				}
+			}
+		}
+	}
+	/* ================== AI 纠正结束 ================== */
 	if($cfg_iscache){
 		if(chkFileCache($cacheName)){
 			$content = getFileCache($cacheName);

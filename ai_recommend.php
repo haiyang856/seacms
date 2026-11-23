@@ -19,6 +19,28 @@ function ai_rec_out($arr)
     exit;
 }
 
+/** 校验 Origin/Referer 是否与当前站点同源 */
+function ai_rec_same_origin()
+{
+    $source = '';
+    if(!empty($_SERVER['HTTP_ORIGIN'])) $source = $_SERVER['HTTP_ORIGIN'];
+    elseif(!empty($_SERVER['HTTP_REFERER'])) $source = $_SERVER['HTTP_REFERER'];
+    if($source === '') return false;
+
+    $host = isset($_SERVER['HTTP_HOST']) ? strtolower($_SERVER['HTTP_HOST']) : '';
+    if($host === '') return false;
+
+    $hostName = preg_replace('/:\d+$/', '', $host);
+    $srcHost = strtolower((string)parse_url($source, PHP_URL_HOST));
+    if($srcHost === '' || $srcHost !== $hostName) return false;
+
+    $srcPort = parse_url($source, PHP_URL_PORT);
+    $hostPort = parse_url('http://'.$host, PHP_URL_PORT);
+    if($srcPort !== null && $hostPort !== null && intval($srcPort) !== intval($hostPort)) return false;
+
+    return true;
+}
+
 /** 轻量读取 AI 配置，供 status 使用（不连接数据库） */
 function ai_rec_config()
 {
@@ -312,6 +334,20 @@ if($action === 'status')
         'ok'      => true,
         'enabled' => ($c['open'] === 'on' && $c['recommend'] === 'on' && $c['api_key'] !== ''),
     ));
+}
+
+// ===== AI 消耗型接口：仅允许 POST，且校验同源 =====
+if($action === 'chat' || $action === 'hot')
+{
+    $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
+    if($method !== 'POST')
+    {
+        ai_rec_out(array('ok'=>false, 'error'=>'请求方式不被允许'));
+    }
+    if(!ai_rec_same_origin())
+    {
+        ai_rec_out(array('ok'=>false, 'error'=>'请求来源校验失败'));
+    }
 }
 
 // ===== 功能开关校验 =====

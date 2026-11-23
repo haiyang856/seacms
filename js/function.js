@@ -948,7 +948,7 @@ function base64decode(str) {
 
 		function loadHot(){
 			var xhr = new XMLHttpRequest();
-			xhr.open('GET', apiBase + '?action=hot&_t=' + (new Date()).getTime(), true);
+			xhr.open('POST', apiBase + '?action=hot&_t=' + (new Date()).getTime(), true);
 			xhr.onreadystatechange = function(){
 				if(xhr.readyState !== 4 || xhr.status !== 200) return;
 				var data;
