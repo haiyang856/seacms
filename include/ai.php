@@ -50,6 +50,7 @@ function deepseek_load_config()
         'temperature'     => '0.7',
         'max_tokens'      => '800',
         'ai_search_correct' => 'off',
+        'ai_recommend'    => 'off',
     );
 
     // ===== 旧 → 新 变量名映射表 =====
@@ -62,7 +63,7 @@ function deepseek_load_config()
     );
 
     // 1) 先尝试新变量名（config.php 已 extract）
-    global $ai_open, $ai_provider, $ai_api_url, $ai_api_key, $ai_model, $ai_temperature, $ai_max_tokens, $ai_search_correct;
+    global $ai_open, $ai_provider, $ai_api_url, $ai_api_key, $ai_model, $ai_temperature, $ai_max_tokens, $ai_search_correct, $ai_recommend;
     if(isset($ai_open))            $cfg['open']            = $ai_open;
     if(isset($ai_provider))        $cfg['provider']        = $ai_provider;
     if(isset($ai_api_url))         $cfg['api_url']         = $ai_api_url;
@@ -71,6 +72,7 @@ function deepseek_load_config()
     if(isset($ai_temperature))     $cfg['temperature']     = $ai_temperature;
     if(isset($ai_max_tokens))      $cfg['max_tokens']      = $ai_max_tokens;
     if(isset($ai_search_correct))  $cfg['ai_search_correct'] = $ai_search_correct;
+    if(isset($ai_recommend))       $cfg['ai_recommend']    = $ai_recommend;
 
     // 2) 旧变量名 fallback（兼容老 deepseek.php 配置文件）
     global $deepseek_open, $deepseek_api_url, $deepseek_api_key, $deepseek_model, $deepseek_temperature;
@@ -106,6 +108,7 @@ function deepseek_load_config()
         if(isset($ai_temperature))     $cfg['temperature']     = $ai_temperature;
         if(isset($ai_max_tokens))      $cfg['max_tokens']      = $ai_max_tokens;
         if(isset($ai_search_correct))  $cfg['ai_search_correct'] = $ai_search_correct;
+        if(isset($ai_recommend))       $cfg['ai_recommend']    = $ai_recommend;
         // 旧变量名兜底
         foreach($legacyMap as $legacy => $modern)
         {
@@ -503,4 +506,266 @@ function deepseek_fetch_video_batch($videoNames)
         usleep(200000);
     }
     return $out;
+}
+
+/**
+ * AI 影片推荐：根据访客需求，从本站候选片单中挑选影片
+ *
+ * @param string $question   访客输入的需求，如“推荐几部科幻片”
+ * @param array  $candidates 候选片单，每项含 id/name/year/area/genre/douban/note/director/actor
+ * @param array  $history    最近几轮对话 [['role'=>'user'|'assistant','content'=>'...'], ...]
+ * @param string $siteName   网站名称
+ * @param array  $hotTitles  近期热门片名，仅作推荐风格参考
+ * @return array ['ok'=>true,'reply'=>'...','movies'=>[['id'=>..,'reason'=>'..'], ...]]
+ */
+function deepseek_recommend_movies($question, $candidates, $history = array(), $siteName = '', $hotTitles = array())
+{
+    $question = trim($question);
+    if($question === '')
+    {
+        return array('ok'=>false, 'error'=>'请输入您想看的内容');
+    }
+    if(!is_array($candidates) || count($candidates) === 0)
+    {
+        return array('ok'=>true, 'reply'=>'片库里暂时没有找到合适的影片，换个说法再试试吧。', 'movies'=>array());
+    }
+
+    $siteName = trim($siteName) !== '' ? trim($siteName) : '本站';
+
+    $systemPrompt = <<<SYS
+你是「{$siteName}」网站的 AI 影片推荐官，负责根据访客的喜好从系统提供的候选片单中挑选影片。
+
+规则：
+1. 只能推荐候选片单中真实存在的影片，严禁编造片单之外的片名或 ID。
+2. 综合考虑类型、地区、年份、导演、演员、心情和观看场景，挑选最匹配的影片。
+3. 推荐 3-5 部；如果候选片单里确实没有合适的，就诚实说明，movies 返回空数组。
+4. reply 使用自然、热情的中文口语，60-140 字，简单说明推荐思路；每次的措辞、开头和推荐词都要随机多变，避免固定套话；不要分点、不要 Markdown、不要表情符号。
+5. 每部影片的 reason 用 15-35 字说明为什么推荐给这位访客。
+
+只输出严格 JSON（不要代码块、不要多余文字）：
+{"reply":"整体推荐语","movies":[{"id":123,"reason":"推荐理由"}]}
+SYS;
+
+    // 组装候选片单文本
+    $lines = array();
+    foreach($candidates as $c)
+    {
+        $id = intval(isset($c['id']) ? $c['id'] : 0);
+        $name = trim(isset($c['name']) ? $c['name'] : '');
+        if($id <= 0 || $name === '') continue;
+
+        $year   = intval(isset($c['year']) ? $c['year'] : 0);
+        $area   = trim(isset($c['area']) ? $c['area'] : '');
+        $genre  = trim(isset($c['genre']) ? $c['genre'] : '');
+        $note   = trim(isset($c['note']) ? $c['note'] : '');
+        $douban = floatval(isset($c['douban']) ? $c['douban'] : 0);
+        $people = trim((isset($c['director']) ? $c['director'] : '').','.(isset($c['actor']) ? $c['actor'] : ''), ',');
+
+        $lines[] = $id.'|'.mb_substr($name, 0, 40, 'UTF-8')
+            .'|'.($year > 0 ? $year : '')
+            .'|'.mb_substr($area, 0, 20, 'UTF-8')
+            .'|'.mb_substr($genre, 0, 30, 'UTF-8')
+            .'|'.($douban > 0 ? $douban : '')
+            .'|'.mb_substr($note, 0, 16, 'UTF-8')
+            .'|'.mb_substr($people, 0, 24, 'UTF-8');
+    }
+
+    $messages = array(
+        array('role' => 'system', 'content' => $systemPrompt),
+    );
+
+    // 最近对话上下文（最多 6 条）
+    if(is_array($history))
+    {
+        $history = array_slice($history, -6);
+        foreach($history as $h)
+        {
+            if(!is_array($h)) continue;
+            $role = isset($h['role']) ? $h['role'] : '';
+            $content = isset($h['content']) ? trim($h['content']) : '';
+            if(($role === 'user' || $role === 'assistant') && $content !== '')
+            {
+                $messages[] = array('role' => $role, 'content' => mb_substr($content, 0, 300, 'UTF-8'));
+            }
+        }
+    }
+
+    $hotText = '';
+    if(is_array($hotTitles) && count($hotTitles) > 0)
+    {
+        $names = array();
+        foreach(array_slice($hotTitles, 0, 8) as $t)
+        {
+            $t = trim((string)$t);
+            if($t !== '') $names[] = $t;
+        }
+        if($names)
+        {
+            $hotText = "\n平台近期热门参考（仅作风格参考，严禁推荐候选片单之外的作品）：".implode('、', $names)."\n";
+        }
+    }
+
+    $messages[] = array(
+        'role' => 'user',
+        'content' => "访客需求：{$question}\n{$hotText}\n候选片单（id|片名|年份|地区|类型|豆瓣|备注|导演演员）：\n".implode("\n", $lines)."\n\n请根据以上候选片单，严格按 JSON 格式输出。",
+    );
+
+    $result = deepseek_chat($messages, 0.85, true);
+    if(!$result['ok']) return $result;
+
+    $raw = trim($result['content']);
+    $jsonStr = deepseek_extract_json($raw);
+    $data = $jsonStr !== null ? json_decode($jsonStr, true) : null;
+
+    // 模型未按 JSON 返回：把原文作为推荐语兜底
+    if(!is_array($data))
+    {
+        $fallback = trim(preg_replace('/^```[a-zA-Z]*\s*|\s*```$/', '', $raw));
+        return array('ok'=>true, 'reply'=>mb_substr($fallback, 0, 600, 'UTF-8'), 'movies'=>array());
+    }
+
+    $reply = isset($data['reply']) && is_string($data['reply']) ? trim($data['reply']) : '';
+    if($reply === '') $reply = '根据你的需求，为你挑选了这几部影片：';
+
+    $valid = array();
+    foreach($candidates as $c)
+    {
+        if(isset($c['id'])) $valid[intval($c['id'])] = $c;
+    }
+
+    $movies = array();
+    $used = array();
+    $list = isset($data['movies']) && is_array($data['movies']) ? $data['movies'] : array();
+    foreach($list as $m)
+    {
+        if(!is_array($m)) continue;
+        $id = intval(isset($m['id']) ? $m['id'] : 0);
+        if($id <= 0 || !isset($valid[$id]) || isset($used[$id])) continue;
+        $used[$id] = 1;
+        $item = $valid[$id];
+        $item['reason'] = isset($m['reason']) && is_string($m['reason'])
+            ? mb_substr(trim($m['reason']), 0, 80, 'UTF-8')
+            : '';
+        $movies[] = $item;
+        if(count($movies) >= 5) break;
+    }
+
+    return array('ok'=>true, 'reply'=>mb_substr($reply, 0, 600, 'UTF-8'), 'movies'=>$movies);
+}
+
+/**
+ * AI 根据访客需求给出匹配片名（站内关键词无结果时兜底）
+ *
+ * @param string $question 访客需求
+ * @param string $siteName 网站名称
+ * @param int    $count    期望数量
+ * @return array ['ok'=>true,'titles'=>['片名1','片名2',...]]
+ */
+function deepseek_suggest_titles($question, $siteName = '', $count = 10)
+{
+    $count = max(5, min(15, intval($count)));
+    $siteName = trim($siteName) !== '' ? trim($siteName) : '本站';
+
+    $messages = array(
+        array(
+            'role' => 'system',
+            'content' => "你是「{$siteName}」的影视推荐助手。根据访客需求列出最匹配的影视作品片名，只输出严格 JSON，不要代码块，不要多余文字。",
+        ),
+        array(
+            'role' => 'user',
+            'content' => "访客需求：{$question}\n请列出 {$count} 部最匹配的影视作品片名，电影和剧集均可。\n"
+                ."输出格式：{\"titles\":[\"片名1\",\"片名2\"]}\n片名不要加书名号。",
+        ),
+    );
+
+    $result = deepseek_chat($messages, 0.5, true);
+    if(!$result['ok']) return $result;
+
+    $jsonStr = deepseek_extract_json(trim($result['content']));
+    $data = $jsonStr !== null ? json_decode($jsonStr, true) : null;
+    if(!is_array($data) || !isset($data['titles']) || !is_array($data['titles']))
+    {
+        return array('ok'=>false, 'error'=>'AI 返回的片名解析失败');
+    }
+
+    $titles = array();
+    foreach($data['titles'] as $t)
+    {
+        if(!is_string($t)) continue;
+
+        $t = trim($t, "《》“”\"' ");
+        if($t === '' || mb_strlen($t, 'UTF-8') > 40) continue;
+        if(!in_array($t, $titles)) $titles[] = $t;
+        if(count($titles) >= $count) break;
+    }
+
+    if(count($titles) === 0)
+    {
+        return array('ok'=>false, 'error'=>'AI 未返回片名');
+    }
+
+    return array('ok'=>true, 'titles'=>$titles);
+}
+
+/**
+ * AI 获取近期热门影视资源
+ *
+ * @param string $siteName 网站名称
+ * @param int    $count    期望数量
+ * @return array ['ok'=>true,'items'=>[['title'=>'..','type'=>'..','reason'=>'..'], ...]]
+ */
+function deepseek_hot_movies($siteName = '', $count = 12)
+{
+    $count = max(6, min(20, intval($count)));
+    $siteName = trim($siteName) !== '' ? trim($siteName) : '本站';
+
+    $messages = array(
+        array(
+            'role' => 'system',
+            'content' => "你是「{$siteName}」的影视趋势助手，负责整理近期热度较高的电影、剧集和动画。只输出严格 JSON，不要代码块，不要多余文字。",
+        ),
+        array(
+            'role' => 'user',
+            'content' => "请列出最近一两年（尽量接近当前时间）讨论度和热度较高的影视作品 {$count} 部，覆盖电影、剧集、动画，避免重复。\n"
+                ."输出格式：{\"items\":[{\"title\":\"片名\",\"type\":\"电影/剧集/动画\",\"reason\":\"一句话热度说明\"}]}\n"
+                ."片名不要加书名号，reason 不超过 30 字。",
+        ),
+    );
+
+    $result = deepseek_chat($messages, 0.6, true);
+    if(!$result['ok']) return $result;
+
+    $jsonStr = deepseek_extract_json(trim($result['content']));
+    $data = $jsonStr !== null ? json_decode($jsonStr, true) : null;
+    if(!is_array($data) || !isset($data['items']) || !is_array($data['items']))
+    {
+        return array('ok'=>false, 'error'=>'AI 返回的热门影视内容解析失败');
+    }
+
+    $types = array('电影', '剧集', '电视剧', '动画', '综艺', '纪录片');
+    $items = array();
+    $seen = array();
+    foreach($data['items'] as $it)
+    {
+        if(!is_array($it)) continue;
+
+        $title = isset($it['title']) ? trim($it['title']) : '';
+        $title = trim($title, "《》“”\"' ");
+        if($title === '' || mb_strlen($title, 'UTF-8') > 40 || isset($seen[$title])) continue;
+        $seen[$title] = 1;
+
+        $type = isset($it['type']) ? trim($it['type']) : '影视';
+        if(!in_array($type, $types)) $type = '影视';
+        $reason = isset($it['reason']) ? mb_substr(trim($it['reason']), 0, 50, 'UTF-8') : '';
+
+        $items[] = array('title'=>$title, 'type'=>$type, 'reason'=>$reason);
+        if(count($items) >= $count) break;
+    }
+
+    if(count($items) === 0)
+    {
+        return array('ok'=>false, 'error'=>'AI 未返回热门影视资源');
+    }
+
+    return array('ok'=>true, 'items'=>$items);
 }

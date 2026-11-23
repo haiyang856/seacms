@@ -117,6 +117,7 @@ if($action=="set")
 	$ai_temperature     = trim($_POST['ai_temperature']);
 	$ai_max_tokens      = trim($_POST['ai_max_tokens']);
 	$ai_search_correct  = isset($_POST['ai_search_correct'])  ? $_POST['ai_search_correct']  : 'off';
+	$ai_recommend       = isset($_POST['ai_recommend'])       ? $_POST['ai_recommend']       : 'off';
 
 	// 提供商预设自动填充
 	if($ai_provider !== 'custom')
@@ -151,6 +152,7 @@ if($action=="set")
 	$str.='$ai_temperature = "'.addslashes($ai_temperature).'"; ';
 	$str.='$ai_max_tokens = "'.addslashes($ai_max_tokens).'"; ';
 	$str.='$ai_search_correct = "'.addslashes($ai_search_correct).'"; ';
+	$str.='$ai_recommend = "'.addslashes($ai_recommend).'"; ';
 	$str.=" ?>";
 	fwrite($open,$str);
 	fclose($open);
@@ -167,6 +169,7 @@ $ai_model          = "deepseek-chat";
 $ai_temperature    = "0.7";
 $ai_max_tokens     = "800";
 $ai_search_correct = "off";
+$ai_recommend      = "off";
 
 // 配置文件：优先 /data/admin/ai.php，兼容旧 deepseek.php
 $__cfg_file = file_exists("../data/admin/ai.php") ? "../data/admin/ai.php" : "../data/admin/deepseek.php";
@@ -185,6 +188,7 @@ if(file_exists($__cfg_file))
 	$__cfg['ai_temperature']    = isset($ai_temperature)    ? $ai_temperature    : '0.7';
 	$__cfg['ai_max_tokens']     = isset($ai_max_tokens)     ? $ai_max_tokens     : '800';
 	$__cfg['ai_search_correct'] = isset($ai_search_correct) ? $ai_search_correct : 'off';
+	$__cfg['ai_recommend']      = isset($ai_recommend)      ? $ai_recommend      : 'off';
 
 	// 旧变量名 fallback
 	if(($__cfg['ai_api_url']=='https://api.deepseek.com/v1' || $__cfg['ai_api_url']=='' ) && isset($deepseek_api_url) && $deepseek_api_url!='')
@@ -313,6 +317,18 @@ AI搜索辅助：
  &nbsp;* 前台搜索时自动纠正错别字 如"流量地球" → "流浪地球"
 </td>
 </tr>
+<tr class="thead">
+<td colspan="5" class="td_title">AI 影片推荐（前台）</td>
+</tr>
+<tr>
+<td width="80%" align="left" height="32" class="td_border">
+AI 影片推荐：
+<input type="radio" name="ai_recommend" value="off" <?php if($ai_recommend=='off') echo 'checked';?>>关闭
+&nbsp;&nbsp;
+<input type="radio" name="ai_recommend" value="on" <?php if($ai_recommend=='on') echo 'checked';?>>开启
+ &nbsp;* 开启后前台右下角出现 AI 推荐浮标，访客点击即可对话获取影片推荐（需同时开启上方「功能开关」）
+</td>
+</tr>
 <tr>
 <td width="10%" align="left" height="32" class="td_border">
 <input type="submit" value="确 认" class="btn">
@@ -321,7 +337,7 @@ AI搜索辅助：
 <tr>
 <td width="90%" align="left" height="32" class="td_border"><div style="padding: 10px;border: 0;border-radius: 4px;font-size: 13px;background-color: #eef5f4;">
 * 支持所有 OpenAI 兼容接口，不限于 DeepSeek / OpenAI。只需改 Base URL + Model + API Key 即可切换。<br>
-* 开启时：后台出现 AI 帮助按钮（右下角）、视频编辑页 AI 填写按钮、前台搜索自动纠错。<br>
+* 开启时：后台出现 AI 帮助按钮（右下角）、视频编辑页 AI 填写按钮、前台搜索自动纠错、前台 AI 影片推荐浮标。<br>
 * API Key 仅保存在服务器端 /data/admin/ai.php，不会在前端暴露。<br>
 * 如果保存无效，请检查 /data/admin/ai.php 文件权限是否可写。
 </div></td>
