@@ -1,6 +1,6 @@
 <?php
 $dist_cfg_saved = array (
-  'enabled' => 1,
+  'enabled' => 0,
   'level1' => 1,
   'level2' => 1,
   'level3' => 1,
