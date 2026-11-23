@@ -369,6 +369,7 @@ function upd_should_skip($rel)
 	if (preg_match('#(^|/)(\.git|\.github|\.workbuddy)(/|$)#', $rel)) return true;
 	if (strpos($rel, '.DS_Store') !== false) return true;
 	if (preg_match('#^templets/default(/|$)#i', $rel)) return true;
+	if (preg_match('#^member/templets/default(/|$)#i', $rel)) return true;
 	if ($rel === 'install/install_lock.txt') return true;
 	return false;
 }
@@ -804,7 +805,7 @@ function upd_action_upgrade()
 	upd_emit('success', '权限校验完成'.($fixed > 0 ? '，自动修正 '.$fixed.' 个文件权限' : '，无需修正'));
 
 	/* 3. 覆盖文件（templets/default 已排除，admin 目录已映射） */
-	upd_emit('info', '开始覆盖升级文件（templets/default 已排除，data 目录仅新增不覆盖，后台目录映射为 '.$updAdminDir.'）...');
+	upd_emit('info', '开始覆盖升级文件（templets/default、member/templets/default 已排除，data 目录仅新增不覆盖，后台目录映射为 '.$updAdminDir.'）...');
 	$copied = 0;
 	$failed = 0;
 	$failFiles = array();
@@ -831,7 +832,7 @@ function upd_action_upgrade()
 		foreach (array_slice($failFiles, 0, 8) as $f) upd_emit('error', $f);
 		exit();
 	}
-	upd_emit('success', '文件覆盖完成：更新 '.$copied.' 个文件，跳过 '.$skipped.' 个（templets/default/已存在的 data 文件）');
+	upd_emit('success', '文件覆盖完成：更新 '.$copied.' 个文件，跳过 '.$skipped.' 个（templets/default、member/templets/default、已存在的 data 文件）');
 
 	/* 4. 数据库结构升级 */
 	upd_emit('info', '开始比对并升级数据库结构...');
